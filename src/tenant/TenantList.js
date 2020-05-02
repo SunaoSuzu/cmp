@@ -6,13 +6,12 @@ import {connect} from "react-redux";
 function TenantList(props) {
     return (
         <React.Fragment>
-            <SuTechGrid title="テント" gridConf={props.gridConf} datas={props.datas}
+            <SuTechGrid title={"テナント一覧(" + props.operationType + ")"} gridConf={props.gridConf} datas={props.datas}
                         goDetailHandler={props.selectGoToDetail}
                         goAddHandler={props.selectGoToAdd}
             ></SuTechGrid>
         </React.Fragment>
-
-        );
+    );
 }
 
 const mapStateToProps = state => {

@@ -1,5 +1,4 @@
 import React , { Component  } from 'react';
-import logo from "./Logo_H_x2.png";
 import {Link, useRouteMatch} from "react-router-dom";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -8,23 +7,28 @@ import {makeStyles} from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import PropTypes from "prop-types";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import SuTechGrid from "../asset/SuTechGrid";
+
+//将来的にItemDetaiPageと統合したいけど、難しそう
 
 const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
         display: 'flex',
-        height: 800,
+        height: 500,
     },
     tabs: {
         borderRight: `1px solid ${theme.palette.divider}`,
     },
 }));
 
-export default function ItemDetailPage(props) {
+export default function TenantDetailPage(props) {
     const classes = useStyles();
     console.log(JSON.stringify(props));
-    const { updateData , backToList } = props;
+    const { updateData , backToList,productGridConf } = props;
 
     let { path, url } = useRouteMatch();
     const [tabValue, setValue] = React.useState(0);
@@ -37,8 +41,6 @@ export default function ItemDetailPage(props) {
         props.data.name="鈴木商事";
         updateData(props.data);
     }
-
-
 
     return (
 
@@ -53,9 +55,10 @@ export default function ItemDetailPage(props) {
                     className={classes.tabs}
                 >
                     <Tab label="基本情報" {...a11yProps(0)} />
-                    <Tab label="本番環境" {...a11yProps(1)} />
-                    <Tab label="試験環境" {...a11yProps(2)} />
-                    <Tab label="開発環境" {...a11yProps(3)} />
+                    {props.data.environments.map((env , index ) => (
+                        <Tab label={landScapeCaption(env.landScape)} {...a11yProps((index + 1))} />
+                    ))}
+
                 </Tabs>
                 <TabPanel value={tabValue} index={0}>
                     <form  encType='multipart/form-data' >
@@ -63,30 +66,37 @@ export default function ItemDetailPage(props) {
 
                         <div>TenantDetail(dataId = {props.data.id})</div>
                         <div>TenantDetail(dataName = {props.data.name})</div>
-                        <div>TenantDetail(dataLicences = {props.data.licences})</div>
-                        <div>TenantDetail(dataVersion = {props.data.version})</div>
                     </form>
                     <button onClick={send.bind(this)}>更新</button>
                 </TabPanel>
-                <TabPanel value={tabValue} index={1}>
-                    Item Two
-                </TabPanel>
-                <TabPanel value={tabValue} index={2}>
-                    Item Three
-                </TabPanel>
-                <TabPanel value={tabValue} index={3}>
-                    Item Four
-                </TabPanel>
+                {props.data.environments.map((env , index ) => (
+                    <TabPanel value={tabValue} index={index + 1}>
+                        <TextField id="standard-basic" label="環境名" defaultValue={landScapeCaption(env.landScape)} helperText="環境名を入れてください" />
+                        <SuTechGrid title="インストール済みライセンス" gridConf={productGridConf}
+                                    datas={env.installedLicences}
+                                    goDetailHandler={null}
+                                    goAddHandler={null}
+                        ></SuTechGrid>
+
+                    </TabPanel>
+                ))}
             </div>
-
-
-
-
-
-
             <Link to={backToList} >Back To The List</Link>
         </React.Fragment>
     )
+}
+
+function landScapeCaption(i){
+    switch (i) {
+        case 1:
+            return "開発環境";
+        case 2:
+            return "ステージング環境";
+        case 3:
+            return "本番環境";
+        default :
+            return "追加環境";
+    }
 }
 
 function TabPanel(props) {

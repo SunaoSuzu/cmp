@@ -14,6 +14,7 @@ const mapDispatchToProps = dispatch => {
         selectList: () => dispatch(tenantAppModule.selectList()),
         selectGoToAdd: () => dispatch(tenantAppModule.selectGoToAdd()),
         selectGoToDetail: (data) => dispatch(tenantAppModule.selectGoToDetail(data)),
+        updateData: (data) => dispatch(tenantAppModule.updateData(data)),
     }
 }
 

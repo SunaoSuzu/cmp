@@ -15,31 +15,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import SuTechIcon from "../asset/SuTechIcon";
-import {Link as RouterLink, Link} from "react-router-dom";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import Divider from "@material-ui/core/Divider";
-
-
-const menuIconsDef= [
-    {menuId:1 , caption : "Activity" , icon:"" , appTo:"/activity"},
-    {menuId:2 , caption : "テナント" , icon:"", appTo:"/tenant" },
-    {menuId:3 , caption : "プロダクト" , icon:"", appTo:"/product" },
-    {menuId:4 , caption : "作業予実" , icon:"", appTo:"/operation" },
-    {menuId:5 , caption : "通知" , icon:"" , appTo:"/home"},
-]
-
-const reportIconsDef= [
-    {reportId:11 , caption : "レポート" , icon:"" ,reportTo:"report"},
-    {reportId:12 , caption : "レポート" , icon:"" ,reportTo:"report"},
-    {reportId:13 , caption : "レポート" , icon:"" ,reportTo:"report"},
-]
-
-const drawerWidth = 240;
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -106,42 +82,19 @@ const useStyles = makeStyles((theme) => ({
             display: 'none',
         },
     },
-    drawer: {
-        width: drawerWidth,
-        flexShrink: 0,
-    },
-    drawerPaper: {
-        width: drawerWidth,
-    },
-    drawerContainer: {
-        overflow: 'auto',
-    },
 }));
 
 
 
 export default function AppHeader(prop) {
-    const menuIcons = menuIconsDef;
-    const reportIcons = reportIconsDef;
-    const classes=useStyles();
-    const { selectMenu,selectReport  } = prop;
-    const { functionType , selectedMenuId,selectedReportId } = prop;
 
-    const anchor='left';
-    const [state, setState] = React.useState({
-        top: false,
-        left: false,
-        bottom: false,
-        right: false,
-    });
+    const [menuState, setMenuState] = React.useState(true);
 
-    const toggleDrawer = (anchor, open) => (event) => {
-        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-            return;
-        }
-
-        setState({ ...state, [anchor]: open });
+    const toggleDrawer = (side, open) => () => {
+        setMenuState({[side]:open});
     };
+
+    const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -285,64 +238,6 @@ export default function AppHeader(prop) {
             </AppBar>
             {renderMobileMenu}
             {renderMenu}
-            <Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}
-                    classes={{
-                        paper: classes.drawerPaper,
-                    }}
-            >
-
-                <div className={classes.drawerContainer}
-                     tabIndex={0}
-                     role="button"
-                     onClick={toggleDrawer('left', false)}
-                     onKeyDown={toggleDrawer('left', false)}
-
-                >
-                    <List>
-                        {menuIcons.map((menu, index) => (
-                            <ListItemLink  key={menu.menuId} onClick={() => selectMenu(menu)}
-                                           to={menu.appTo}
-                                           selected={ functionType==="MENU"&&selectedMenuId===menu.menuId ? true : false}
-                                           primary={menu.caption} icon={<InboxIcon />}
-                            >
-                            </ListItemLink>
-                        ))}
-                    </List>
-                    <Divider />
-                    <List>
-                        {reportIcons.map((report, index) => (
-                            <ListItemLink button key={report.reportId} onClick={() => selectReport(report)}
-                                          to={"/report/" + report.reportId}
-                                          primary={report.caption} icon={<InboxIcon />}
-                                          selected={ functionType==="REPORT"&&selectedReportId===report.reportId ? true : false}>
-                            </ListItemLink>
-                        ))}
-                    </List>
-                </div>
-            </Drawer>
         </React.Fragment>
     );
 }
-
-
-
-function ListItemLink(props) {
-    const { icon, primary, to, key , onClick , selected } = props;
-
-    const renderLink = React.useMemo(
-        () => React.forwardRef((itemProps, ref) => <RouterLink to={to} ref={ref} {...itemProps} />),
-        [to],
-    );
-
-    return (
-        <li>
-            <ListItem button component={renderLink} key={key} selected={selected} onClick={onClick}>
-                {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
-                <ListItemText primary={primary} />
-            </ListItem>
-        </li>
-    );
-}
-
-
-

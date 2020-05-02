@@ -66,9 +66,10 @@ export default function Navigation(props)  {
             <div className={classes.root} >
                 <CssBaseline />
                 <AppHeader selectHome={selectHome} selectSearch={selectSearch} selectNotice={selectNotice}
-                           selectProfile={selectProfile} selectAccount={selectAccount} selectLogout={selectLogout}
-                           functionType={functionType} selectedMenuId={selectedMenuId} selectedReportId={selectedReportId}
-                           selectMenu={selectMenu} selectReport={selectReport}/>
+                           selectProfile={selectProfile} selectAccount={selectAccount} selectLogout={selectLogout} />
+                <div className={classes.toolbar} />
+                <SideMenu functionType={functionType} selectedMenuId={selectedMenuId} selectedReportId={selectedReportId}
+                          selectMenu={selectMenu} selectReport={selectReport}/>
                 <main className={classes.content}>
                     <Toolbar />
                     <Paper elevation={0}>

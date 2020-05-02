@@ -18,9 +18,8 @@ export default function TenantApp(props) {
 
     return (
         <React.Fragment>
-            <div>props={props.operationType}</div>
             <Switch>
-                <Route exact path={path + "/list"} render={TenantList}></Route>
+                <Route exact path={path + "/list"} component={TenantList}></Route>
                 <Route exact path={path + "/add"} component={TenantAdd} ></Route>
                 <Route exact path={path + "/detail"} component={TenantDetail} ></Route>
                 <Route exact path={path + "/detail/:tenantId"} component={TenantDetail} ></Route>

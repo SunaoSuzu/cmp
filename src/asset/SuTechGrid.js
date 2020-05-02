@@ -69,7 +69,6 @@ export default function SuTechGrid(props) {
     console.log(JSON.stringify(props));
     return (
         <React.Fragment>
-
             <TableContainer component={Paper}>
                 <div>{props.title}</div>
                 <Table >

@@ -6,12 +6,19 @@ import * as serviceWorker from './serviceWorker';
 
 import { Provider } from 'react-redux';
 import createStore from './NavigationStore';
+import { ConnectedRouter } from 'connected-react-router'
+import history from './asset/history';
+import {Route, Switch} from "react-router";
 
 const store = createStore();
 ReactDOM.render(
   <React.StrictMode>
       <Provider store={store} >
-          <App />
+          <ConnectedRouter history={history}>
+              <Switch>
+                  <Route path="/" component={App}></Route>
+              </Switch>
+          </ConnectedRouter>
       </Provider>
   </React.StrictMode>,
   document.getElementById('root')

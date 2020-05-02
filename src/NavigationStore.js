@@ -1,16 +1,37 @@
-import { createStore as reduxCreateStore, applyMiddleware, combineReducers } from 'redux';
-import logger from 'redux-logger';
+import { createStore as reduxCreateStore, compose, applyMiddleware, combineReducers } from 'redux';
 import navigationReducer from './NavigationModule';
+import { connectRouter, routerMiddleware } from 'connected-react-router'
+import history from './asset/history'
+import NavigationModule from "./NavigationModule";
+import { createLogger } from 'redux-logger';
 
 
-export default function createStore() {
+const initialState = {
+    functionType : NavigationModule.HOME,
+    selectedMenuId: null,
+    targetReportId: null
+}
+
+
+
+export default function
+
+    createStore() {
+    const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
     const store = reduxCreateStore(
-            navigationReducer,
-        applyMiddleware(
-            logger,
-        )
-    );
+        combineReducers({
+            router: connectRouter(history),navigationReducer})
+        , // new root reducer with router state
+        initialState,
+        composeEnhancers(
+            applyMiddleware(
+                routerMiddleware(history), // for dispatching history actions
+                createLogger(),
 
+            ),
+        ),
+    )
     return store;
 }
 
