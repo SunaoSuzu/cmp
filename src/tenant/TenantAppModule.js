@@ -1,8 +1,8 @@
 
-const LIST = 1
-const GOTO_ADD = 5
-const GOTO_DETAIL = 10
-const UPDATE_DATA = 100
+const LIST = 1;
+const GOTO_ADD = 5;
+const GOTO_DETAIL = 10;
+const UPDATE_DATA = 100;
 
 //設定関係（いずれDBへ）
 const gridConf = {
@@ -87,53 +87,56 @@ const initialState = {
     gridConf :gridConf,
     productGridConf :productGridConf,
     datas : tenants,
-    data  : []
-}
+    data  : {},
+    breadcrumbStack : [],
+};
+
+const breadcrumbStackList = { caption : "テナント一覧" , to : "/tenant/list"};
 
 export default function reducer(state=initialState, action) {
     switch (action.type) {
         case LIST:
             return {operationType : LIST , gridConf: state.gridConf ,productGridConf :productGridConf,
-                datas : state.datas , data : null};
+                datas : state.datas, data : null , breadcrumbStack : []};
         case GOTO_ADD:
             return {operationType : GOTO_ADD , gridConf: state.gridConf,productGridConf :productGridConf,
-                datas : state.datas, data : null};
+                datas : state.datas, data : null,breadcrumbStack : [breadcrumbStackList]};
         case GOTO_DETAIL:
             return {operationType : GOTO_DETAIL, gridConf: state.gridConf,productGridConf :productGridConf,
-                datas : state.datas, data : action.data};
+                datas : state.datas, data : action.data , breadcrumbStack : [breadcrumbStackList , {caption : action.data.caption , to : "/tenant/detail/" + action.data.id }]};
         case UPDATE_DATA:
             console.log("UPDATE_DATA " + action.data);
             return {operationType : UPDATE_DATA, gridConf: state.gridConf,productGridConf :productGridConf,
-                datas : state.datas, data : action.data};
+                datas : state.datas, data : action.data,breadcrumbStack : [breadcrumbStackList , {caption : action.data.caption , to : "/tenant/detail/" + action.data.id }]};
         default:
                 return state
     }
-}
+};
 
 // Action Creators
 export const selectList  = () => {
     return {
         type: LIST,
     }
-}
+};
 
 export const selectGoToAdd  = () => {
-    console.log("GOTO_ADD")
+    console.log("GOTO_ADD");
     return {
         type: GOTO_ADD,
     }
-}
+};
 
 export const selectGoToDetail  = (data) => {
     return {
         type: GOTO_DETAIL,
         data: data
     }
-}
+};
 
 export const updateData  = (data) => {
     return {
         type: UPDATE_DATA,
         data: data
     }
-}
+};

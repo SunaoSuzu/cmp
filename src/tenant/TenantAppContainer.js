@@ -3,11 +3,12 @@ import * as tenantAppModule from './TenantAppModule';
 import TenantApp from "./TenantApp";
 
 const mapStateToProps = state => {
-    console.log('mapStateToProps ' + JSON.stringify(state))
+    console.log('mapStateToProps ' + JSON.stringify(state));
     return {
         operationType  : state.operationType,
+        breadcrumbStack: state.breadcrumbStack,
     }
-}
+};
 
 const mapDispatchToProps = dispatch => {
     return {
@@ -16,6 +17,6 @@ const mapDispatchToProps = dispatch => {
         selectGoToDetail: (data) => dispatch(tenantAppModule.selectGoToDetail(data)),
         updateData: (data) => dispatch(tenantAppModule.updateData(data)),
     }
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(TenantApp);
