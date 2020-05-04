@@ -49,7 +49,6 @@ export default function Navigation(props)  {
 
 
     const classes=useStyles();
-    console.log(props);
 
     return (
         <React.StrictMode>

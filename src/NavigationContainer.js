@@ -3,13 +3,12 @@ import * as navigationModule from './NavigationModule';
 import Navigation from "./Navigation";
 
 const mapStateToProps = state => {
-    console.log('mapStateToProps ' + JSON.stringify(state))
     return {
         functionType  : state.functionType,
         selectedMenuId: state.selectedMenuId,
         selectedReportId: state.selectedReportId,
     }
-}
+};
 
 const mapDispatchToProps = dispatch => {
     return {
@@ -22,6 +21,6 @@ const mapDispatchToProps = dispatch => {
         selectSearch: () => dispatch(navigationModule.selectSearch()),
         selectLogout: () => dispatch(navigationModule.selectLogout()),
     }
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Navigation);
