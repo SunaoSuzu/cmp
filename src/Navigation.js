@@ -5,11 +5,10 @@ import Link from '@material-ui/core/Link';
 import {makeStyles  } from "@material-ui/core/styles";
 import Toolbar from '@material-ui/core/Toolbar';
 import Paper from '@material-ui/core/Paper';
-import { BrowserRouter as Router, Route,Redirect } from "react-router-dom";
+import { Route,Redirect } from "react-router-dom";
 
 //自作
 import AppHeader from "./layout/AppHeader";
-import SideMenu from "./layout/SideMenu";
 import ActivityApp from "./activity/ActivityApp";
 import TenantSubApp from "./tenant/TenantSubApp";
 import ProductApp from "./product/ProductApp";
@@ -31,7 +30,6 @@ function Copyright() {
         </Typography>
     );
 }
-const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
@@ -42,15 +40,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function hadlerClick(e){
-    console.log(e);
-    return "";
-}
-
-
 export default function Navigation(props)  {
-
-    const handle = hadlerClick;
 
     const { selectHome,selectProfile,selectAccount,selectNotice,selectSearch,selectLogout  } = props;
 
@@ -59,7 +49,7 @@ export default function Navigation(props)  {
 
 
     const classes=useStyles();
-    console.log(props)
+    console.log(props);
 
     return (
         <React.StrictMode>
@@ -73,16 +63,16 @@ export default function Navigation(props)  {
                     <Toolbar />
                     <Paper elevation={0}>
                         <Redirect exact from="/" to="/home"/>
-                        <Route exact path="/" component={HomeApp}></Route>
-                        <Route path="/home" component={HomeApp}></Route>
-                        <Route path="/profile" component={ProfileApp}></Route>
-                        <Route path="/notice" component={NoticeApp}></Route>
-                        <Route path="/activity" component={ActivityApp}></Route>
-                        <Route path="/tenant" component={TenantSubApp}></Route>
-                        <Route path="/product" component={ProductApp}></Route>
-                        <Route path="/operation" component={OperationApp}></Route>
-                        <Route exact path="/report" component={ReportApp}></Route>
-                        <Route path="/report/:reportId" component={ReportApp}></Route>
+                        <Route exact path="/" component={HomeApp}/>
+                        <Route path="/home" component={HomeApp}/>
+                        <Route path="/profile" component={ProfileApp}/>
+                        <Route path="/notice" component={NoticeApp}/>
+                        <Route path="/activity" component={ActivityApp}/>
+                        <Route path="/tenant" component={TenantSubApp}/>
+                        <Route path="/product" component={ProductApp}/>
+                        <Route path="/operation" component={OperationApp}/>
+                        <Route exact path="/report" component={ReportApp}/>
+                        <Route path="/report/:reportId" component={ReportApp}/>
                     </Paper>
                     <Copyright/>
                 </main>
