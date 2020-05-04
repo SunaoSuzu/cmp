@@ -11,7 +11,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import SuTechIcon from "../asset/SuTechIcon";
@@ -24,20 +23,8 @@ import List from "@material-ui/core/List";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import Divider from "@material-ui/core/Divider";
 
+import Configuration from "../Configuration";
 
-const menuIconsDef= [
-    {menuId:1 , caption : "Activity" , icon:"" , appTo:"/activity"},
-    {menuId:2 , caption : "テナント" , icon:"", appTo:"/tenant" },
-    {menuId:3 , caption : "プロダクト" , icon:"", appTo:"/product" },
-    {menuId:4 , caption : "作業予実" , icon:"", appTo:"/operation" },
-    {menuId:5 , caption : "通知" , icon:"" , appTo:"/home"},
-]
-
-const reportIconsDef= [
-    {reportId:11 , caption : "レポート" , icon:"" ,reportTo:"report"},
-    {reportId:12 , caption : "レポート" , icon:"" ,reportTo:"report"},
-    {reportId:13 , caption : "レポート" , icon:"" ,reportTo:"report"},
-]
 
 const drawerWidth = 240;
 
@@ -121,8 +108,9 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function AppHeader(prop) {
-    const menuIcons = menuIconsDef;
-    const reportIcons = reportIconsDef;
+    const conf = Configuration();
+    const menuIcons = conf.menuIcons;
+    const reportIcons = conf.reportIcons;
     const classes=useStyles();
     const { selectMenu,selectReport  } = prop;
     const { functionType , selectedMenuId,selectedReportId } = prop;
@@ -299,23 +287,22 @@ export default function AppHeader(prop) {
 
                 >
                     <List>
-                        {menuIcons.map((menu, index) => (
+                        {menuIcons.map((menu) => (
                             <ListItemLink  key={menu.menuId} onClick={() => selectMenu(menu)}
                                            to={menu.appTo}
-                                           selected={ functionType==="MENU"&&selectedMenuId===menu.menuId ? true : false}
+                                           selected={ functionType==="MENU"&&selectedMenuId===menu.menuId}
                                            primary={menu.caption} icon={<InboxIcon />}
-                            >
-                            </ListItemLink>
+                            />
                         ))}
                     </List>
                     <Divider />
                     <List>
-                        {reportIcons.map((report, index) => (
+                        {reportIcons.map((report, ) => (
                             <ListItemLink button key={report.reportId} onClick={() => selectReport(report)}
                                           to={"/report/" + report.reportId}
                                           primary={report.caption} icon={<InboxIcon />}
-                                          selected={ functionType==="REPORT"&&selectedReportId===report.reportId ? true : false}>
-                            </ListItemLink>
+                                          selected={ functionType==="REPORT"&&selectedReportId===report.reportId}
+                            />
                         ))}
                     </List>
                 </div>

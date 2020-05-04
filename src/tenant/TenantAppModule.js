@@ -4,25 +4,10 @@ const GOTO_ADD = 5;
 const GOTO_DETAIL = 10;
 const UPDATE_DATA = 100;
 
-//設定関係（いずれDBへ）
-const gridConf = {
-    columnsDef :[
-        {caption : 'テナント' , propName : 'name'},
-        {caption : '状況' , propName : 'statusCaption'},
-    ],
-};
-
-const productGridConf = {
-    columnsDef :[
-        {caption : 'ライセンス名称' , propName : 'caption'},
-        {caption : 'Version' , propName : 'version'},
-        {caption : 'Patch' , propName : 'patch'},
-    ],
-};
-
 
 const tenants = [
     { id : 1 , name : '株式会社三菱' , statusCaption : '本番運用中' ,
+        environmentSetting : { vpcType : 1  },
         environments : [
             {envId:1,ord:1,landScape:1,
                 installedLicences :[
@@ -41,6 +26,7 @@ const tenants = [
         ],
     },
     { id : 2 , name : '住友商事' , statusCaption : '導入中' ,
+        environmentSetting : { vpcType : 2  },
         environments : [
             {envId:3,ord:1,landScape:1,
                 installedLicences :[
@@ -52,6 +38,7 @@ const tenants = [
         ],
     },
     { id : 3 , name : '帝国会社' , statusCaption : '本番運用中' ,
+        environmentSetting : { vpcType : 9  },
         environments : [
             {envId:4,ord:1,landScape:1,
                 installedLicences :[
@@ -78,14 +65,8 @@ const tenants = [
     },
 ];
 
-
-
-
-
 const initialState = {
     operationType : LIST,
-    gridConf :gridConf,
-    productGridConf :productGridConf,
     datas : tenants,
     data  : {},
     breadcrumbStack : [],
@@ -96,18 +77,18 @@ const breadcrumbStackList = { caption : "テナント一覧" , to : "/tenant/lis
 export default function reducer(state=initialState, action) {
     switch (action.type) {
         case LIST:
-            return {operationType : LIST , gridConf: state.gridConf ,productGridConf :productGridConf,
-                datas : state.datas, data : null , breadcrumbStack : []};
+            return {operationType : LIST , datas : state.datas, data : null ,
+                breadcrumbStack : []};
         case GOTO_ADD:
-            return {operationType : GOTO_ADD , gridConf: state.gridConf,productGridConf :productGridConf,
-                datas : state.datas, data : null,breadcrumbStack : [breadcrumbStackList]};
+            return {operationType : GOTO_ADD , datas : state.datas, data : null,
+                breadcrumbStack : [breadcrumbStackList]};
         case GOTO_DETAIL:
-            return {operationType : GOTO_DETAIL, gridConf: state.gridConf,productGridConf :productGridConf,
-                datas : state.datas, data : action.data , breadcrumbStack : [breadcrumbStackList , {caption : action.data.caption , to : "/tenant/detail/" + action.data.id }]};
+            return {operationType : GOTO_DETAIL, datas : state.datas, data : action.data ,
+                breadcrumbStack : [breadcrumbStackList , {caption : action.data.caption , to : "/tenant/detail/" + action.data.id }]};
         case UPDATE_DATA:
             console.log("UPDATE_DATA " + action.data);
-            return {operationType : UPDATE_DATA, gridConf: state.gridConf,productGridConf :productGridConf,
-                datas : state.datas, data : action.data,breadcrumbStack : [breadcrumbStackList , {caption : action.data.caption , to : "/tenant/detail/" + action.data.id }]};
+            return {operationType : UPDATE_DATA, datas : state.datas, data : action.data,
+                breadcrumbStack : [breadcrumbStackList , {caption : action.data.caption , to : "/tenant/detail/" + action.data.id }]};
         default:
                 return state
     }
@@ -121,7 +102,6 @@ export const selectList  = () => {
 };
 
 export const selectGoToAdd  = () => {
-    console.log("GOTO_ADD");
     return {
         type: GOTO_ADD,
     }

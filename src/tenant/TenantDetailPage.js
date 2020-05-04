@@ -1,5 +1,5 @@
-import React , { Component  } from 'react';
-import {Link, useRouteMatch} from "react-router-dom";
+import React from "react";
+import {Link} from "react-router-dom";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import TextField from "@material-ui/core/TextField";
@@ -7,9 +7,9 @@ import {makeStyles} from "@material-ui/core/styles";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import PropTypes from "prop-types";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
 import SuTechGrid from "../asset/SuTechGrid";
+import getConfiguration from "../Configuration";
+
 
 //将来的にItemDetaiPageと統合したいけど、難しそう
 
@@ -26,11 +26,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TenantDetailPage(props) {
+    const conf = getConfiguration();
+    const productGridConf = conf.productGridConf;
     const classes = useStyles();
     console.log(JSON.stringify(props));
-    const { updateData , backToList,productGridConf } = props;
+    const { updateData , backToList } = props;
 
-    let { path, url } = useRouteMatch();
+//    let { path, url } = useRouteMatch();
     const [tabValue, setValue] = React.useState(0);
 
     const handleChange = (event, newTabValue) => {
@@ -38,9 +40,10 @@ export default function TenantDetailPage(props) {
     };
 
     const send = function send(e){
+        console.log(e);
         props.data.name="鈴木商事";
         updateData(props.data);
-    }
+    };
 
     return (
 
@@ -76,7 +79,7 @@ export default function TenantDetailPage(props) {
                                     datas={env.installedLicences}
                                     goDetailHandler={null}
                                     goAddHandler={null}
-                        ></SuTechGrid>
+                        />
 
                     </TabPanel>
                 ))}
