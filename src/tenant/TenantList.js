@@ -2,12 +2,17 @@ import React from "react";
 import SuTechGrid from "../asset/SuTechGrid";
 import * as tenantAppModule from "./TenantAppModule";
 import {connect} from "react-redux";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import getConfiguration from "../Configuration";
 
 function TenantList(props) {
     const conf = getConfiguration();
     const gridConf = conf.tenantListGridConf;
+    if (props.isFetching){
+        return       <CircularProgress />
+    }
+
     return (
         <React.Fragment>
             <div>顧客は1000件以上いるわけだから、10件を一覧にするのはまじ意味ない・・・・</div>
@@ -25,6 +30,7 @@ const mapStateToProps = state => {
     console.log('mapStateToProps ' + JSON.stringify(state));
     return {
         operationType  : state.operationType,
+        isFetching : state.isFetching,
         datas  : state.datas,
     }
 };

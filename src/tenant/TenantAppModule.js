@@ -1,73 +1,18 @@
+import axios from 'axios'
 
-const LIST = 1;
-const GOTO_ADD = 5;
-const GOTO_DETAIL = 10;
-const UPDATE_DATA = 100;
+export const GET_LIST_REQUEST = 2;
+export const GET_LIST_SUCCESS = 3;
+export const GET_LIST_FAILURE = 4;
+export const GOTO_ADD = 5;
+export const GOTO_DETAIL = 10;
+export const UPDATE_DATA = 100;
 
 
-const tenants = [
-    { id : 1 , name : '株式会社三菱' , statusCaption : '本番運用中' ,
-        environmentSetting : { vpcType : 1  },
-        environments : [
-            {envId:1,ord:1,landScape:1,
-                installedLicences :[
-                    {id : 1 ,  caption  : "CJK" , version : 8 , patch : 10 },
-                    {id : 10 , caption : "CWS" , version : 8 , patch : 10 },
-                    {id : 20 , caption : "CSR" , version : 8 , patch : 10 },
-                ]
-            },
-            {envId:2,ord:2,landScape:3,
-                installedLicences :[
-                    {id : 1 , caption  : "CJK" , version : 8 , patch : 10 },
-                    {id : 10 , caption : "CWS" , version : 8 , patch : 10 },
-                    {id : 20 , caption : "CSR" , version : 8 , patch : 10 },
-                ]
-            },
-        ],
-    },
-    { id : 2 , name : '住友商事' , statusCaption : '導入中' ,
-        environmentSetting : { vpcType : 2  },
-        environments : [
-            {envId:3,ord:1,landScape:1,
-                installedLicences :[
-                    {id : 1 , caption  : "CJK" , version : 8 , patch : 10 },
-                    {id : 10 , caption : "CWS" , version : 8 , patch : 10 },
-                    {id : 20 , caption : "CSR" , version : 8 , patch : 10 },
-                ]
-            },
-        ],
-    },
-    { id : 3 , name : '帝国会社' , statusCaption : '本番運用中' ,
-        environmentSetting : { vpcType : 9  },
-        environments : [
-            {envId:4,ord:1,landScape:1,
-                installedLicences :[
-                    {id : 1 , caption  : "CJK" , version : 8 , patch : 10 },
-                    {id : 10 , caption : "CWS" , version : 8 , patch : 10 },
-                    {id : 20 , caption : "CSR" , version : 8 , patch : 10 },
-                ]
-            },
-            {envId:5,ord:2,landScape:2,
-                installedLicences :[
-                    {id : 1 , caption  : "CJK" , version : 8 , patch : 10 },
-                    {id : 10 , caption : "CWS" , version : 8 , patch : 10 },
-                    {id : 20 , caption : "CSR" , version : 8 , patch : 10 },
-                ]
-            },
-            {envId:6,ord:3,landScape:3,
-                installedLicences :[
-                    {id : 1 , caption  : "CJK" , version : 8 , patch : 10 },
-                    {id : 10 , caption : "CWS" , version : 8 , patch : 10 },
-                    {id : 20 , caption : "CSR" , version : 8 , patch : 10 },
-                ]
-            },
-        ],
-    },
-];
 
 const initialState = {
-    operationType : LIST,
-    datas : tenants,
+    isFetching: false,
+    operationType : GET_LIST_REQUEST,
+    datas : [],
     data  : {},
     breadcrumbStack : [],
 };
@@ -76,18 +21,25 @@ const breadcrumbStackList = { caption : "テナント一覧" , to : "/tenant/lis
 
 export default function reducer(state=initialState, action) {
     switch (action.type) {
-        case LIST:
-            return {operationType : LIST , datas : state.datas, data : null ,
+        case GET_LIST_REQUEST:
+            return {isFetching : true , operationType : GET_LIST_SUCCESS , datas : [] , data : null ,
+                breadcrumbStack : []};
+
+        case GET_LIST_SUCCESS:
+            return {isFetching : false , operationType : GET_LIST_SUCCESS , datas : action.datas , data : null ,
+                breadcrumbStack : []};
+        case GET_LIST_FAILURE:
+            return {isFetching : false , operationType : GET_LIST_SUCCESS , datas : [] , data : null ,
                 breadcrumbStack : []};
         case GOTO_ADD:
-            return {operationType : GOTO_ADD , datas : state.datas, data : null,
+            return {isFetching : false,  operationType : GOTO_ADD , datas : state.datas, data : null,
                 breadcrumbStack : [breadcrumbStackList]};
         case GOTO_DETAIL:
-            return {operationType : GOTO_DETAIL, datas : state.datas, data : action.data ,
+            return {isFetching : false, operationType : GOTO_DETAIL, datas : state.datas, data : action.data ,
                 breadcrumbStack : [breadcrumbStackList , {caption : action.data.caption , to : "/tenant/detail/" + action.data.id }]};
         case UPDATE_DATA:
             console.log("UPDATE_DATA " + action.data);
-            return {operationType : UPDATE_DATA, datas : state.datas, data : action.data,
+            return {isFetching : false, operationType : UPDATE_DATA, datas : state.datas, data : action.data,
                 breadcrumbStack : [breadcrumbStackList , {caption : action.data.caption , to : "/tenant/detail/" + action.data.id }]};
         default:
                 return state
@@ -95,9 +47,37 @@ export default function reducer(state=initialState, action) {
 };
 
 // Action Creators
-export const selectList  = () => {
+
+const getPostsRequest = () => {
     return {
-        type: LIST,
+        type: GET_LIST_REQUEST
+    }
+};
+
+const getPostsSuccess = (json) => {
+    return {
+        type: GET_LIST_SUCCESS,
+        datas : json,
+        receivedAt: Date.now()
+    }
+};
+
+const getPostsFailure = (error) => {
+    return {
+        type: GET_LIST_FAILURE,
+        error
+    }
+};
+
+export const selectList  = () => {
+    return (dispatch) => {
+        dispatch(getPostsRequest());
+        return axios.get(`https://115y9im0ec.execute-api.ap-northeast-1.amazonaws.com/develop/select`)
+            .then(res =>
+                dispatch(getPostsSuccess(res.data))
+            ).catch(err =>
+                dispatch(getPostsFailure(err))
+            )
     }
 };
 
