@@ -57,8 +57,7 @@ const whi_configuration = {
 };
 
 
-
-export default function getConfiguration(tenant){
-    console.log(tenant);
+//いずれテナントで分岐
+export default function getConfiguration(){
     return whi_configuration;
 };
