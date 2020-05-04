@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function TenantDetailPage(props) {
+export default function TenantProfilePage(props) {
     const conf = getConfiguration();
     const productGridConf = conf.productGridConf;
     const classes = useStyles();

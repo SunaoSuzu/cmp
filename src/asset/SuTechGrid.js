@@ -1,4 +1,4 @@
-import React , { Component  } from 'react';
+import React  from 'react';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -9,13 +9,7 @@ import Paper from '@material-ui/core/Paper';
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 import {makeStyles} from "@material-ui/core/styles";
-import {useRouteMatch} from "react-router-dom";
 import { Link as RouterLink } from 'react-router-dom';
-
-{/*
-  見た目に責務を持つので、データの流れとかどうやってデータを取るとか、そう言う事は全く気にしない（上位レイヤーでやられる事）
-  conf
-*/}
 
 const useStyles = makeStyles((theme) => ({
     fab: {
@@ -65,28 +59,28 @@ function FabLink(props) {
 
 export default function SuTechGrid(props) {
     const classes = useStyles();
-    let { path, url } = useRouteMatch();
-    console.log(JSON.stringify(props));
+    const selectToBase = props.selectToBase;
+    const addToBase = props.selectToBase;
     return (
         <React.Fragment>
             <TableContainer component={Paper}>
                 <div>{props.title}</div>
                 <Table >
                     <TableHead>
-                        {props.gridConf.columnsDef.map((column , index ) => (
+                        {props.gridConf.columnsDef.map((column) => (
                             <TableCell align="left">{column.caption}</TableCell>
                         ))}
 
                     </TableHead>
                     <TableBody>
-                        {props.datas.map((data, index) => (
-                            <DataRow button baseTo="/tenant/detail" data={data} gridConf={props.gridConf}
+                        {props.datas.map((data) => (
+                            <DataRow button baseTo={selectToBase} data={data} gridConf={props.gridConf}
                                      goDetailHandler={props.goDetailHandler} />
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-            <FabLink className={classes.fab} to="/tenant/add" onClick={props.goAddHandler} />
+            <FabLink className={classes.fab} to={addToBase} onClick={props.goAddHandler} />
         </React.Fragment>
     );
 }

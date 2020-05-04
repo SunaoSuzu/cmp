@@ -1,7 +1,7 @@
 import React from "react";
 import * as tenantAppModule from "./TenantAppModule";
 import {connect} from "react-redux";
-import TenantDetailPage from "./TenantDetailPage";
+import TenantProfilePage from "./TenantProfilePage";
 
 
 
@@ -13,7 +13,7 @@ function ItemDetail(props) {
 
         <React.Fragment>
             <div>TenantDetail(tenantId = {props.match.params.tenantId})</div>
-            <TenantDetailPage data={props.data} updateData={props.updateData} backToList="/tenant/list"
+            <TenantProfilePage data={props.data} updateData={props.updateData} backToList="/tenant/list"
                                />
         </React.Fragment>
     );

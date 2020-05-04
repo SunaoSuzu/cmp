@@ -13,6 +13,8 @@ function TenantList(props) {
             <SuTechGrid title={"テナント一覧(" + props.operationType + ")"} gridConf={gridConf} datas={props.datas}
                         goDetailHandler={props.selectGoToDetail}
                         goAddHandler={props.selectGoToAdd}
+                        selectToBase="/tenant/profile"
+                        addToBase="/tenant/add"
             />
         </React.Fragment>
     );
