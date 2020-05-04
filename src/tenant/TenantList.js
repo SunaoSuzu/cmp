@@ -10,6 +10,7 @@ function TenantList(props) {
     const gridConf = conf.tenantListGridConf;
     return (
         <React.Fragment>
+            <div>顧客は1000件以上いるわけだから、10件を一覧にするのはまじ意味ない・・・・</div>
             <SuTechGrid title={"テナント一覧(" + props.operationType + ")"} gridConf={gridConf} datas={props.datas}
                         goDetailHandler={props.selectGoToDetail}
                         goAddHandler={props.selectGoToAdd}
