@@ -61,3 +61,25 @@ const whi_configuration = {
 export default function getConfiguration(){
     return whi_configuration;
 };
+
+//以下は設定ではなくマスタ。将来は不要になるはず
+//販売製品
+export const productLicenses = {
+    1 : { id : 1 , name : "CJK"     },
+    2 : { id : 2 , name : "CWS"     },
+    3 : { id : 2 , name : "CWS"     },
+    4 : { id : 3 , name : "CTM"     },
+};
+
+export const installableModules = {
+    1 : { id : 1 , name : "CJK"     },
+    2 : { id : 2 , name : "CWS"     },
+    3 : { id : 3 , name : "CTM"     },
+};
+
+
+export const licenseKinds = {
+    1 : { id : 1 , name : "CJK"     , options : ["noCJK"]},
+    2 : { id : 2 , name : "CWS/CSR" , options : ["csr"]},
+    3 : { id : 3 , name : "CTM"}    ,
+};

@@ -72,7 +72,7 @@ const getPostsFailure = (error) => {
 export const selectList  = () => {
     return (dispatch) => {
         dispatch(getPostsRequest());
-        return axios.get(`https://115y9im0ec.execute-api.ap-northeast-1.amazonaws.com/develop/select`)
+        return axios.get(`http://localhost:3011/tenant`)
             .then(res =>
                 dispatch(getPostsSuccess(res.data))
             ).catch(err =>
