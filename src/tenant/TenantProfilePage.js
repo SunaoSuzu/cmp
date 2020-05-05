@@ -12,7 +12,6 @@ import getConfiguration from "../Configuration";
 
 
 //将来的にItemDetaiPageと統合したいけど、難しそう
-
 const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
@@ -30,7 +29,7 @@ export default function TenantProfilePage(props) {
     const productGridConf = conf.productGridConf;
     const classes = useStyles();
     console.log(JSON.stringify(props));
-    const { updateData , backToList } = props;
+    const { updateData , backToList,changeProperty,updateComplete } = props;
 
 //    let { path, url } = useRouteMatch();
     const [tabValue, setValue] = React.useState(0);
@@ -39,15 +38,22 @@ export default function TenantProfilePage(props) {
         setValue(newTabValue);
     };
 
+
     const send = function send(e){
         console.log(e);
-        props.data.name="鈴木商事";
         updateData(props.data);
     };
+
+    const changePropertyOfInput = (event) => {
+        changeProperty(event);
+    };
+
+    const data = props.data;
 
     return (
 
         <React.Fragment>
+            <button onClick={send.bind(this)}>更新</button><div> updateComplete={updateComplete}</div>
             <div className={classes.root}>
                 <Tabs
                     orientation="vertical"
@@ -58,23 +64,24 @@ export default function TenantProfilePage(props) {
                     className={classes.tabs}
                 >
                     <Tab label="基本情報" {...a11yProps(0)} />
-                    {props.data.environments.map((env , index ) => (
-                        <Tab label={landScapeCaption(env.landScape)} {...a11yProps((index + 1))} />
+                    {data.environments.map((env , index ) => (
+                        <Tab label={env.name} {...a11yProps((index + 1))} />
                     ))}
 
                 </Tabs>
                 <TabPanel value={tabValue} index={0}>
                     <form  encType='multipart/form-data' >
-                        <TextField id="standard-basic" label="テナント名" defaultValue={props.data.name} helperText="会社名を入れてください" />
+                        <TextField name="name" onChange={changePropertyOfInput} id="standard-basic" label="テナント名" defaultValue={data.name} helperText="会社名を入れてください" />
+                        <TextField name="contract.remarks" onChange={changePropertyOfInput} id="standard-basic" label="契約特記事項" defaultValue={data.contract.remarks} helperText="契約特記事項" />
+                        <TextField name="contract.infraAnnualIncome" onChange={changePropertyOfInput} id="standard-basic" label="インフラ年間予算" defaultValue={data.infraAnnualIncome} helperText="インフラ年間予算" />
 
-                        <div>TenantDetail(dataId = {props.data.id})</div>
-                        <div>TenantDetail(dataName = {props.data.name})</div>
+                        <div>TenantDetail(dataId = {data.id})</div>
+                        <div>TenantDetail(dataName = {data.name})</div>
                     </form>
-                    <button onClick={send.bind(this)}>更新</button>
                 </TabPanel>
-                {props.data.environments.map((env , index ) => (
+                {data.environments.map((env , index ) => (
                     <TabPanel value={tabValue} index={index + 1}>
-                        <TextField id="standard-basic" label="環境名" defaultValue={landScapeCaption(env.landScape)} helperText="環境名を入れてください" />
+                        <TextField name={"environments." + index + ".name"}  onChange={changePropertyOfInput} id="standard-basic" label="環境名" defaultValue={env.name} helperText="環境名を入れてください" />
                         <SuTechGrid title="インストール済みライセンス" gridConf={productGridConf}
                                     datas={env.installedLicences}
                                     goDetailHandler={null}
@@ -87,19 +94,6 @@ export default function TenantProfilePage(props) {
             <Link to={backToList} >Back To The List</Link>
         </React.Fragment>
     )
-}
-
-function landScapeCaption(i){
-    switch (i) {
-        case 1:
-            return "開発環境";
-        case 2:
-            return "ステージング環境";
-        case 3:
-            return "本番環境";
-        default :
-            return "追加環境";
-    }
 }
 
 function TabPanel(props) {

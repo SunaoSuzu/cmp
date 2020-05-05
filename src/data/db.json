@@ -1,43 +1,140 @@
 {
-  "tenant" : [
-    { "id" : 1 , "name" : "株式会社三菱" , "statusCaption" : "本番運用中" ,
-      "environmentSetting" : { "vpcType" : 1  },
-      "environments" : [
-        {"envId":1,"ord":1,"landScape":1,
-          "installedLicences" :[
-            {"id" : 1 ,  "caption" : "CJK" , "version" : 8 , "patch" : 10 },
-            {"id" : 10 , "caption" : "CWS" , "version" : 8 , "patch" : 10 }
+  "tenant": [
+    {
+      "id": 1,
+      "name": "株式会社三菱1",
+      "statusCaption": "本番運用中",
+      "environmentSetting": {
+        "vpcType": 1
+      },
+      "contract": {
+        "infraAnnualIncome": 10000000,
+        "boughtProducts": [
+          {
+            "id": 1,
+            "productMstId": 1,
+            "amount": 50000,
+            "validFrom": "2020/01/01"
+          },
+          {
+            "id": 2,
+            "productMstId": 2,
+            "amount": 50000,
+            "validFrom": "2020/01/01"
+          }
+        ],
+        "remarks": "大幅な値引きをしています"
+      },
+      "environments": [
+        {
+          "envId": 1,
+          "name": "開発環境1",
+          "ord": 1,
+          "landScape": 1,
+          "installedLicences": [
+            {
+              "id": 1,
+              "caption": "CJK",
+              "version": 8,
+              "patch": 10
+            },
+            {
+              "id": 10,
+              "caption": "CWS",
+              "version": 8,
+              "patch": 10
+            }
           ]
         },
-        {"envId":2,"ord":2,"landScape":3,
-          "installedLicences" :[
-            {"id" : 1 ,  "caption" : "CJK" , "version" : 8 , "patch" : 10 },
-            {"id" : 10 , "caption" : "CWS" , "version" : 8 , "patch" : 10 }
+        {
+          "envId": 2,
+          "name": "本番環境1",
+          "ord": 2,
+          "landScape": 3,
+          "installedLicences": [
+            {
+              "id": 1,
+              "caption": "CJK",
+              "version": 8,
+              "patch": 10
+            },
+            {
+              "id": 10,
+              "caption": "CWS",
+              "version": 8,
+              "patch": 10
+            }
           ]
         }
       ]
     },
-    { "id" : 2 , "name" : "住友商事" , "statusCaption" : "導入中" ,
-      "environmentSetting" : { "vpcType" : 2  },
-      "environments" : [
-        {"envId":3,"ord":1,"landScape":1,
-          "installedLicences" :[
-            {"id" : 1 ,  "caption" : "CJK" , "version" : 8 , "patch" : 10 },
-            {"id" : 10 , "caption" : "CWS" , "version" : 8 , "patch" : 10 },
-            {"id" : 20 , "caption" : "CSR" , "version" : 8 , "patch" : 10 }
+    {
+      "id": 2,
+      "name": "住友商事12345",
+      "statusCaption": "導入中",
+      "environmentSetting": {
+        "vpcType": 2
+      },
+      "contract": "１大幅な値引きをしています",
+      "environments": [
+        {
+          "envId": 3,
+          "name": "開発環境1",
+          "ord": 1,
+          "landScape": 1,
+          "installedLicences": [
+            {
+              "id": 1,
+              "caption": "CJK",
+              "version": 8,
+              "patch": 10
+            },
+            {
+              "id": 10,
+              "caption": "CWS",
+              "version": 8,
+              "patch": 10
+            },
+            {
+              "id": 20,
+              "caption": "CSR",
+              "version": 8,
+              "patch": 10
+            }
           ]
         }
-      ]
+      ],
+      "remarks": "１大幅な値引きをしています"
     },
-    { "id": 3,
+    {
+      "id": 3,
       "name": "帝国会社",
       "statusCaption": "本番運用中",
       "environmentSetting": {
         "vpcType": 9
       },
+      "contract": {
+        "infraAnnualIncome": 10000000,
+        "boughtProducts": [
+          {
+            "id": 1,
+            "productMstId": 1,
+            "amount": 50000,
+            "validFrom": "2020/01/01"
+          },
+          {
+            "id": 2,
+            "productMstId": 2,
+            "amount": 50000,
+            "validFrom": "2020/01/01"
+          }
+        ],
+        "remarks": "大幅な値引きをしています"
+      },
       "environments": [
         {
           "envId": 4,
+          "name": "開発環境",
           "ord": 1,
           "landScape": 1,
           "installedLicences": [
@@ -52,6 +149,7 @@
         {
           "envId": 5,
           "ord": 2,
+          "name": "ステージング環境",
           "landScape": 2,
           "installedLicences": [
             {
@@ -65,6 +163,7 @@
         {
           "envId": 6,
           "ord": 3,
+          "name": "本番環境",
           "landScape": 3,
           "installedLicences": [
             {
@@ -77,25 +176,5 @@
         }
       ]
     }
-  ],
-
-    "posts"
-    :
-    [
-    {
-      "id": 1,
-      "title": "json-server",
-      "author": "typicode"
-    }
-  ],
-  "comments": [
-    {
-      "id": 1,
-      "body": "some comment",
-      "postId": 1
-    }
-  ],
-  "profile": {
-    "name": "typicode"
-  }
+  ]
 }

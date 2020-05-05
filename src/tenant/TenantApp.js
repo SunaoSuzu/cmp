@@ -15,7 +15,7 @@ export default function TenantApp(props) {
         <React.Fragment>
             <Breadcrumbs aria-label="breadcrumb">
                 {props.breadcrumbStack.map((step ) => (
-                    <Link to={step.to}>
+                    <Link to={step.to} onClick={props.selectList}>
                         {step.caption}
                     </Link>
                 ))}

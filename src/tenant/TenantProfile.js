@@ -7,13 +7,11 @@ import TenantProfilePage from "./TenantProfilePage";
 
 
 function ItemDetail(props) {
-    console.log(JSON.stringify(props));
-
     return (
 
         <React.Fragment>
             <div>TenantDetail(tenantId = {props.match.params.tenantId})</div>
-            <TenantProfilePage data={props.data} updateData={props.updateData} backToList="/tenant/list"
+            <TenantProfilePage updateComplete={props.updateComplete} changeProperty={props.changeProperty} data={props.data} updateData={props.updateData} backToList="/tenant/list"
                                />
         </React.Fragment>
     );
@@ -22,6 +20,7 @@ function ItemDetail(props) {
 const mapStateToProps = state => {
     return {
         operationType  : state.operationType,
+        updateComplete : state.updateComplete,
         data  : state.data,
     }
 };
@@ -32,6 +31,7 @@ const mapDispatchToProps = dispatch => {
         selectGoToAdd: () => dispatch(tenantAppModule.selectGoToAdd()),
         selectGoToDetail: (data) => dispatch(tenantAppModule.selectGoToDetail(data)),
         updateData: (data) => dispatch(tenantAppModule.updateData(data)),
+        changeProperty: (e) => dispatch(tenantAppModule.changeProperty(e)),
     }
 };
 
