@@ -175,6 +175,76 @@
           ]
         }
       ]
+    },
+    {
+      "name": "住友商店",
+      "statusCaption": "本番運用中",
+      "environmentSetting": {
+        "vpcType": 1
+      },
+      "contract": {
+        "infraAnnualIncome": null,
+        "boughtProducts": [],
+        "remarks": null
+      },
+      "environments": [],
+      "id": 4
+    },
+    {
+      "name": "鈴木商事",
+      "statusCaption": "本番運用中",
+      "environmentSetting": {
+        "vpcType": 1
+      },
+      "contract": {
+        "infraAnnualIncome": null,
+        "boughtProducts": [],
+        "remarks": null
+      },
+      "environments": [],
+      "id": 5
+    },
+    {
+      "name": "CCC",
+      "statusCaption": "本番運用中",
+      "environmentSetting": {
+        "vpcType": 1
+      },
+      "contract": {
+        "infraAnnualIncome": null,
+        "boughtProducts": [],
+        "remarks": null
+      },
+      "environments": [],
+      "id": 6
+    },
+    {
+      "name": "ZZZ",
+      "statusCaption": "本番運用中",
+      "environmentSetting": {
+        "vpcType": 1
+      },
+      "contract": {
+        "infraAnnualIncome": null,
+        "boughtProducts": [],
+        "remarks": null
+      },
+      "environments": [],
+      "id": 7
+    },
+    {
+      "name": "JJJ",
+      "statusCaption": "本番運用中",
+      "environmentSetting": {
+        "vpcType": 1
+      },
+      "contract": {
+        "infraAnnualIncome": null,
+        "boughtProducts": [],
+        "remarks": null
+      },
+      "environments": [],
+      "id": 8
     }
   ]
 }

@@ -5,7 +5,6 @@ import { Provider } from 'react-redux';
 import createStore from "./TenantAppStore";
 
 
-
 export default class TenantSubApp extends React.Component {
     constructor(props) {
         super(props);

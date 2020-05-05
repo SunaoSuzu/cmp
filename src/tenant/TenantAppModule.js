@@ -4,7 +4,6 @@ export const GET_LIST_REQUEST = 2;
 export const GET_LIST_SUCCESS = 3;
 export const GET_LIST_FAILURE = 4;
 
-export const GOTO_ADD = 5;
 
 export const GOTO_DETAIL = 10;
 export const GET_DETAIL_REQUEST = 11;
@@ -16,6 +15,12 @@ export const CHANGE_PROPERTY = 30;
 export const UPDATE_REQUEST = 100;
 export const UPDATE_SUCCESS = 110;
 export const UPDATE_FAILURE = 120;
+
+export const GOTO_ADD = 5;
+export const CHANGE_PROPERTY_OF_NEW = 55;
+export const ADD_REQUEST = 56;
+export const ADD_SUCCESS = 57;
+export const ADD_FAILURE = 59;
 
 
 export const noNeed = 1;
@@ -56,7 +61,9 @@ const initialState = {
     getDetailComplete : yet,
     updateComplete: noNeed,
 
+
     newData  : {},
+    addComplete: noNeed,
 };
 
 const breadcrumbStackList = { caption : "テナント一覧" , to : "/tenant/list"};
@@ -70,8 +77,6 @@ export default function reducer(state=initialState, action) {
             return {...state , operationType : GET_LIST_SUCCESS,isFetching : false  , datas : action.datas};
         case GET_LIST_FAILURE:
             return {...state , operationType : GET_LIST_SUCCESS , isFetching : false  , datas : []};//どうするのが正しいか未定
-        case GOTO_ADD:
-            return {...state , operationType : GOTO_ADD ,  newData : empty, breadcrumbStack : [breadcrumbStackList]};
         case GOTO_DETAIL:
             return {...state , operationType : GOTO_DETAIL , data : null ,getDetailComplete :yet};
         case GET_DETAIL_REQUEST:
@@ -82,15 +87,7 @@ export default function reducer(state=initialState, action) {
             return {...state , operationType : GET_DETAIL_FAILURE, data : null ,getDetailComplete :loadFailed }; //どうするのが正しいか未定
         case CHANGE_PROPERTY:
             const newData = {...state.data};
-            const paths = action.name.split(".");
-            let base = newData;
-            paths.forEach(function(path, index){
-                if( index === (paths.length - 1) ){
-                    base[path]=action.value;
-                }else{
-                    base = base[path];
-                }
-            });
+            setProperty(newData , action.name , action.value);
             return {...state , data : newData,updateComplete:necessary };
         case UPDATE_REQUEST:
             return {...state , operationType : UPDATE_REQUEST, updateComplete : syncing};
@@ -98,11 +95,37 @@ export default function reducer(state=initialState, action) {
             return {...state , operationType : UPDATE_SUCCESS, updateComplete : synced};
         case UPDATE_FAILURE:
             return {...state , operationType : UPDATE_FAILURE, updateComplete : failed};
+        case GOTO_ADD:
+            return {...state , operationType : GOTO_ADD ,  newData : empty, addComplete : noNeed ,breadcrumbStack : [breadcrumbStackList]};
+        case CHANGE_PROPERTY_OF_NEW:
+            const obj = {...state.newData};
+            setProperty(obj , action.name , action.value);
+            return {...state , newData : obj ,addComplete:necessary };
+        case ADD_REQUEST:
+            return {...state , operationType : ADD_REQUEST, addComplete : syncing};
+        case ADD_SUCCESS:
+            console.log("added " + JSON.stringify(action.data));
+            return {...state , operationType : ADD_SUCCESS, addComplete : synced, newData : action.data};
+        case ADD_FAILURE:
+            return {...state , operationType : ADD_FAILURE, addComplete : failed};
+
         default:
                 return state
     }
 };
 
+function setProperty(obj , path , value){
+    const paths = path.split(".");
+    let base = obj;
+    paths.forEach(function(path, index){
+        if( index === (paths.length - 1) ){
+            base[path]=value;
+        }else{
+            base = base[path];
+        }
+    });
+
+}
 // Action Creators
 
 const getListRequest = () => {
@@ -223,6 +246,48 @@ export const updateSuccess = (data) => {
 export const updateFail = (error) => {
     return {
         type: UPDATE_FAILURE,
+        error
+    }
+};
+
+export const changePropertyOfNew  = (e) => {
+    return {
+        type: CHANGE_PROPERTY_OF_NEW,
+        name: e.target.name,
+        value: e.target.value
+    }
+};
+
+export const addData  = (data) => {
+    return (dispatch) => {
+        dispatch(startAdd(data));
+        console.log("send add:" + data);
+        return axios.post(`http://localhost:3011/tenant` , data)
+            .then(res =>
+                dispatch(addSuccess(res.data))
+            ).catch(err =>
+                dispatch(addFail(err))
+            )
+    }
+};
+
+export const startAdd = (data) => {
+    return {
+        type: ADD_REQUEST,
+        data: data
+    }
+};
+
+export const addSuccess = (data) => {
+    return {
+        type:ADD_SUCCESS,
+        data: data
+    }
+};
+
+export const addFail = (error) => {
+    return {
+        type: ADD_FAILURE,
         error
     }
 };

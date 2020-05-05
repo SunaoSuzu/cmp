@@ -7,7 +7,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 //
 
 
-function ItemDetail(props) {
+function TenantProfile(props) {
     const tenantId=props.match.params.tenantId;
     const {getDetailComplete,loadDetail,updateComplete} = props;
     console.log("page.getDetailComplete" + getDetailComplete);
@@ -55,4 +55,4 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ItemDetail);
+export default connect(mapStateToProps, mapDispatchToProps)(TenantProfile);

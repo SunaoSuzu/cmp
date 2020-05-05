@@ -1,14 +1,40 @@
+import NewTenantPage from "./NewTenentPage";
+import {connect} from "react-redux";
+import * as tenantAppModule from "./TenantAppModule";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import React from "react";
-import TextField from "@material-ui/core/TextField";
+import { Redirect } from 'react-router-dom';
 
-export default function NewTenant(props) {
-    return (
-        <React.Fragment>
-            <form  encType='multipart/form-data' >
-                <div>TenantAdd()</div>
-                <TextField id="standard-basic" label="テナント名"  helperText="会社名を入れてください" />
-                <TextField id="standard-basic" label="インフラ年間予算"  helperText="インフラ年間予算" />
-            </form>
-        </React.Fragment>
-    )
+function NewTenant(props) {
+
+    if(props.addComplete === tenantAppModule.syncing) {
+        return <CircularProgress/>
+    }else if (props.addComplete === tenantAppModule.synced){
+        return <Redirect to={'/tenant/profile/' + props.newData.id} />
+    }else{
+        return <NewTenantPage addComplete={props.addComplete}
+                              changePropertyOfNew={props.changePropertyOfNew}
+                              addData={props.addData}
+                              newData={props.newData}
+        />;
+    }
+
 }
+
+
+const mapStateToProps = state => {
+    return {
+        getDetailComplete : state.getDetailComplete,
+        addComplete : state.addComplete,
+        newData : state.newData,
+    }
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        changePropertyOfNew: (e) => dispatch(tenantAppModule.changePropertyOfNew(e)),
+        addData: (e) => dispatch(tenantAppModule.addData(e)),
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewTenant);
