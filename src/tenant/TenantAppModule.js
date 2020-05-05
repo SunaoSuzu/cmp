@@ -3,11 +3,16 @@ import axios from 'axios'
 export const GET_LIST_REQUEST = 2;
 export const GET_LIST_SUCCESS = 3;
 export const GET_LIST_FAILURE = 4;
+
 export const GOTO_ADD = 5;
+
 export const GOTO_DETAIL = 10;
+export const GET_DETAIL_REQUEST = 11;
+export const GET_DETAIL_SUCCESS = 12;
+export const GET_DETAIL_FAILURE = 19;
+
+
 export const CHANGE_PROPERTY = 30;
-
-
 export const UPDATE_REQUEST = 100;
 export const UPDATE_SUCCESS = 110;
 export const UPDATE_FAILURE = 120;
@@ -19,30 +24,62 @@ export const syncing = 3;
 export const synced = 4;
 export const failed = 9;
 
+export const yet = 1;
+export const requested = 2;
+export const loadSuccess = 3;
+export const loadFailed = 9;
+
+// for new add
+const empty = {
+    "name": null,
+    "statusCaption": "本番運用中",
+    "environmentSetting": {
+        "vpcType": 1
+    },
+    "contract": {
+        "infraAnnualIncome": null ,
+        "boughtProducts": [
+        ],
+        "remarks": null
+    },
+    "environments": []
+
+};
 
 const initialState = {
-    isFetching: false,
-    updateComplete: noNeed,
-    operationType : GET_LIST_REQUEST,
-    datas : [],
-    data  : {},
+    operationType : GET_LIST_REQUEST, // 不要な予感。。（もしくは選択肢が多すぎるし、Restなんだからずれそう）
     breadcrumbStack : [],
+    isFetching: false,
+    datas : [],
+
+    data  : {},
+    getDetailComplete : yet,
+    updateComplete: noNeed,
+
+    newData  : {},
 };
 
 const breadcrumbStackList = { caption : "テナント一覧" , to : "/tenant/list"};
 
 export default function reducer(state=initialState, action) {
+    console.log(action.type);
     switch (action.type) {
         case GET_LIST_REQUEST:
-            return {...state, operationType : GET_LIST_SUCCESS,isFetching : true,breadcrumbStack:[]  };
+            return {...state , operationType : GET_LIST_SUCCESS,isFetching : true,breadcrumbStack:[]  };
         case GET_LIST_SUCCESS:
-            return {...state, operationType : GET_LIST_SUCCESS,isFetching : false  , datas : action.datas};
+            return {...state , operationType : GET_LIST_SUCCESS,isFetching : false  , datas : action.datas};
         case GET_LIST_FAILURE:
-            return {...state, operationType : GET_LIST_SUCCESS , isFetching : false  , datas : []};
+            return {...state , operationType : GET_LIST_SUCCESS , isFetching : false  , datas : []};//どうするのが正しいか未定
         case GOTO_ADD:
-            return {...state, operationType : GOTO_ADD ,  data : null, breadcrumbStack : [breadcrumbStackList]};
+            return {...state , operationType : GOTO_ADD ,  newData : empty, breadcrumbStack : [breadcrumbStackList]};
         case GOTO_DETAIL:
-            return {...state, data : action.data,updateComplete:noNeed ,breadcrumbStack : [breadcrumbStackList]};
+            return {...state , operationType : GOTO_DETAIL , data : null ,getDetailComplete :yet};
+        case GET_DETAIL_REQUEST:
+            return {...state , operationType : GET_DETAIL_REQUEST, getDetailComplete :requested};
+        case GET_DETAIL_SUCCESS:
+            return {...state , operationType : GET_DETAIL_SUCCESS, data : action.data,getDetailComplete :loadSuccess ,updateComplete:noNeed ,breadcrumbStack : [breadcrumbStackList]};
+        case GET_DETAIL_FAILURE:
+            return {...state , operationType : GET_DETAIL_FAILURE, data : null ,getDetailComplete :loadFailed }; //どうするのが正しいか未定
         case CHANGE_PROPERTY:
             const newData = {...state.data};
             const paths = action.name.split(".");
@@ -54,16 +91,13 @@ export default function reducer(state=initialState, action) {
                     base = base[path];
                 }
             });
-            return {...state, data : newData,updateComplete:necessary };
+            return {...state , data : newData,updateComplete:necessary };
         case UPDATE_REQUEST:
-            console.log("UPDATE_REQUEST " + JSON.stringify(action.data));
-            return {...state, operationType : UPDATE_REQUEST, updateComplete : syncing};
+            return {...state , operationType : UPDATE_REQUEST, updateComplete : syncing};
         case UPDATE_SUCCESS:
-            console.log("UPDATE_SUCCESS " + JSON.stringify(action.data));
-            return {...state, operationType : UPDATE_SUCCESS, updateComplete : synced};
+            return {...state , operationType : UPDATE_SUCCESS, updateComplete : synced};
         case UPDATE_FAILURE:
-            console.log("UPDATE_FAILURE " + JSON.stringify(action.data));
-            return {...state, operationType : UPDATE_FAILURE, updateComplete : failed};
+            return {...state , operationType : UPDATE_FAILURE, updateComplete : failed};
         default:
                 return state
     }
@@ -71,13 +105,13 @@ export default function reducer(state=initialState, action) {
 
 // Action Creators
 
-const getPostsRequest = () => {
+const getListRequest = () => {
     return {
         type: GET_LIST_REQUEST
     }
 };
 
-const getPostsSuccess = (json) => {
+const getListSuccess = (json) => {
     return {
         type: GET_LIST_SUCCESS,
         datas : json,
@@ -85,7 +119,7 @@ const getPostsSuccess = (json) => {
     }
 };
 
-const getPostsFailure = (error) => {
+const getListFailure = (error) => {
     return {
         type: GET_LIST_FAILURE,
         error
@@ -94,12 +128,12 @@ const getPostsFailure = (error) => {
 
 export const selectList  = () => {
     return (dispatch) => {
-        dispatch(getPostsRequest());
+        dispatch(getListRequest());
         return axios.get(`http://localhost:3011/tenant`)
             .then(res =>
-                dispatch(getPostsSuccess(res.data))
+                dispatch(getListSuccess(res.data))
             ).catch(err =>
-                dispatch(getPostsFailure(err))
+                dispatch(getListFailure(err))
             )
     }
 };
@@ -114,6 +148,40 @@ export const selectGoToDetail  = (data) => {
     return {
         type: GOTO_DETAIL,
         data: data
+    }
+};
+
+export const loadDetail=(id) => {
+    return (dispatch) => {
+        dispatch(requestLoadDetail(id));
+        console.log("get:" + id);
+        return axios.get(`http://localhost:3011/tenant/` + id)
+            .then(res =>
+                dispatch(successLoadDetail(res.data))
+            ).catch(err =>
+                dispatch(failLoadDetail(err))
+            )
+    }
+};
+
+export const requestLoadDetail=(id) => {
+    return {
+        type: GET_DETAIL_REQUEST,
+        id: id,
+    }
+};
+
+export const successLoadDetail = (data) => {
+    return {
+        type: GET_DETAIL_SUCCESS,
+        data: data
+    }
+};
+
+const failLoadDetail = (error) => {
+    return {
+        type: GET_LIST_FAILURE,
+        error
     }
 };
 

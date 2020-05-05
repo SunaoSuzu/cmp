@@ -3,8 +3,9 @@ import SuTechGrid from "../asset/SuTechGrid";
 import * as tenantAppModule from "./TenantAppModule";
 import {connect} from "react-redux";
 import CircularProgress from '@material-ui/core/CircularProgress';
-
+import FabLink from "../asset/FabLink";
 import getConfiguration from "../Configuration";
+
 
 function TenantList(props) {
     const conf = getConfiguration();
@@ -18,10 +19,9 @@ function TenantList(props) {
             <div>顧客は1000件以上いるわけだから、10件を一覧にするのはまじ意味ない・・・・</div>
             <SuTechGrid title={"テナント一覧(" + props.operationType + ")"} gridConf={gridConf} datas={props.datas}
                         goDetailHandler={props.selectGoToDetail}
-                        goAddHandler={props.selectGoToAdd}
                         selectToBase="/tenant/profile"
-                        addToBase="/tenant/add"
             />
+            <FabLink to="/tenant/add" onClick={props.selectGoToAdd} />
         </React.Fragment>
     );
 }

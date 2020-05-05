@@ -108,7 +108,7 @@
     },
     {
       "id": 3,
-      "name": "帝国会社",
+      "name": "帝国会社1",
       "statusCaption": "本番運用中",
       "environmentSetting": {
         "vpcType": 9
@@ -134,7 +134,7 @@
       "environments": [
         {
           "envId": 4,
-          "name": "開発環境",
+          "name": "開発環境1",
           "ord": 1,
           "landScape": 1,
           "installedLicences": [

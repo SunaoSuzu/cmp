@@ -28,7 +28,7 @@
   },
   "scripts": {
     "start:react": "react-scripts start",
-    "start:json": "json-server --watch src/data/db.json --port 3011",
+    "start:json": "json-server --watch src/data/db.json --port 3011 --delay 500",
     "start": "npm-run-all -p start:*",
     "build": "react-scripts build",
     "test": "react-scripts test",

@@ -4,7 +4,6 @@ import TenantApp from "./TenantApp";
 
 const mapStateToProps = state => {
     return {
-
         operationType  : state.operationType,
         breadcrumbStack: state.breadcrumbStack,
     }

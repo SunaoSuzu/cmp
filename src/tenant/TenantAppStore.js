@@ -6,8 +6,9 @@ import {selectList} from "./TenantAppModule";
 
 
 export default function createStore() {
+    console.log("TenantAppStore.createStore()");
     const store = reduxCreateStore(
-            tenantAppReducer,
+        tenantAppReducer,
         applyMiddleware(
             thunk , logger
         )

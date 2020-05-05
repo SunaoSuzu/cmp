@@ -2,24 +2,43 @@ import React from "react";
 import * as tenantAppModule from "./TenantAppModule";
 import {connect} from "react-redux";
 import TenantProfilePage from "./TenantProfilePage";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
-
+//
 
 
 function ItemDetail(props) {
-    return (
+    const tenantId=props.match.params.tenantId;
+    const {getDetailComplete,loadDetail,updateComplete} = props;
+    console.log("page.getDetailComplete" + getDetailComplete);
 
-        <React.Fragment>
-            <div>TenantDetail(tenantId = {props.match.params.tenantId})</div>
-            <TenantProfilePage updateComplete={props.updateComplete} changeProperty={props.changeProperty} data={props.data} updateData={props.updateData} backToList="/tenant/list"
-                               />
-        </React.Fragment>
-    );
+    switch (getDetailComplete) {
+        case tenantAppModule.yet:
+            loadDetail(tenantId);
+            return       <CircularProgress />;
+        case tenantAppModule.requested:
+            return       <CircularProgress />;
+        case tenantAppModule.loadSuccess:
+            if(updateComplete===tenantAppModule.syncing){
+                return       <CircularProgress />;
+            }else{
+                return (
+                    <React.Fragment>
+                        <div>TenantDetail(tenantId = {tenantId})</div>
+                        <TenantProfilePage updateComplete={props.updateComplete} changeProperty={props.changeProperty} data={props.data} updateData={props.updateData} backToList="/tenant/list"
+                        />
+                    </React.Fragment>
+                );
+
+            }
+        default:
+    }
 }
 
 const mapStateToProps = state => {
     return {
         operationType  : state.operationType,
+        getDetailComplete : state.getDetailComplete,
         updateComplete : state.updateComplete,
         data  : state.data,
     }
@@ -32,6 +51,7 @@ const mapDispatchToProps = dispatch => {
         selectGoToDetail: (data) => dispatch(tenantAppModule.selectGoToDetail(data)),
         updateData: (data) => dispatch(tenantAppModule.updateData(data)),
         changeProperty: (e) => dispatch(tenantAppModule.changeProperty(e)),
+        loadDetail: (id) => dispatch(tenantAppModule.loadDetail(id)),
     }
 };
 

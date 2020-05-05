@@ -6,8 +6,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Fab from "@material-ui/core/Fab";
-import AddIcon from "@material-ui/icons/Add";
 import {makeStyles} from "@material-ui/core/styles";
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -41,31 +39,14 @@ function DataRow(props ) {
     );
 }
 
-function FabLink(props) {
-    const {  to, onClick,classes } = props;
-
-    const renderLink = React.useMemo(
-        () => React.forwardRef((itemProps, ref) => <RouterLink to={to} ref={ref} {...itemProps} />),
-        [to],
-    );
-
-    return (
-        <Fab aria-label="Add" className={classes} color="primary" component={renderLink} onClick={onClick} >
-            <AddIcon />
-        </Fab>
-    );
-}
-
-
 export default function SuTechGrid(props) {
     const classes = useStyles();
     const selectToBase = props.selectToBase;
-    const addToBase = props.selectToBase;
     return (
         <React.Fragment>
             <TableContainer component={Paper}>
                 <div>{props.title}</div>
-                <Table >
+                <Table className={classes} >
                     <TableHead>
                         {props.gridConf.columnsDef.map((column) => (
                             <TableCell align="left">{column.caption}</TableCell>
@@ -80,7 +61,6 @@ export default function SuTechGrid(props) {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <FabLink className={classes.fab} to={addToBase} onClick={props.goAddHandler} />
         </React.Fragment>
     );
 }
