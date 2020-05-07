@@ -43,13 +43,17 @@ const empty = {
     },
     "contract": {
         "infraAnnualIncome": null ,
-        "boughtProducts": [
+        "details": [
+            {},
         ],
         "remarks": null
     },
     "environments": []
 
 };
+
+const baseEndPoint = "http://localhost:3011";
+
 
 const initialState = {
     operationType : GET_LIST_REQUEST, // 不要な予感。。（もしくは選択肢が多すぎるし、Restなんだからずれそう）
@@ -152,7 +156,7 @@ const getListFailure = (error) => {
 export const selectList  = () => {
     return (dispatch) => {
         dispatch(getListRequest());
-        return axios.get(`http://localhost:3011/tenant`)
+        return axios.get(baseEndPoint + `/tenant`)
             .then(res =>
                 dispatch(getListSuccess(res.data))
             ).catch(err =>
@@ -178,7 +182,7 @@ export const loadDetail=(id) => {
     return (dispatch) => {
         dispatch(requestLoadDetail(id));
         console.log("get:" + id);
-        return axios.get(`http://localhost:3011/tenant/` + id)
+        return axios.get(baseEndPoint + `/tenant/` + id)
             .then(res =>
                 dispatch(successLoadDetail(res.data))
             ).catch(err =>
@@ -220,7 +224,7 @@ export const updateData  = (data) => {
     return (dispatch) => {
         dispatch(startUpdate(data));
         console.log("send:" + data);
-        return axios.put(`http://localhost:3011/tenant/` + data.id , data)
+        return axios.put(baseEndPoint + `/tenant/` + data.id , data)
             .then(res =>
                 dispatch(updateSuccess(res.data))
             ).catch(err =>
@@ -262,7 +266,7 @@ export const addData  = (data) => {
     return (dispatch) => {
         dispatch(startAdd(data));
         console.log("send add:" + data);
-        return axios.post(`http://localhost:3011/tenant` , data)
+        return axios.post(baseEndPoint + `/tenant/tenant` , data)
             .then(res =>
                 dispatch(addSuccess(res.data))
             ).catch(err =>
