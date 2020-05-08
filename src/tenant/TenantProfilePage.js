@@ -13,6 +13,7 @@ import SaveIcon from '@material-ui/icons/Save';
 import Divider from "@material-ui/core/Divider";
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import StorageIcon from '@material-ui/icons/Storage';
+import ContractDetails from "./ContractDetails";
 
 //将来的にItemDetaiPageと統合したいけど、難しそう
 const useStyles = makeStyles((theme) => ({
@@ -43,6 +44,10 @@ const useStyles = makeStyles((theme) => ({
     tabs: {
         borderRight: `1px solid ${theme.palette.divider}`,
     },
+    tabPanel: {
+        width : "100%",
+        borderRight: `1px solid ${theme.palette.divider}`,
+    },
 }));
 
 export default function TenantProfilePage(props) {
@@ -60,16 +65,23 @@ export default function TenantProfilePage(props) {
     };
 
 
-    const send = function send(e){
-        console.log(e);
+
+    //ここで新規登録画面との変数名の違いを吸収
+    const targetData = props.data;
+    const save = function save(){
         requestUpdate(props.data);
     };
-
-    const changePropertyOfInput = (event) => {
+    const uiToJson = (event) => {
         changeProperty(event);
     };
+    const delDetail = function addDetail(path , index){
+        props.delFromArrayForNew(path , index);
+    };
+    const addDetail = function addDetail(path,empty){
+        props.pushEmptyForNew(path,empty);
+    };
 
-    const data = props.data;
+
 
     return (
 
@@ -85,15 +97,15 @@ export default function TenantProfilePage(props) {
                             size="large"
                             className={classes.button}
                             startIcon={<SaveIcon />}
-                            onClick={send.bind(this)}
+                            onClick={save.bind(this)}
                         >
                             Save
                         </Button>
                     </div>
                 </div>
                 <div className={classes.basicInformationPanel}>
-                    <TextField name="name" onChange={changePropertyOfInput} id="standard-basic" label="テナント名" defaultValue={data.name} helperText="会社名を入れてください" />
-                    <TextField name="alias" onChange={changePropertyOfInput} id="standard-basic-alias" label="略称" defaultValue={data.alias} helperText="略称を入れてください" />
+                    <TextField name="name" onChange={uiToJson} id="standard-basic" label="テナント名" defaultValue={targetData.name} helperText="会社名を入れてください" />
+                    <TextField name="alias" onChange={uiToJson} id="standard-basic-alias" label="略称" defaultValue={targetData.alias} helperText="略称を入れてください" />
                 </div>
                 <Divider/>
                 <div className={classes.tabRoot}>
@@ -105,19 +117,21 @@ export default function TenantProfilePage(props) {
                         aria-label="Vertical tabs example"
                         className={classes.tabs}
                     >
-                        <Tab label="契約内容" {...a11yProps(0)} icon={<AssignmentIcon />} wrapped />
-                        {data.environments.map((env , index ) => (
-                            <Tab label={env.name} {...a11yProps((index + 1))} icon={<StorageIcon />} />
+                        <Tab label="契約内容" {...a11yProps(0)} icon={<AssignmentIcon />} wrapped className={classes.tabPanel} />
+                        {targetData.environments.map((env , index ) => (
+                            <Tab label={env.name} {...a11yProps((index + 1))} icon={<StorageIcon />} className={classes.tabPanel} />
                         ))}
 
                     </Tabs>
                     <TabPanel value={tabValue} index={0}>
-                        <TextField name="contract.remarks" onChange={changePropertyOfInput} id="standard-basic" label="契約特記事項" defaultValue={data.contract.remarks} helperText="契約特記事項" />
-                        <TextField name="contract.infraAnnualIncome" onChange={changePropertyOfInput} id="standard-basic" label="インフラ年間予算" defaultValue={data.infraAnnualIncome} helperText="インフラ年間予算" />
+                        <ContractDetails targetData={targetData} uiToJson={uiToJson}
+                                         addDetail={addDetail} delDetail={delDetail} />
                     </TabPanel>
-                    {data.environments.map((env , index ) => (
+                    {targetData.environments.map((env , index ) => (
                         <TabPanel value={tabValue} index={index + 1}>
-                            <TextField name={"environments." + index + ".name"}  onChange={changePropertyOfInput} id="standard-basic" label="環境名" defaultValue={env.name} helperText="環境名を入れてください" />
+                            <TextField name={"environments." + index + ".name"}  onChange={uiToJson}
+                                       id="standard-basic" label="環境名" defaultValue={env.name}
+                                       helperText="環境名を入れてください" />
                             <SuTechGrid title="インストール済みライセンス" gridConf={productGridConf}
                                         datas={env.installedLicences}
                                         goDetailHandler={null}

@@ -20,6 +20,8 @@ function NewTenant(props) {
 
         return <NewTenantPage addComplete={props.addComplete}
                               changePropertyOfNew={props.changePropertyOfNew}
+                              pushEmptyForNew={props.pushEmptyForNew}
+                              delFromArrayForNew={props.delFromArrayForNew}
                               requestAdd={props.requestAdd}
                               newData={props.newData}
         />;
@@ -38,9 +40,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        changePropertyOfNew: (e) => dispatch(tenantAppModule.changePropertyOfNew(e)),
         selectGoToAdd:() => dispatch(tenantAppModule.selectGoToAdd()),
         requestAdd: (e) => dispatch(tenantAppModule.requestAdd(e)),
+        changePropertyOfNew: (e) => dispatch(tenantAppModule.changePropertyOfNew(e)),
+        pushEmptyForNew: (path,empty) => dispatch(tenantAppModule.pushEmptyForNew(path,empty)),
+        delFromArrayForNew: (path,index) => dispatch(tenantAppModule.delFromArrayForNew(path,index)),
+
     }
 };
 

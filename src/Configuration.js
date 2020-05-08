@@ -51,7 +51,7 @@ const environmentStatusMst = {
 export const productLicenses = {
     1 : { id : 1 , caption : "CJK"     },
     2 : { id : 2 , caption : "CWS"     },
-    3 : { id : 3 , caption : "CWS"     },
+    3 : { id : 3 , caption : "CSR"     },
     4 : { id : 4 , caption : "CTM"     },
 };
 

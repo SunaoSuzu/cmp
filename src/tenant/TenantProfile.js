@@ -25,6 +25,8 @@ function TenantProfile(props) {
                     <React.Fragment>
                         <TenantProfilePage updateComplete={updateComplete}
                                            changeProperty={props.changeProperty}
+                                           pushEmptyForNew={props.pushEmptyForNew}
+                                           delFromArrayForNew={props.delFromArrayForNew}
                                            data={props.data}
                                            requestUpdate={props.requestUpdate} backToList="/tenant/list"
                         />
@@ -50,6 +52,8 @@ const mapDispatchToProps = dispatch => {
         requestUpdate: (data) => dispatch(tenantAppModule.requestUpdate(data)),
         changeProperty: (e) => dispatch(tenantAppModule.changeProperty(e)),
         requestLoadDetail: (id) => dispatch(tenantAppModule.requestLoadDetail(id)),
+        pushEmptyForNew: (path,empty) => dispatch(tenantAppModule.pushEmptyForNew(path,empty)),
+        delFromArrayForNew: (path,index) => dispatch(tenantAppModule.delFromArrayForNew(path,index)),
     }
 };
 

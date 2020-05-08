@@ -1,3 +1,5 @@
+import { setProperty , pushEmptyToArray , spliceObjOfArray } from "../util/JsonUtils";
+
 export const GET_LIST_REQUEST = "GET_LIST_REQUEST";
 export const GET_LIST_SUCCESS = "GET_LIST_SUCCESS";
 export const GET_LIST_FAILURE = "GET_LIST_FAILURE";
@@ -20,6 +22,12 @@ export const ADD_REQUEST = "ADD_REQUEST";
 export const ADD_SUCCESS = "ADD_SUCCESS";
 export const ADD_FAILURE = "ADD_FAILURE";
 
+//
+export const PUSH_EMPTY_TO_ARRAY = "PUSH_EMPTY_TO_ARRAY";
+export const PUSH_EMPTY_TO_ARRAY_NEW = "PUSH_EMPTY_TO_ARRAY_NEW";
+export const DEL_FROM_ARRAY = "DEL_FROM_ARRAY";
+export const DEL_FROM_ARRAY_NEW = "DEL_FROM_ARRAY_NEW";
+
 
 export const noNeed = 1;
 export const necessary = 2;
@@ -33,21 +41,25 @@ export const loadSuccess = 3;
 export const loadFailed = 9;
 
 // for new add
+export const empty_contract = {"productMstId" : "" , amount : ""};
+
+
 export const empty = {
-    "name": null,
+    "name": "",
+    "alias": "",
     "statusCaption": "本番運用中",
+    "tags" : [{}],
     "environmentSetting": {
         "vpcType": 1
     },
     "contract": {
-        "infraAnnualIncome": null ,
+        "infraAnnualIncome": "" ,
         "details": [
-            {},
+            empty_contract,
         ],
-        "remarks": null
+        "remarks": ""
     },
     "environments": []
-
 };
 
 const initialState = {
@@ -99,6 +111,7 @@ export default function reducer(state=initialState, action) {
         case CHANGE_PROPERTY_OF_NEW:
             const obj = {...state.newData};
             setProperty(obj , action.name , action.value);
+            console.log("newData=" + JSON.stringify(obj));
             return {...state , newData : obj ,addComplete:necessary };
         case ADD_REQUEST:
             return {...state , operationType : ADD_REQUEST, addComplete : syncing};
@@ -106,24 +119,28 @@ export default function reducer(state=initialState, action) {
             return {...state , operationType : ADD_SUCCESS, addComplete : synced, newData : action.data};
         case ADD_FAILURE:
             return {...state , operationType : ADD_FAILURE, addComplete : failed};
-
+//ここから先は細かい処理
+        case PUSH_EMPTY_TO_ARRAY_NEW:
+            return {...state , operationType : PUSH_EMPTY_TO_ARRAY_NEW,
+                newData : pushEmptyToArray({...state.newData} , action.path,action.empty)
+                ,addComplete:necessary};
+        case PUSH_EMPTY_TO_ARRAY:
+            return {...state , operationType : PUSH_EMPTY_TO_ARRAY,
+                newData : pushEmptyToArray({...state.data} , action.path,action.empty)
+                ,addComplete:necessary};
+        case DEL_FROM_ARRAY_NEW:
+            return {...state , operationType : DEL_FROM_ARRAY_NEW,
+                newData : spliceObjOfArray({...state.newData} , action.path , action.index)
+                ,addComplete:necessary};
+        case DEL_FROM_ARRAY:
+            return {...state , operationType : DEL_FROM_ARRAY,
+                newData : spliceObjOfArray({...state.data} , action.path , action.index)
+                ,addComplete:necessary};
         default:
                 return state
     }
 };
 
-function setProperty(obj , path , value){
-    const paths = path.split(".");
-    let base = obj;
-    paths.forEach(function(path, index){
-        if( index === (paths.length - 1) ){
-            base[path]=value;
-        }else{
-            base = base[path];
-        }
-    });
-
-}
 // Action Creators
 
 export const requestList = () => {
@@ -176,9 +193,6 @@ export const requestUpdate = (data) => {
     }
 };
 
-
-
-
 export const requestAdd = (data) => {
     return {
         type: ADD_REQUEST,
@@ -186,3 +200,35 @@ export const requestAdd = (data) => {
     }
 };
 
+//
+export const pushEmptyForNew = (path,empty) => {
+    return {
+        type: PUSH_EMPTY_TO_ARRAY_NEW,
+        path: path,
+        empty: empty
+    }
+}
+
+export const pushEmpty = (path,empty) => {
+    return {
+        type: PUSH_EMPTY_TO_ARRAY,
+        path: path,
+        empty: empty
+    }
+}
+
+export const delFromArrayForNew = (path,index) => {
+    return {
+        type:  DEL_FROM_ARRAY_NEW,
+        path:  path,
+        index: index,
+    }
+}
+
+export const delFromArray = (path,index) => {
+    return {
+        type:   DEL_FROM_ARRAY,
+        path:   path,
+        index : index,
+    }
+}
