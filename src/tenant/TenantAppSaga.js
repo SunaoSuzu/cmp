@@ -77,12 +77,32 @@ function* handleRequestAdd(action) {
     }
 }
 
+function* handleRequestDel(action) {
+    try {
+        const id = action.id;
+        const res = yield axios.delete(baseEndPoint + `/tenant/` + id);
+        yield put(
+            {
+                type: TenantAppModule.DEL_SUCCESS,
+                data : res.data,
+                receivedAt: Date.now()
+            }
+        );
+    } catch (e) {
+        yield put({
+            type: TenantAppModule.DEL_FAILURE,
+            e
+        });
+    }
+}
+
 function* mySaga() {
     all(
         yield takeEvery(TenantAppModule.GET_LIST_REQUEST , handleRequestList),
         yield takeEvery(TenantAppModule.GET_DETAIL_REQUEST , handleRequestData),
         yield takeEvery(TenantAppModule.UPDATE_REQUEST , handleRequestUpdate),
         yield takeEvery(TenantAppModule.ADD_REQUEST , handleRequestAdd),
+        yield takeEvery(TenantAppModule.DEL_REQUEST , handleRequestDel),
     )
 }
 

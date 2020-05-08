@@ -22,6 +22,11 @@ export const ADD_REQUEST = "ADD_REQUEST";
 export const ADD_SUCCESS = "ADD_SUCCESS";
 export const ADD_FAILURE = "ADD_FAILURE";
 
+export const DEL_REQUEST = "DEL_REQUEST";
+export const DEL_SUCCESS = "DEL_SUCCESS";
+export const DEL_FAILURE = "DEL_FAILURE";
+
+
 //
 export const PUSH_EMPTY_TO_ARRAY = "PUSH_EMPTY_TO_ARRAY";
 export const PUSH_EMPTY_TO_ARRAY_NEW = "PUSH_EMPTY_TO_ARRAY_NEW";
@@ -76,6 +81,8 @@ const initialState = {
 
     newData  : {},
     addComplete: noNeed,
+
+    deleteComplete : yet,
 };
 
 const breadcrumbStackList = { caption : "テナント一覧" , to : "/tenant/list"};
@@ -119,7 +126,13 @@ export default function reducer(state=initialState, action) {
             return {...state , operationType : ADD_SUCCESS, addComplete : synced, newData : action.data};
         case ADD_FAILURE:
             return {...state , operationType : ADD_FAILURE, addComplete : failed};
-//ここから先は細かい処理
+        case DEL_REQUEST:
+            return {...state , operationType : DEL_REQUEST, delComplete : syncing};
+        case DEL_SUCCESS:
+            return {...state , operationType : DEL_SUCCESS, delComplete : synced, loadSuccess: yet , datas : null};
+        case DEL_FAILURE:
+            return {...state , operationType : DEL_FAILURE, delComplete : failed};
+            //ここから先は細かい処理
         case PUSH_EMPTY_TO_ARRAY_NEW:
             return {...state , operationType : PUSH_EMPTY_TO_ARRAY_NEW,
                 newData : pushEmptyToArray({...state.newData} , action.path,action.empty)
@@ -197,6 +210,13 @@ export const requestAdd = (data) => {
     return {
         type: ADD_REQUEST,
         data: data
+    }
+};
+
+export const requestDel = (id) => {
+    return {
+        type: DEL_REQUEST,
+        id: id
     }
 };
 
