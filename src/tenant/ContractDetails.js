@@ -52,7 +52,7 @@ const ContractDetails = (props) => {
     const delDetail  = props.delDetail;
 
     const addDetailHandler = () => {
-        addDetail("contract.details",empty_contract);
+        addDetail("contract.details",{...empty_contract});
     }
 
     const delDetailHandler = (index ) => {
@@ -67,7 +67,7 @@ const ContractDetails = (props) => {
                 <h6>契約日など後で追加</h6>
             </div>
             <h4>製品ライセンス</h4>
-            {targetData.contract.details.map((contract , index) => (
+            {targetData.contract.details.map((detail , index) => (
 
                 <div className={classes.contractDetails} key={index} >
                     <FormControl variant="outlined" className={classes.formControl} >
@@ -75,7 +75,7 @@ const ContractDetails = (props) => {
                         <Select
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
-                            value={targetData.contract.details[index].productMstId}
+                            value={detail.productMstId}
                             onChange={uiToJson}
                             className={classes.contractDetailsItem}
                             name={"contract.details." + index + ".productMstId"}
@@ -94,7 +94,7 @@ const ContractDetails = (props) => {
                         InputLabelProps={{
                             shrink: true,
                         }}
-                        value={targetData.contract.details[index].amount}
+                        value={detail.amount}
                         onChange={uiToJson}
                         className={classes.contractDetailsItem}
                         required

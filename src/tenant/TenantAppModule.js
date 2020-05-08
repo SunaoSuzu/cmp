@@ -60,7 +60,7 @@ export const empty = {
     "contract": {
         "infraAnnualIncome": "" ,
         "details": [
-            empty_contract,
+            {"productMstId" : "" , amount : ""},    //empty_contractを参照できない
         ],
         "remarks": ""
     },
@@ -90,13 +90,13 @@ const breadcrumbStackList = { caption : "テナント一覧" , to : "/tenant/lis
 export default function reducer(state=initialState, action) {
     switch (action.type) {
         case GET_LIST_REQUEST:
-            return {...state , operationType : GET_LIST_SUCCESS,loadSuccess : requested , breadcrumbStack:[]  };
+            return {...state , operationType : GET_LIST_SUCCESS,loadSuccess : requested , breadcrumbStack:[] ,data : null , newData:null,datas:[] };
         case GET_LIST_SUCCESS:
             return {...state , operationType : GET_LIST_SUCCESS,loadSuccess : loadSuccess , datas : action.datas};
         case GET_LIST_FAILURE:
             return {...state , operationType : GET_LIST_SUCCESS ,loadSuccess : loadFailed, datas : []};//どうするのが正しいか未定
         case GOTO_DETAIL:
-            return {...state , operationType : GOTO_DETAIL , data : null ,getDetailComplete :yet};
+            return {...state , operationType : GOTO_DETAIL , data : null , newData:null, getDetailComplete :yet};
         case GET_DETAIL_REQUEST:
             return {...state , operationType : GET_DETAIL_REQUEST, getDetailComplete :requested};
         case GET_DETAIL_SUCCESS:
@@ -114,7 +114,7 @@ export default function reducer(state=initialState, action) {
         case UPDATE_FAILURE:
             return {...state , operationType : UPDATE_FAILURE, updateComplete : failed};
         case GOTO_ADD:
-            return {...state , operationType : GOTO_ADD ,  newData : empty, addComplete : noNeed ,breadcrumbStack : [breadcrumbStackList]};
+            return {...state , operationType : GOTO_ADD ,  newData : {...empty}, addComplete : noNeed ,breadcrumbStack : [breadcrumbStackList]};
         case CHANGE_PROPERTY_OF_NEW:
             const obj = {...state.newData};
             setProperty(obj , action.name , action.value);
@@ -123,7 +123,8 @@ export default function reducer(state=initialState, action) {
         case ADD_REQUEST:
             return {...state , operationType : ADD_REQUEST, addComplete : syncing};
         case ADD_SUCCESS:
-            return {...state , operationType : ADD_SUCCESS, addComplete : synced, newData : action.data};
+            return {...state , operationType : ADD_SUCCESS,
+                addComplete : synced, newData : action.data , getDetailComplete : yet};
         case ADD_FAILURE:
             return {...state , operationType : ADD_FAILURE, addComplete : failed};
         case DEL_REQUEST:
@@ -138,16 +139,19 @@ export default function reducer(state=initialState, action) {
                 newData : pushEmptyToArray({...state.newData} , action.path,action.empty)
                 ,addComplete:necessary};
         case PUSH_EMPTY_TO_ARRAY:
+            console.log(JSON.stringify(action));
+            console.log(JSON.stringify(state.data));
             return {...state , operationType : PUSH_EMPTY_TO_ARRAY,
-                newData : pushEmptyToArray({...state.data} , action.path,action.empty)
+                data : pushEmptyToArray({...state.data} , action.path,action.empty)
                 ,addComplete:necessary};
         case DEL_FROM_ARRAY_NEW:
             return {...state , operationType : DEL_FROM_ARRAY_NEW,
                 newData : spliceObjOfArray({...state.newData} , action.path , action.index)
                 ,addComplete:necessary};
         case DEL_FROM_ARRAY:
+            console.log(DEL_FROM_ARRAY);
             return {...state , operationType : DEL_FROM_ARRAY,
-                newData : spliceObjOfArray({...state.data} , action.path , action.index)
+                data : spliceObjOfArray({...state.data} , action.path , action.index)
                 ,addComplete:necessary};
         default:
                 return state
