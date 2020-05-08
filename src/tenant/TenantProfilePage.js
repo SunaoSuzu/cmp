@@ -11,14 +11,22 @@ import getConfiguration from "../Configuration";
 import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
 import Divider from "@material-ui/core/Divider";
-
+import AssignmentIcon from '@material-ui/icons/Assignment';
+import StorageIcon from '@material-ui/icons/Storage';
 
 //将来的にItemDetaiPageと統合したいけど、難しそう
 const useStyles = makeStyles((theme) => ({
     functionPanel: {
         margin: theme.spacing(1),
         backgroundColor: theme.palette.grey["200"],
-
+        width : "100%",
+        alignItems : "center",
+    },
+    functionPanelLeft :{
+        flexGrow: 1,
+    },
+    functionPanelRight :{
+        textAlign: "right",
     },
     basicInformationPanel: {
         margin: theme.spacing(1),
@@ -68,19 +76,24 @@ export default function TenantProfilePage(props) {
         <React.Fragment>
             <form  encType='multipart/form-data' >
                 <div className={classes.functionPanel}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        className={classes.button}
-                        startIcon={<SaveIcon />}
-                        onClick={send.bind(this)}
-                    >
-                        Save
-                    </Button>
+                    <div className={classes.functionPanelLeft}>
+                    </div>
+                    <div className={classes.functionPanelRight} >
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            size="large"
+                            className={classes.button}
+                            startIcon={<SaveIcon />}
+                            onClick={send.bind(this)}
+                        >
+                            Save
+                        </Button>
+                    </div>
                 </div>
                 <div className={classes.basicInformationPanel}>
                     <TextField name="name" onChange={changePropertyOfInput} id="standard-basic" label="テナント名" defaultValue={data.name} helperText="会社名を入れてください" />
+                    <TextField name="alias" onChange={changePropertyOfInput} id="standard-basic-alias" label="略称" defaultValue={data.alias} helperText="略称を入れてください" />
                 </div>
                 <Divider/>
                 <div className={classes.tabRoot}>
@@ -92,18 +105,15 @@ export default function TenantProfilePage(props) {
                         aria-label="Vertical tabs example"
                         className={classes.tabs}
                     >
-                        <Tab label="契約内容" {...a11yProps(0)} />
+                        <Tab label="契約内容" {...a11yProps(0)} icon={<AssignmentIcon />} wrapped />
                         {data.environments.map((env , index ) => (
-                            <Tab label={env.name} {...a11yProps((index + 1))} />
+                            <Tab label={env.name} {...a11yProps((index + 1))} icon={<StorageIcon />} />
                         ))}
 
                     </Tabs>
                     <TabPanel value={tabValue} index={0}>
-                            <TextField name="contract.remarks" onChange={changePropertyOfInput} id="standard-basic" label="契約特記事項" defaultValue={data.contract.remarks} helperText="契約特記事項" />
-                            <TextField name="contract.infraAnnualIncome" onChange={changePropertyOfInput} id="standard-basic" label="インフラ年間予算" defaultValue={data.infraAnnualIncome} helperText="インフラ年間予算" />
-
-                            <div>TenantDetail(dataId = {data.id})</div>
-                            <div>TenantDetail(dataName = {data.name})</div>
+                        <TextField name="contract.remarks" onChange={changePropertyOfInput} id="standard-basic" label="契約特記事項" defaultValue={data.contract.remarks} helperText="契約特記事項" />
+                        <TextField name="contract.infraAnnualIncome" onChange={changePropertyOfInput} id="standard-basic" label="インフラ年間予算" defaultValue={data.infraAnnualIncome} helperText="インフラ年間予算" />
                     </TabPanel>
                     {data.environments.map((env , index ) => (
                         <TabPanel value={tabValue} index={index + 1}>

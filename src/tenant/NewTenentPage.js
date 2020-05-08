@@ -11,6 +11,24 @@ import SaveIcon from '@material-ui/icons/Save';
 import Configuration from "../Configuration";
 
 const useStyles = makeStyles((theme) => ({
+    functionPanel: {
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.grey["200"],
+        width : "100%",
+        alignItems : "center",
+    },
+    functionPanelLeft :{
+        flexGrow: 1,
+    },
+    functionPanelRight :{
+        textAlign: "right",
+    },
+    basicInformationPanel: {
+        margin: theme.spacing(1),
+    },
+    button: {
+        margin: theme.spacing(1),
+    },
     formControl: {
         margin: theme.spacing(1),
         minWidth: 120,
@@ -33,21 +51,29 @@ export default function NewTenantPage(props) {
 
     return (
         <React.Fragment>
-            <Button
-                variant="contained"
-                color="primary"
-                size="small"
-                className={classes.button}
-                startIcon={<SaveIcon />}
-                onClick={send.bind(this)}
-            >
-                保存
-            </Button>
             <form  encType='multipart/form-data' >
-                <FormControl variant="outlined" className={classes.formControl}>
-                    <InputLabel htmlFor="outlined-age-native-simple">テナント名</InputLabel>
-                    <TextField name="name" onChange={changePropertyOfNew} id="standard-basic" label="テナント名"  helperText="会社名を入れてください" />
-                </FormControl>
+                <div className={classes.functionPanel}>
+                    <div className={classes.functionPanelLeft}>
+                    </div>
+                    <div className={classes.functionPanelRight} >
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            size="large"
+                            className={classes.button}
+                            startIcon={<SaveIcon />}
+                            onClick={send.bind(this)}
+                        >
+                            Save
+                        </Button>
+                    </div>
+                </div>
+                <div className={classes.basicInformationPanel} >
+                    <FormControl variant="outlined" className={classes.formControl}>
+                        <InputLabel >テナント名</InputLabel>
+                        <TextField name="name" onChange={changePropertyOfNew} id="standard-basic" label="テナント名"  helperText="会社名を入れてください" />
+                    </FormControl>
+                </div>
                 <Divider variant="middle" />
                 <FormControl variant="outlined" className={classes.formControl}>
                     <InputLabel htmlFor="outlined-age-native-simple">製品</InputLabel>
@@ -88,10 +114,6 @@ export default function NewTenantPage(props) {
                     }}
                     onChange={changePropertyOfNew}
                 />
-
-
-
-
             </form>
         </React.Fragment>
     )
