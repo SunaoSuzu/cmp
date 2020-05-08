@@ -10,6 +10,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import { NavLink } from "react-router-dom";
 import {makeStyles} from "@material-ui/core/styles";
 import MoreIcon from "@material-ui/icons/MoreVert";
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const useStyles = makeStyles((theme) => ({
     dataRow:{
@@ -19,9 +20,17 @@ const useStyles = makeStyles((theme) => ({
 
 function DataRow(props ) {
 
-    const {  baseTo, data,gridConf,goDetailHandler, className } = props;
+    const {  baseTo, data,gridConf,goDetailHandler, className , deleteHandler } = props;
 
     const to = baseTo + "/" + data.id;
+
+    const deleteData = function deleteData(id){
+        console.log("deleteHandler=" + id);
+
+        if(deleteHandler!==null){
+//            deleteHandler(id);
+        }
+    };
 
     return (
         <TableRow key={data.id}   >
@@ -37,6 +46,7 @@ function DataRow(props ) {
             ))}
             <TableCell key="10000">
                 <MoreIcon />
+                <DeleteIcon onClick={() => deleteData(data.id)} />
             </TableCell>
         </TableRow>
     );
@@ -48,7 +58,6 @@ export default function SuTechGrid(props) {
     return (
         <React.Fragment>
             <TableContainer component={Paper}>
-                <div>{props.title}</div>
                 <Table  >
                     <TableHead>
                         <TableRow>
@@ -62,7 +71,7 @@ export default function SuTechGrid(props) {
                     <TableBody>
                         {props.datas.map((data) => (
                             <DataRow className={classes.dataRow} button key={data.id} baseTo={selectToBase} data={data} gridConf={props.gridConf}
-                                     goDetailHandler={props.goDetailHandler} />
+                                     goDetailHandler={props.goDetailHandler} deleteHandler={props.deleteHandler}/>
                         ))}
                     </TableBody>
                 </Table>
