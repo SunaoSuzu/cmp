@@ -54,7 +54,6 @@ export default function TenantProfilePage(props) {
     const conf = getConfiguration();
     const productGridConf = conf.productGridConf;
     const classes = useStyles();
-    console.log(JSON.stringify(props));
     const { requestUpdate , changeProperty } = props;
 
 //    let { path, url } = useRouteMatch();
@@ -75,10 +74,10 @@ export default function TenantProfilePage(props) {
         changeProperty(event);
     };
     const delDetail = function addDetail(path , index){
-        props.delFromArrayForNew(path , index);
+        props.delFromArray(path , index);
     };
     const addDetail = function addDetail(path,empty){
-        props.pushEmptyForNew(path,empty);
+        props.pushEmpty(path,empty);
     };
 
 

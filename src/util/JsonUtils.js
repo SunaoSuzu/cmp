@@ -34,13 +34,19 @@ export function pushEmptyToArray(obj , path , empty){
     return obj;
 }
 export function spliceObjOfArray(obj , path , i){
+    console.log("spliceObjOfArray:" + JSON.stringify(obj));
+    console.log("spliceObjOfArray:" + path);
+    console.log("spliceObjOfArray:" + i);
+
     const paths = path.split(".");
     let base = obj;
-    paths.forEach(function(path, index){
+    paths.forEach(function(p, index){
         if( index === (paths.length - 1) ){
-            base[path].splice(i , 1);
+            console.log("spliceObjOfArray:" + base[p]);
+            base[p].splice(i , 1);
+            console.log("spliceObjOfArray:" + base[p]);
         }else{
-            base = base[path];
+            base = base[p];
         }
     });
     return obj;
