@@ -33,7 +33,7 @@ export const loadSuccess = 3;
 export const loadFailed = 9;
 
 // for new add
-const empty = {
+export const empty = {
     "name": null,
     "statusCaption": "本番運用中",
     "environmentSetting": {

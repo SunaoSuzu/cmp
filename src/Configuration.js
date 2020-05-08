@@ -46,10 +46,34 @@ const environmentStatusMst = {
     100: {id: 100 , caption : "作成済み"    , description : "本番環境です" , use:1},
 };
 
+//以下は設定ではなくマスタ。将来は不要になるはず
+//販売製品
+export const productLicenses = {
+    1 : { id : 1 , caption : "CJK"     },
+    2 : { id : 2 , caption : "CWS"     },
+    3 : { id : 3 , caption : "CWS"     },
+    4 : { id : 4 , caption : "CTM"     },
+};
+
+export const installableModules = {
+    1 : { id : 1 , caption : "CJK"     },
+    2 : { id : 2 , caption : "CWS"     },
+    3 : { id : 3 , caption : "CTM"     },
+};
+
+
+export const licenseKinds = {
+    1 : { id : 1 , name : "CJK"     , options : ["noCJK"]},
+    2 : { id : 2 , name : "CWS/CSR" , options : ["csr"]},
+    3 : { id : 3 , name : "CTM"}    ,
+};
+
 
 const whi_configuration = {
     vpcTypes : [vpcTypeMst[1],vpcTypeMst[2]],
     landscapeTypes : [landscapeTypeMst[1],landscapeTypeMst[10],landscapeTypeMst[100]],
+    productLicensesConf : [productLicenses[1],productLicenses[2],productLicenses[3],productLicenses[4]],
+
     menuIcons : [ menuIconsDef[1] , menuIconsDef[2],menuIconsDef[3],menuIconsDef[4],menuIconsDef[5]],
     reportIcons : [ reportIconsDef[11] , reportIconsDef[12]],
     tenantListGridConf : { columnsDef :[
@@ -68,24 +92,3 @@ export default function getConfiguration(){
     return whi_configuration;
 };
 
-//以下は設定ではなくマスタ。将来は不要になるはず
-//販売製品
-export const productLicenses = {
-    1 : { id : 1 , name : "CJK"     },
-    2 : { id : 2 , name : "CWS"     },
-    3 : { id : 2 , name : "CWS"     },
-    4 : { id : 3 , name : "CTM"     },
-};
-
-export const installableModules = {
-    1 : { id : 1 , name : "CJK"     },
-    2 : { id : 2 , name : "CWS"     },
-    3 : { id : 3 , name : "CTM"     },
-};
-
-
-export const licenseKinds = {
-    1 : { id : 1 , name : "CJK"     , options : ["noCJK"]},
-    2 : { id : 2 , name : "CWS/CSR" , options : ["csr"]},
-    3 : { id : 3 , name : "CTM"}    ,
-};

@@ -47,8 +47,8 @@ export default function TenantApp(props) {
 
                     <h2 className={classes.appTitle}>テナントプロファイル</h2>
                     <Breadcrumbs aria-label="breadcrumb" className={classes.appBreadcrumbs}>
-                        {breadcrumbStack.map((step ) => (
-                            <Link to={step.to} onClick={props.selectList} className={classes.appBreadcrumbs}>
+                        {breadcrumbStack.map((step,index ) => (
+                            <Link to={step.to} onClick={props.selectList} className={classes.appBreadcrumbs} key={index}>
                                 {step.caption}
                             </Link>
                         ))}
