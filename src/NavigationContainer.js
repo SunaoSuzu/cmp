@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import { withRouter} from 'react-router-dom'
 import * as navigationModule from './NavigationModule';
 import Navigation from "./Navigation";
 
@@ -23,4 +24,4 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Navigation);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Navigation));

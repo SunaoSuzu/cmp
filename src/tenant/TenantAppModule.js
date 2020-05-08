@@ -52,7 +52,7 @@ const empty = {
 
 };
 
-const baseEndPoint = "http://localhost:3011";
+const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
 
 
 const initialState = {

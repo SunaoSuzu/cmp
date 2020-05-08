@@ -23,7 +23,7 @@ export default function FabLink(props) {
     );
 
     return (
-        <Fab aria-label="Add" className={classes} color="primary" component={renderLink} onClick={onClick} >
+        <Fab aria-label="Add" className={classes.fab} color="primary" component={renderLink} onClick={onClick} >
             <AddIcon />
         </Fab>
     );

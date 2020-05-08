@@ -1,5 +1,4 @@
 import React from "react";
-import {Link} from "react-router-dom";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import TextField from "@material-ui/core/TextField";
@@ -9,11 +8,25 @@ import Typography from "@material-ui/core/Typography";
 import PropTypes from "prop-types";
 import SuTechGrid from "../asset/SuTechGrid";
 import getConfiguration from "../Configuration";
+import Button from '@material-ui/core/Button';
+import SaveIcon from '@material-ui/icons/Save';
+import Divider from "@material-ui/core/Divider";
 
 
 //将来的にItemDetaiPageと統合したいけど、難しそう
 const useStyles = makeStyles((theme) => ({
-    root: {
+    functionPanel: {
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.grey["200"],
+
+    },
+    basicInformationPanel: {
+        margin: theme.spacing(1),
+    },
+    button: {
+        margin: theme.spacing(1),
+    },
+    tabRoot: {
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
         display: 'flex',
@@ -29,7 +42,7 @@ export default function TenantProfilePage(props) {
     const productGridConf = conf.productGridConf;
     const classes = useStyles();
     console.log(JSON.stringify(props));
-    const { updateData , backToList,changeProperty,updateComplete } = props;
+    const { updateData , changeProperty } = props;
 
 //    let { path, url } = useRouteMatch();
     const [tabValue, setValue] = React.useState(0);
@@ -53,45 +66,58 @@ export default function TenantProfilePage(props) {
     return (
 
         <React.Fragment>
-            <button onClick={send.bind(this)}>更新</button><div> updateComplete={updateComplete}</div>
-            <div className={classes.root}>
-                <Tabs
-                    orientation="vertical"
-                    variant="scrollable"
-                    value={tabValue}
-                    onChange={handleChange}
-                    aria-label="Vertical tabs example"
-                    className={classes.tabs}
-                >
-                    <Tab label="基本情報" {...a11yProps(0)} />
-                    {data.environments.map((env , index ) => (
-                        <Tab label={env.name} {...a11yProps((index + 1))} />
-                    ))}
+            <form  encType='multipart/form-data' >
+                <div className={classes.functionPanel}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        className={classes.button}
+                        startIcon={<SaveIcon />}
+                        onClick={send.bind(this)}
+                    >
+                        Save
+                    </Button>
+                </div>
+                <div className={classes.basicInformationPanel}>
+                    <TextField name="name" onChange={changePropertyOfInput} id="standard-basic" label="テナント名" defaultValue={data.name} helperText="会社名を入れてください" />
+                </div>
+                <Divider/>
+                <div className={classes.tabRoot}>
+                    <Tabs
+                        orientation="vertical"
+                        variant="scrollable"
+                        value={tabValue}
+                        onChange={handleChange}
+                        aria-label="Vertical tabs example"
+                        className={classes.tabs}
+                    >
+                        <Tab label="契約内容" {...a11yProps(0)} />
+                        {data.environments.map((env , index ) => (
+                            <Tab label={env.name} {...a11yProps((index + 1))} />
+                        ))}
 
-                </Tabs>
-                <TabPanel value={tabValue} index={0}>
-                    <form  encType='multipart/form-data' >
-                        <TextField name="name" onChange={changePropertyOfInput} id="standard-basic" label="テナント名" defaultValue={data.name} helperText="会社名を入れてください" />
-                        <TextField name="contract.remarks" onChange={changePropertyOfInput} id="standard-basic" label="契約特記事項" defaultValue={data.contract.remarks} helperText="契約特記事項" />
-                        <TextField name="contract.infraAnnualIncome" onChange={changePropertyOfInput} id="standard-basic" label="インフラ年間予算" defaultValue={data.infraAnnualIncome} helperText="インフラ年間予算" />
+                    </Tabs>
+                    <TabPanel value={tabValue} index={0}>
+                            <TextField name="contract.remarks" onChange={changePropertyOfInput} id="standard-basic" label="契約特記事項" defaultValue={data.contract.remarks} helperText="契約特記事項" />
+                            <TextField name="contract.infraAnnualIncome" onChange={changePropertyOfInput} id="standard-basic" label="インフラ年間予算" defaultValue={data.infraAnnualIncome} helperText="インフラ年間予算" />
 
-                        <div>TenantDetail(dataId = {data.id})</div>
-                        <div>TenantDetail(dataName = {data.name})</div>
-                    </form>
-                </TabPanel>
-                {data.environments.map((env , index ) => (
-                    <TabPanel value={tabValue} index={index + 1}>
-                        <TextField name={"environments." + index + ".name"}  onChange={changePropertyOfInput} id="standard-basic" label="環境名" defaultValue={env.name} helperText="環境名を入れてください" />
-                        <SuTechGrid title="インストール済みライセンス" gridConf={productGridConf}
-                                    datas={env.installedLicences}
-                                    goDetailHandler={null}
-                                    goAddHandler={null}
-                        />
-
+                            <div>TenantDetail(dataId = {data.id})</div>
+                            <div>TenantDetail(dataName = {data.name})</div>
                     </TabPanel>
-                ))}
-            </div>
-            <Link to={backToList} >Back To The List</Link>
+                    {data.environments.map((env , index ) => (
+                        <TabPanel value={tabValue} index={index + 1}>
+                            <TextField name={"environments." + index + ".name"}  onChange={changePropertyOfInput} id="standard-basic" label="環境名" defaultValue={env.name} helperText="環境名を入れてください" />
+                            <SuTechGrid title="インストール済みライセンス" gridConf={productGridConf}
+                                        datas={env.installedLicences}
+                                        goDetailHandler={null}
+                                        goAddHandler={null}
+                            />
+
+                        </TabPanel>
+                    ))}
+                </div>
+            </form>
         </React.Fragment>
     )
 }

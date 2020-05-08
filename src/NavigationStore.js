@@ -1,38 +1,34 @@
-import { createStore as reduxCreateStore, compose, applyMiddleware, combineReducers } from 'redux';
-import navigationReducer from './NavigationModule';
-import { connectRouter, routerMiddleware } from 'connected-react-router'
+import {applyMiddleware, compose, createStore , combineReducers} from 'redux';
 import history from './asset/history'
-import NavigationModule from "./NavigationModule";
-import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk'
+import { createLogger } from 'redux-logger';
+import {routerMiddleware,connectRouter} from 'connected-react-router';
+//import createSagaMiddleware from 'redux-saga';
+//import rootSaga from '../sagas/index';
+import navigationReducer from './NavigationModule';
 
 
-const initialState = {
-    functionType : NavigationModule.HOME,
-    selectedMenuId: null,
-    targetReportId: null
-};
+const routeMiddleware = routerMiddleware(history);
+//const sagaMiddleware = createSagaMiddleware();
+
+const middlewares = [ routeMiddleware ,thunk , createLogger()];
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 
-
-export default function createStore() {
-    const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
-    const store = reduxCreateStore(
+export default function configureStore(initialState) {
+    return createStore(
         combineReducers({
             router: connectRouter(history),navigationReducer})
-        , // new root reducer with router state
-        initialState,
-        composeEnhancers(
-            applyMiddleware(
-                routerMiddleware(history), // for dispatching history actions
-                thunk,
-                createLogger(),
+        , initialState,
+        composeEnhancers(applyMiddleware(...middlewares)));
 
-            ),
-        ),
-    );
-    return store;
-};
+//    sagaMiddleware.run(rootSaga);
+
+}
+export {history};
+
+
+
+
 
 

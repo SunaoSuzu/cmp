@@ -10,7 +10,6 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 function TenantProfile(props) {
     const tenantId=props.match.params.tenantId;
     const {getDetailComplete,loadDetail,updateComplete} = props;
-    console.log("page.getDetailComplete" + getDetailComplete);
 
     switch (getDetailComplete) {
         case tenantAppModule.yet:
@@ -24,7 +23,6 @@ function TenantProfile(props) {
             }else{
                 return (
                     <React.Fragment>
-                        <div>TenantDetail(tenantId = {tenantId})</div>
                         <TenantProfilePage updateComplete={props.updateComplete} changeProperty={props.changeProperty} data={props.data} updateData={props.updateData} backToList="/tenant/list"
                         />
                     </React.Fragment>
