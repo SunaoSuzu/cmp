@@ -8,7 +8,7 @@ import Select from "@material-ui/core/Select";
 import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
 
-import Configuration from "../Configuration";
+import getConfiguration from "../Configuration";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import AssignmentIcon from "@material-ui/icons/Assignment";
@@ -53,9 +53,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function NewTenantPage(props) {
     const classes = useStyles();
-    const conf = Configuration();
-    const productLicenses = conf.productLicenses;
-    console.log(productLicenses);
+    const conf = getConfiguration();
+    const productLicenses = conf.productLicensesConf;
     const { requestAdd , changePropertyOfNew,newData } = props;
     const send = function send(){
         requestAdd(newData);
@@ -127,10 +126,10 @@ export default function NewTenantPage(props) {
                                 }}
                                 onChange={changePropertyOfNew}
                             >
-                                <option value="1" >CJK</option>
-                                <option value="2" >CWS</option>
-                                <option value="4" >CSR</option>
-                                <option value="3" >CTM</option>
+                                {productLicenses.map((p) => (
+                                    <option value={p.id} key={p.id} >{p.caption}</option>
+                                ))}
+
                             </Select>
                         </FormControl>
                         <TextField
