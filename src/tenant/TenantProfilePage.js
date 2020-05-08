@@ -132,7 +132,7 @@ export default function TenantProfilePage(props) {
     )
 }
 
-function TabPanel(props) {
+export function TabPanel(props) {
     const { children, value, index, ...other } = props;
 
     return (
