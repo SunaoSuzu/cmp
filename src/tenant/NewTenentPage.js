@@ -3,16 +3,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from "@material-ui/core/TextField";
 import Divider from "@material-ui/core/Divider";
 import FormControl from "@material-ui/core/FormControl";
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from "@material-ui/core/Select";
 import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
 
-import getConfiguration from "../Configuration";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import {TabPanel} from "./TenantProfilePage";
+import ContractDetails from "./ContractDetails";
 
 const useStyles = makeStyles((theme) => ({
     functionPanel: {
@@ -46,24 +44,34 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(1),
         minWidth: 120,
     },
-    selectEmpty: {
-        marginTop: theme.spacing(2),
+    tabPanel: {
+        width : "100%",
+        borderRight: `1px solid ${theme.palette.divider}`,
     },
 }));
 
 export default function NewTenantPage(props) {
     const classes = useStyles();
-    const conf = getConfiguration();
-    const productLicenses = conf.productLicensesConf;
-    const { requestAdd , changePropertyOfNew,newData } = props;
-    const send = function send(){
-        requestAdd(newData);
-    };
+    const { requestAdd } = props;
 
-    const [tabValue, setValue] = React.useState(0);
 
     const handleChange = (event, newTabValue) => {
         setValue(newTabValue);
+    };
+    const [tabValue, setValue] = React.useState(0);
+
+    const targetData = props.newData;
+    const save = function save(){
+        requestAdd(targetData);
+    };
+    const uiToJson = (event) => {
+        props.changePropertyOfNew(event);
+    };
+    const delDetail = function addDetail(path , index){
+        props.delFromArrayForNew(path , index);
+    };
+    const addDetail = function addDetail(path,empty){
+        props.pushEmptyForNew(path,empty);
     };
 
     return (
@@ -79,7 +87,7 @@ export default function NewTenantPage(props) {
                             size="large"
                             className={classes.button}
                             startIcon={<SaveIcon />}
-                            onClick={send.bind(this)}
+                            onClick={save.bind(this)}
                         >
                             Save
                         </Button>
@@ -87,15 +95,18 @@ export default function NewTenantPage(props) {
                 </div>
                 <div className={classes.basicInformationPanel} >
                     <FormControl variant="outlined" className={classes.formControl}>
-                        <TextField name="name" onChange={changePropertyOfNew} id="standard-basic"
+                        <TextField name="name" onChange={uiToJson} id="standard-basic"
                                    label="テナント名"  helperText="会社名を入れてください"
-                                   margin="normal"
+                                   margin="normal" required
+                                   value={targetData.name === null ? "": targetData.name}
                         />
                     </FormControl>
                     <FormControl variant="outlined" className={classes.formControl}>
-                        <TextField name="alias" onChange={changePropertyOfNew}
+                        <TextField name="alias" onChange={uiToJson}
                                    id="standard-basic-alias" label="略称"
-                                   helperText="略称を入れてください" />
+                                   helperText="略称を入れてください"
+                                   value={targetData.alias === null ? "": targetData.alias}
+                        />
                     </FormControl>
                 </div>
                 <Divider variant="middle" />
@@ -111,37 +122,7 @@ export default function NewTenantPage(props) {
                         <Tab label="契約内容" {...a11yProps(0)} icon={<AssignmentIcon />} wrapped />
                     </Tabs>
                     <TabPanel value={tabValue} index={0}>
-                        <TextField name="contract.remarks" onChange={changePropertyOfNew} id="standard-basic"
-                                   label="契約特記事項"  helperText="契約特記事項" />
-                        <TextField name="contract.infraAnnualIncome" onChange={changePropertyOfNew}
-                                   id="standard-basic" label="インフラ年間予算"  helperText="インフラ年間予算" />
-                        <FormControl variant="outlined" className={classes.formControl}>
-                            <InputLabel htmlFor="outlined-age-native-simple">製品</InputLabel>
-                            <Select
-                                native
-                                label="製品"
-                                inputProps={{
-                                    name: 'contract.details.0.productMstId',
-                                    id: 'outlined-age-native-simple',
-                                }}
-                                onChange={changePropertyOfNew}
-                            >
-                                {productLicenses.map((p) => (
-                                    <option value={p.id} key={p.id} >{p.caption}</option>
-                                ))}
-
-                            </Select>
-                        </FormControl>
-                        <TextField
-                            id="standard-number"
-                            name="contract.details.0.amount"
-                            label="ライセンス数"
-                            type="number"
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            onChange={changePropertyOfNew}
-                        />
+                        <ContractDetails targetData={targetData} uiToJson={uiToJson} addDetail={addDetail} delDetail={delDetail} />
                     </TabPanel>
                 </div>
 
