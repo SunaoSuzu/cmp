@@ -40,10 +40,16 @@ const landscapeTypeMst = {
     200: {id: 200 , caption : "訓練環境"    , description : "本番ユーザがオペレーションを訓練する環境" , use:1},
 };
 
+const environmentStatusMst = {
+    1: {id: 1 , caption : "未作成（予定なし）"  , description : "開発専用の環境です", use:1},
+    10: {id: 10 , caption : "未作成（予定あり）" , description : "受け入れ試験を行う環境です", use:1},
+    100: {id: 100 , caption : "作成済み"    , description : "本番環境です" , use:1},
+};
+
 
 const whi_configuration = {
-    vpcType : [vpcTypeMst[1],vpcTypeMst[2]],
-    landscapeType : [landscapeTypeMst[1],landscapeTypeMst[10],landscapeTypeMst[100]],
+    vpcTypes : [vpcTypeMst[1],vpcTypeMst[2]],
+    landscapeTypes : [landscapeTypeMst[1],landscapeTypeMst[10],landscapeTypeMst[100]],
     menuIcons : [ menuIconsDef[1] , menuIconsDef[2],menuIconsDef[3],menuIconsDef[4],menuIconsDef[5]],
     reportIcons : [ reportIconsDef[11] , reportIconsDef[12]],
     tenantListGridConf : { columnsDef :[
