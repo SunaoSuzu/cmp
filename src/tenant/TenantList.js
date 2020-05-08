@@ -10,34 +10,41 @@ import getConfiguration from "../Configuration";
 function TenantList(props) {
     const conf = getConfiguration();
     const gridConf = conf.tenantListGridConf;
-    if (props.isFetching){
+
+    if (props.loadSuccess===tenantAppModule.yet){
+        props.requestGetList();
         return       <CircularProgress />
     }
-
-    return (
-        <React.Fragment>
-            <div>顧客は1000件以上いるわけだから、10件を一覧にするのはまじ意味ない・・・・</div>
-            <SuTechGrid title={"テナント一覧(" + props.operationType + ")"} gridConf={gridConf} datas={props.datas}
-                        goDetailHandler={props.selectGoToDetail}
-                        selectToBase="/tenant/profile"
-            />
-            <FabLink to="/tenant/add" onClick={props.selectGoToAdd} />
-        </React.Fragment>
-    );
+    if (props.loadSuccess===tenantAppModule.requested){
+        return       <CircularProgress />
+    }
+    if(props.loadSuccess===tenantAppModule.loadSuccess){
+        return (
+            <React.Fragment>
+                <div>顧客は1000件以上いるわけだから、10件を一覧にするのはまじ意味ない・・・・</div>
+                <SuTechGrid title={"テナント一覧(" + props.operationType + ")"} gridConf={gridConf} datas={props.datas}
+                            goDetailHandler={props.selectGoToDetail}
+                            selectToBase="/tenant/profile"
+                />
+                <FabLink to="/tenant/add" onClick={props.selectGoToAdd} />
+            </React.Fragment>
+        );
+    }
+    return <div>ERROE!!!!</div>
 }
 
 const mapStateToProps = state => {
     console.log('mapStateToProps ' + JSON.stringify(state));
     return {
         operationType  : state.operationType,
-        isFetching : state.isFetching,
+        loadSuccess : state.loadSuccess,
         datas  : state.datas,
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        selectList: () => dispatch(tenantAppModule.selectList()),
+        requestGetList: () => dispatch(tenantAppModule.requestList()),
         selectGoToAdd: () => dispatch(tenantAppModule.selectGoToAdd()),
         selectGoToDetail: (data) => dispatch(tenantAppModule.selectGoToDetail(data)),
     }

@@ -1,26 +1,24 @@
-import axios from 'axios'
-
-export const GET_LIST_REQUEST = 2;
-export const GET_LIST_SUCCESS = 3;
-export const GET_LIST_FAILURE = 4;
+export const GET_LIST_REQUEST = "GET_LIST_REQUEST";
+export const GET_LIST_SUCCESS = "GET_LIST_SUCCESS";
+export const GET_LIST_FAILURE = "GET_LIST_FAILURE";
 
 
-export const GOTO_DETAIL = 10;
-export const GET_DETAIL_REQUEST = 11;
-export const GET_DETAIL_SUCCESS = 12;
-export const GET_DETAIL_FAILURE = 19;
+export const GOTO_DETAIL = "GOTO_DETAIL";
+export const GET_DETAIL_REQUEST = "GET_DETAIL_REQUEST";
+export const GET_DETAIL_SUCCESS = "GET_DETAIL_SUCCESS";
+export const GET_DETAIL_FAILURE = "GET_DETAIL_FAILURE";
 
 
-export const CHANGE_PROPERTY = 30;
-export const UPDATE_REQUEST = 100;
-export const UPDATE_SUCCESS = 110;
-export const UPDATE_FAILURE = 120;
+export const CHANGE_PROPERTY = "CHANGE_PROPERTY";
+export const UPDATE_REQUEST = "UPDATE_REQUEST";
+export const UPDATE_SUCCESS = "UPDATE_SUCCESS";
+export const UPDATE_FAILURE = "UPDATE_FAILURE";
 
-export const GOTO_ADD = 5;
-export const CHANGE_PROPERTY_OF_NEW = 55;
-export const ADD_REQUEST = 56;
-export const ADD_SUCCESS = 57;
-export const ADD_FAILURE = 59;
+export const GOTO_ADD = "GOTO_ADD";
+export const CHANGE_PROPERTY_OF_NEW = "CHANGE_PROPERTY_OF_NEW";
+export const ADD_REQUEST = "ADD_REQUEST";
+export const ADD_SUCCESS = "ADD_SUCCESS";
+export const ADD_FAILURE = "ADD_FAILURE";
 
 
 export const noNeed = 1;
@@ -52,13 +50,11 @@ const empty = {
 
 };
 
-const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
-
-
 const initialState = {
     operationType : GET_LIST_REQUEST, // 不要な予感。。（もしくは選択肢が多すぎるし、Restなんだからずれそう）
     breadcrumbStack : [],
-    isFetching: false,
+
+    loadSuccess : yet,
     datas : [],
 
     data  : {},
@@ -73,14 +69,13 @@ const initialState = {
 const breadcrumbStackList = { caption : "テナント一覧" , to : "/tenant/list"};
 
 export default function reducer(state=initialState, action) {
-    console.log(action.type);
     switch (action.type) {
         case GET_LIST_REQUEST:
-            return {...state , operationType : GET_LIST_SUCCESS,isFetching : true,breadcrumbStack:[]  };
+            return {...state , operationType : GET_LIST_SUCCESS,loadSuccess : requested , breadcrumbStack:[]  };
         case GET_LIST_SUCCESS:
-            return {...state , operationType : GET_LIST_SUCCESS,isFetching : false  , datas : action.datas};
+            return {...state , operationType : GET_LIST_SUCCESS,loadSuccess : loadSuccess , datas : action.datas};
         case GET_LIST_FAILURE:
-            return {...state , operationType : GET_LIST_SUCCESS , isFetching : false  , datas : []};//どうするのが正しいか未定
+            return {...state , operationType : GET_LIST_SUCCESS ,loadSuccess : loadFailed, datas : []};//どうするのが正しいか未定
         case GOTO_DETAIL:
             return {...state , operationType : GOTO_DETAIL , data : null ,getDetailComplete :yet};
         case GET_DETAIL_REQUEST:
@@ -108,7 +103,6 @@ export default function reducer(state=initialState, action) {
         case ADD_REQUEST:
             return {...state , operationType : ADD_REQUEST, addComplete : syncing};
         case ADD_SUCCESS:
-            console.log("added " + JSON.stringify(action.data));
             return {...state , operationType : ADD_SUCCESS, addComplete : synced, newData : action.data};
         case ADD_FAILURE:
             return {...state , operationType : ADD_FAILURE, addComplete : failed};
@@ -132,36 +126,9 @@ function setProperty(obj , path , value){
 }
 // Action Creators
 
-const getListRequest = () => {
+export const requestList = () => {
     return {
         type: GET_LIST_REQUEST
-    }
-};
-
-const getListSuccess = (json) => {
-    return {
-        type: GET_LIST_SUCCESS,
-        datas : json,
-        receivedAt: Date.now()
-    }
-};
-
-const getListFailure = (error) => {
-    return {
-        type: GET_LIST_FAILURE,
-        error
-    }
-};
-
-export const selectList  = () => {
-    return (dispatch) => {
-        dispatch(getListRequest());
-        return axios.get(baseEndPoint + `/tenant`)
-            .then(res =>
-                dispatch(getListSuccess(res.data))
-            ).catch(err =>
-                dispatch(getListFailure(err))
-            )
     }
 };
 
@@ -178,19 +145,6 @@ export const selectGoToDetail  = (data) => {
     }
 };
 
-export const loadDetail=(id) => {
-    return (dispatch) => {
-        dispatch(requestLoadDetail(id));
-        console.log("get:" + id);
-        return axios.get(baseEndPoint + `/tenant/` + id)
-            .then(res =>
-                dispatch(successLoadDetail(res.data))
-            ).catch(err =>
-                dispatch(failLoadDetail(err))
-            )
-    }
-};
-
 export const requestLoadDetail=(id) => {
     return {
         type: GET_DETAIL_REQUEST,
@@ -198,59 +152,12 @@ export const requestLoadDetail=(id) => {
     }
 };
 
-export const successLoadDetail = (data) => {
-    return {
-        type: GET_DETAIL_SUCCESS,
-        data: data
-    }
-};
-
-const failLoadDetail = (error) => {
-    return {
-        type: GET_LIST_FAILURE,
-        error
-    }
-};
 
 export const changeProperty  = (e) => {
     return {
         type: CHANGE_PROPERTY,
         name: e.target.name,
         value: e.target.value
-    }
-};
-
-export const updateData  = (data) => {
-    return (dispatch) => {
-        dispatch(startUpdate(data));
-        console.log("send:" + data);
-        return axios.put(baseEndPoint + `/tenant/` + data.id , data)
-            .then(res =>
-                dispatch(updateSuccess(res.data))
-            ).catch(err =>
-                dispatch(updateFail(err))
-            )
-    }
-};
-
-export const startUpdate = (data) => {
-    return {
-        type: UPDATE_REQUEST,
-        data: data
-    }
-};
-
-export const updateSuccess = (data) => {
-    return {
-        type: UPDATE_SUCCESS,
-        data: data
-    }
-};
-
-export const updateFail = (error) => {
-    return {
-        type: UPDATE_FAILURE,
-        error
     }
 };
 
@@ -262,36 +169,20 @@ export const changePropertyOfNew  = (e) => {
     }
 };
 
-export const addData  = (data) => {
-    return (dispatch) => {
-        dispatch(startAdd(data));
-        console.log("send add:" + data);
-        return axios.post(baseEndPoint + `/tenant/tenant` , data)
-            .then(res =>
-                dispatch(addSuccess(res.data))
-            ).catch(err =>
-                dispatch(addFail(err))
-            )
+export const requestUpdate = (data) => {
+    return {
+        type: UPDATE_REQUEST,
+        data: data
     }
 };
 
-export const startAdd = (data) => {
+
+
+
+export const requestAdd = (data) => {
     return {
         type: ADD_REQUEST,
         data: data
     }
 };
 
-export const addSuccess = (data) => {
-    return {
-        type:ADD_SUCCESS,
-        data: data
-    }
-};
-
-export const addFail = (error) => {
-    return {
-        type: ADD_FAILURE,
-        error
-    }
-};

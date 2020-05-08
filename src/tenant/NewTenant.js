@@ -14,7 +14,7 @@ function NewTenant(props) {
     }else{
         return <NewTenantPage addComplete={props.addComplete}
                               changePropertyOfNew={props.changePropertyOfNew}
-                              addData={props.addData}
+                              requestAdd={props.requestAdd}
                               newData={props.newData}
         />;
     }
@@ -33,7 +33,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         changePropertyOfNew: (e) => dispatch(tenantAppModule.changePropertyOfNew(e)),
-        addData: (e) => dispatch(tenantAppModule.addData(e)),
+        requestAdd: (e) => dispatch(tenantAppModule.requestAdd(e)),
     }
 };
 

@@ -43,9 +43,9 @@ export default function NewTenantPage(props) {
     const conf = Configuration();
     const productLicenses = conf.productLicenses;
     console.log(productLicenses);
-    const { addData , changePropertyOfNew,addComplete,newData } = props;
+    const { requestAdd , changePropertyOfNew,newData } = props;
     const send = function send(){
-        addData(newData);
+        requestAdd(newData);
     };
 
 
