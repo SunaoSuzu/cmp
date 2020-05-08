@@ -11,7 +11,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        selectList: () => dispatch(tenantAppModule.selectList()),
+        selectList: () => dispatch(tenantAppModule.requestList()),
         selectGoToAdd: () => dispatch(tenantAppModule.selectGoToAdd()),
         selectGoToDetail: (data) => dispatch(tenantAppModule.selectGoToDetail(data)),
     }

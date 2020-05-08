@@ -50,7 +50,7 @@ export default function TenantProfilePage(props) {
     const productGridConf = conf.productGridConf;
     const classes = useStyles();
     console.log(JSON.stringify(props));
-    const { updateData , changeProperty } = props;
+    const { requestUpdate , changeProperty } = props;
 
 //    let { path, url } = useRouteMatch();
     const [tabValue, setValue] = React.useState(0);
@@ -62,7 +62,7 @@ export default function TenantProfilePage(props) {
 
     const send = function send(e){
         console.log(e);
-        updateData(props.data);
+        requestUpdate(props.data);
     };
 
     const changePropertyOfInput = (event) => {

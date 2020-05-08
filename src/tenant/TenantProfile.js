@@ -9,11 +9,11 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 function TenantProfile(props) {
     const tenantId=props.match.params.tenantId;
-    const {getDetailComplete,loadDetail,updateComplete} = props;
+    const {getDetailComplete,requestLoadDetail,updateComplete} = props;
 
     switch (getDetailComplete) {
         case tenantAppModule.yet:
-            loadDetail(tenantId);
+            requestLoadDetail(tenantId);
             return       <CircularProgress />;
         case tenantAppModule.requested:
             return       <CircularProgress />;
@@ -23,7 +23,10 @@ function TenantProfile(props) {
             }else{
                 return (
                     <React.Fragment>
-                        <TenantProfilePage updateComplete={props.updateComplete} changeProperty={props.changeProperty} data={props.data} updateData={props.updateData} backToList="/tenant/list"
+                        <TenantProfilePage updateComplete={updateComplete}
+                                           changeProperty={props.changeProperty}
+                                           data={props.data}
+                                           requestUpdate={props.requestUpdate} backToList="/tenant/list"
                         />
                     </React.Fragment>
                 );
@@ -44,12 +47,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        selectList: () => dispatch(tenantAppModule.selectList()),
-        selectGoToAdd: () => dispatch(tenantAppModule.selectGoToAdd()),
-        selectGoToDetail: (data) => dispatch(tenantAppModule.selectGoToDetail(data)),
-        updateData: (data) => dispatch(tenantAppModule.updateData(data)),
+        requestUpdate: (data) => dispatch(tenantAppModule.requestUpdate(data)),
         changeProperty: (e) => dispatch(tenantAppModule.changeProperty(e)),
-        loadDetail: (id) => dispatch(tenantAppModule.loadDetail(id)),
+        requestLoadDetail: (id) => dispatch(tenantAppModule.requestLoadDetail(id)),
     }
 };
 

@@ -1,19 +1,20 @@
 import { createStore as reduxCreateStore, applyMiddleware } from 'redux';
+import createSagaMiddleware from 'redux-saga'
 import logger from 'redux-logger';
 import tenantAppReducer from "./TenantAppModule";
-import thunk from "redux-thunk";
-import {selectList} from "./TenantAppModule";
-
+import rootSaga from "./TenantAppSaga";
 
 export default function createStore() {
     console.log("TenantAppStore.createStore()");
+    const sagaMiddleware = createSagaMiddleware();
     const store = reduxCreateStore(
         tenantAppReducer,
         applyMiddleware(
-            thunk , logger
+            sagaMiddleware , logger
         )
     );
-    store.dispatch(selectList());
+    sagaMiddleware.run(rootSaga);
+
     return store;
 }
 
