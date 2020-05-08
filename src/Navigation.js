@@ -1,46 +1,30 @@
 import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import Link from '@material-ui/core/Link';
 import {makeStyles  } from "@material-ui/core/styles";
 import Toolbar from '@material-ui/core/Toolbar';
-import Paper from '@material-ui/core/Paper';
-import { Route,Redirect } from "react-router-dom";
+import Routes from "./Routes";
+import { withRouter } from "react-router";
 
 //自作
-import AppHeader from "./layout/AppHeader";
-import ActivityApp from "./activity/ActivityApp";
-import TenantSubApp from "./tenant/TenantSubApp";
-import ProductApp from "./product/ProductApp";
-import OperationApp from "./operation/OperationApp";
-import ProfileApp from "./profile/ProfileApp";
-import HomeApp from "./HomeApp";
-import ReportApp from "./report/ReportApp";
-import NoticeApp from "./notice/NoticeApp";
+import SiteHeader from "./layout/SiteHeader";
+import SiteFooter from "./layout/SiteFooter";
 
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="http://www.sutech.co.jp/">
-                SuTech
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
+        flexDirection : "column"
     },
     content: {
         flexGrow: 1,
-        padding: theme.spacing(2),
+        bgcolor : theme.palette.background
+    },
+    appWhole: {
+        padding: theme.spacing(1),
     },
 }));
 
-export default function Navigation(props)  {
+
+const Navigation = (props) => {
 
     const { selectHome,selectProfile,selectAccount,selectNotice,selectSearch,selectLogout  } = props;
 
@@ -49,34 +33,24 @@ export default function Navigation(props)  {
 
 
     const classes=useStyles();
-
     return (
         <React.StrictMode>
             <div className={classes.root} >
                 <CssBaseline />
-                <AppHeader selectHome={selectHome} selectSearch={selectSearch} selectNotice={selectNotice}
-                           selectProfile={selectProfile} selectAccount={selectAccount} selectLogout={selectLogout}
-                           functionType={functionType} selectedMenuId={selectedMenuId} selectedReportId={selectedReportId}
-                           selectMenu={selectMenu} selectReport={selectReport}/>
+                <SiteHeader selectHome={selectHome} selectSearch={selectSearch} selectNotice={selectNotice}
+                            selectProfile={selectProfile} selectAccount={selectAccount} selectLogout={selectLogout}
+                            functionType={functionType} selectedMenuId={selectedMenuId} selectedReportId={selectedReportId}
+                            selectMenu={selectMenu} selectReport={selectReport}/>
                 <main className={classes.content}>
                     <Toolbar />
-                    <Paper elevation={0}>
-                        <Redirect exact from="/" to="/home"/>
-                        <Route exact path="/" component={HomeApp}/>
-                        <Route path="/home" component={HomeApp}/>
-                        <Route path="/profile" component={ProfileApp}/>
-                        <Route path="/notice" component={NoticeApp}/>
-                        <Route path="/activity" component={ActivityApp}/>
-                        <Route path="/tenant" component={TenantSubApp}/>
-                        <Route path="/product" component={ProductApp}/>
-                        <Route path="/operation" component={OperationApp}/>
-                        <Route exact path="/report" component={ReportApp}/>
-                        <Route path="/report/:reportId" component={ReportApp}/>
-                    </Paper>
-                    <Copyright/>
+                    <div className={classes.appWhole}>
+                        <Routes />
+                    </div>
                 </main>
+                <SiteFooter/>
             </div>
         </React.StrictMode>
     );
 }
 
+export default withRouter(Navigation);

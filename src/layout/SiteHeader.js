@@ -14,7 +14,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import SuTechIcon from "../asset/SuTechIcon";
-import {Link as RouterLink, Link} from "react-router-dom";
+import {NavLink, Link} from "react-router-dom";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -103,11 +103,14 @@ const useStyles = makeStyles((theme) => ({
     drawerContainer: {
         overflow: 'auto',
     },
+    menuLink:{
+        textDecoration : "none" ,
+    },
 }));
 
 
 
-export default function AppHeader(prop) {
+export default function SiteHeader(prop) {
     const conf = Configuration();
     const menuIcons = conf.menuIcons;
     const reportIcons = conf.reportIcons;
@@ -288,7 +291,7 @@ export default function AppHeader(prop) {
                 >
                     <List>
                         {menuIcons.map((menu) => (
-                            <ListItemLink  key={menu.menuId} onClick={() => selectMenu(menu)}
+                            <ListItemLink  className={classes.menuLink} key={menu.menuId} id={menu.menuId} onClick={() => selectMenu(menu)}
                                            to={menu.appTo}
                                            selected={ functionType==="MENU"&&selectedMenuId===menu.menuId}
                                            primary={menu.caption} icon={<InboxIcon />}
@@ -297,8 +300,8 @@ export default function AppHeader(prop) {
                     </List>
                     <Divider />
                     <List>
-                        {reportIcons.map((report, ) => (
-                            <ListItemLink button key={report.reportId} onClick={() => selectReport(report)}
+                        {reportIcons.map((report ) => (
+                            <ListItemLink key={report.reportId} id={report.reportId} onClick={() => selectReport(report)}
                                           to={"/report/" + report.reportId}
                                           primary={report.caption} icon={<InboxIcon />}
                                           selected={ functionType==="REPORT"&&selectedReportId===report.reportId}
@@ -314,16 +317,16 @@ export default function AppHeader(prop) {
 
 
 function ListItemLink(props) {
-    const { icon, primary, to, key , onClick , selected } = props;
+    const { icon, primary, to, id , onClick , selected,className } = props;
 
     const renderLink = React.useMemo(
-        () => React.forwardRef((itemProps, ref) => <RouterLink to={to} ref={ref} {...itemProps} />),
+        () => React.forwardRef((itemProps, ref) => <NavLink to={to} ref={ref} className="className" {...itemProps} />),
         [to],
     );
 
     return (
         <li>
-            <ListItem button component={renderLink} key={key} selected={selected} onClick={onClick}>
+            <ListItem button key={id} component={renderLink} selected={selected} onClick={onClick} className={className}>
                 {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
                 <ListItemText primary={primary} />
             </ListItem>
