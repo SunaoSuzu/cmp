@@ -49,30 +49,39 @@ const environmentStatusMst = {
 //以下は設定ではなくマスタ。将来は不要になるはず
 //販売製品
 export const productLicenses = {
-    1 : { id : 1 , caption : "CJK"     },
-    2 : { id : 2 , caption : "CWS"     },
-    3 : { id : 3 , caption : "CSR"     },
-    4 : { id : 4 , caption : "CTM"     },
-};
-
-export const installableModules = {
-    1 : { id : 1 , caption : "CJK"     },
-    2 : { id : 2 , caption : "CWS"     },
-    3 : { id : 3 , caption : "CTM"     },
+    "CJK" : { id : 1 , name:"CJK" , caption : "CJK"  , options : []   },
+    "CWS" : { id : 2 , name:"CWS" , caption : "CWS"  , options : []   },
+    "CSR" : { id : 3 , name:"CSR" , caption : "CSR"  , options : []   },
+    "CTM" : { id : 4 , name:"CTM" , caption : "CTM"  , options : []   },
 };
 
 
-export const licenseKinds = {
-    1 : { id : 1 , name : "CJK"     , options : ["noCJK"]},
-    2 : { id : 2 , name : "CWS/CSR" , options : ["csr"]},
-    3 : { id : 3 , name : "CTM"}    ,
+export const installableComponent = {
+    "CJK_AP" : { id : 1  , name:"CJK_AP" , caption : "CJK_AP"     },
+    "CJK_DB" : { id : 2  , name:"CJK_DB" , caption : "CJK_DB"     },
+    "CJK_BS" : { id : 3  , name:"CJK_BS" , caption : "CJK_BS"     },
+    "CWS_AP" : { id : 4  , name:"CWS_AP" , caption : "CWS_AP"     },
+    "CWS_DB" : { id : 5  , name:"CWS_DB" , caption : "CWS_DB"     },
+    "CWS_BD" : { id : 6  , name:"CWS_BD" , caption : "CWS_BD"     },
+    "CTM_AP" : { id : 7  , name:"CTM_AP" , caption : "CTM_AP"     },
+    "CTM_DB" : { id : 8  , name:"CTM_DB" , caption : "CTM_DB"     },
+    "CTM_ES" : { id : 9  , name:"CTM_ES" , caption : "CTM_ES"     },
+    "CTM_BS" : { id : 10 , name:"CTM_BS" , caption : "CTM_BS"     },
 };
+
+export const requiredComponent = {
+    "CJK"    : { "main" : ["CJK_AP","CJK_DB","CJK_BS" ] , sub : []},
+    "CWS" : { "main" : ["CWS_AP","CWS_DB","CWS_BS", "CWS_DL" ] , "sub" : ["CJK_AP","CJK_DB","CJK_BS" ]},
+    "CSR" : { "main" : [] , "sub" : ["CWS_AP","CWS_DB","CWS_BS", "CWS_DL" , "CJK_AP","CJK_DB","CJK_BS" ]},
+    "CTM"    : { "main" : ["CTM_AP","CTM_DB","CTM_ES" , "CTM_BS" ] , sub : []},
+}
 
 
 const whi_configuration = {
+    "requiredComponent" :requiredComponent,
     vpcTypes : [vpcTypeMst[1],vpcTypeMst[2]],
     landscapeTypes : [landscapeTypeMst[1],landscapeTypeMst[10],landscapeTypeMst[100]],
-    productLicensesConf : [productLicenses[1],productLicenses[2],productLicenses[3],productLicenses[4]],
+    productLicensesConf : [productLicenses["CJK"],productLicenses["CWS"],productLicenses["CSR"],productLicenses["CTM"]],
 
     menuIcons : [ menuIconsDef[1] , menuIconsDef[2],menuIconsDef[3],menuIconsDef[4],menuIconsDef[5]],
     reportIcons : [ reportIconsDef[11] , reportIconsDef[12]],

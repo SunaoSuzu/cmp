@@ -1,6 +1,9 @@
 import { put, takeEvery, all } from 'redux-saga/effects'
 import * as TenantAppModule from "./TenantAppModule";
 import axios from 'axios'
+import makeTemplateMaker from "./EnvironmentTemplateMaker";
+
+
 
 const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
 
@@ -96,6 +99,17 @@ function* handleRequestDel(action) {
     }
 }
 
+function* handleRequestNewEnv(action) {
+    const tenant = action.data;
+    let ret = makeTemplateMaker(tenant);
+    sleep(500);
+    yield put({
+        type: TenantAppModule.NEW_ENV_SUCCESS,
+        environment : ret,
+    });
+}
+
+
 function* mySaga() {
     all(
         yield takeEvery(TenantAppModule.GET_LIST_REQUEST , handleRequestList),
@@ -103,7 +117,15 @@ function* mySaga() {
         yield takeEvery(TenantAppModule.UPDATE_REQUEST , handleRequestUpdate),
         yield takeEvery(TenantAppModule.ADD_REQUEST , handleRequestAdd),
         yield takeEvery(TenantAppModule.DEL_REQUEST , handleRequestDel),
+        yield takeEvery(TenantAppModule.NEW_ENV_REQUEST , handleRequestNewEnv),
     )
+}
+
+function sleep(waitMsec) {
+    var startMsec = new Date();
+
+    // 指定ミリ秒間だけループさせる（CPUは常にビジー状態）
+    while (new Date() - startMsec < waitMsec){};
 }
 
 export default mySaga;

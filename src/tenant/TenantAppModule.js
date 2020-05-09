@@ -33,6 +33,8 @@ export const PUSH_EMPTY_TO_ARRAY_NEW = "PUSH_EMPTY_TO_ARRAY_NEW";
 export const DEL_FROM_ARRAY = "DEL_FROM_ARRAY";
 export const DEL_FROM_ARRAY_NEW = "DEL_FROM_ARRAY_NEW";
 
+export const NEW_ENV_REQUEST = "NEW_ENV_REQUEST";
+export const NEW_ENV_SUCCESS = "NEW_ENV_SUCCESS";
 
 export const noNeed = 1;
 export const necessary = 2;
@@ -52,7 +54,8 @@ export const empty_contract = {"productMstId" : "" , amount : ""};
 export const empty = {
     "name": "",
     "alias": "",
-    "statusCaption": "本番運用中",
+    "status": 1,
+    "statusCaption": "下書き",
     "tags" : [{}],
     "environmentSetting": {
         "vpcType": 1
@@ -68,7 +71,6 @@ export const empty = {
 };
 
 const initialState = {
-    operationType : GET_LIST_REQUEST, // 不要な予感。。（もしくは選択肢が多すぎるし、Restなんだからずれそう）
     breadcrumbStack : [],
 
     loadSuccess : yet,
@@ -83,6 +85,8 @@ const initialState = {
     addComplete: noNeed,
 
     deleteComplete : yet,
+
+    newEnvComplated : yet,
 };
 
 const breadcrumbStackList = { caption : "テナント一覧" , to : "/tenant/list"};
@@ -90,57 +94,54 @@ const breadcrumbStackList = { caption : "テナント一覧" , to : "/tenant/lis
 export default function reducer(state=initialState, action) {
     switch (action.type) {
         case GET_LIST_REQUEST:
-            return {...state , operationType : GET_LIST_SUCCESS,loadSuccess : requested , breadcrumbStack:[] ,data : null , newData:null,datas:[] };
+            return {...state , loadSuccess : requested , breadcrumbStack:[] ,data : null , newData:null,datas:[] };
         case GET_LIST_SUCCESS:
-            return {...state , operationType : GET_LIST_SUCCESS,loadSuccess : loadSuccess , datas : action.datas};
+            return {...state ,loadSuccess : loadSuccess , datas : action.datas};
         case GET_LIST_FAILURE:
-            return {...state , operationType : GET_LIST_SUCCESS ,loadSuccess : loadFailed, datas : []};//どうするのが正しいか未定
+            return {...state  ,loadSuccess : loadFailed, datas : []};//どうするのが正しいか未定
         case GOTO_DETAIL:
-            return {...state , operationType : GOTO_DETAIL , data : null , newData:null, getDetailComplete :yet};
+            return {...state  , data : null , newData:null, getDetailComplete :yet};
         case GET_DETAIL_REQUEST:
-            return {...state , operationType : GET_DETAIL_REQUEST, getDetailComplete :requested};
+            return {...state , getDetailComplete :requested};
         case GET_DETAIL_SUCCESS:
-            return {...state , operationType : GET_DETAIL_SUCCESS, data : action.data,getDetailComplete :loadSuccess ,updateComplete:noNeed ,breadcrumbStack : [breadcrumbStackList]};
+            return {...state , data : action.data,getDetailComplete :loadSuccess ,updateComplete:noNeed ,breadcrumbStack : [breadcrumbStackList]};
         case GET_DETAIL_FAILURE:
-            return {...state , operationType : GET_DETAIL_FAILURE, data : null ,getDetailComplete :loadFailed }; //どうするのが正しいか未定
+            return {...state , data : null ,getDetailComplete :loadFailed }; //どうするのが正しいか未定
         case CHANGE_PROPERTY:
             const newData = {...state.data};
             setProperty(newData , action.name , action.value);
             return {...state , data : newData,updateComplete:necessary };
         case UPDATE_REQUEST:
-            return {...state , operationType : UPDATE_REQUEST, updateComplete : syncing};
+            return {...state , updateComplete : syncing};
         case UPDATE_SUCCESS:
-            return {...state , operationType : UPDATE_SUCCESS, updateComplete : synced};
+            return {...state , updateComplete : synced};
         case UPDATE_FAILURE:
-            return {...state , operationType : UPDATE_FAILURE, updateComplete : failed};
+            return {...state , updateComplete : failed};
         case GOTO_ADD:
-            return {...state , operationType : GOTO_ADD ,  newData : {...empty}, addComplete : noNeed ,breadcrumbStack : [breadcrumbStackList]};
+            return {...state , newData : {...empty}, addComplete : noNeed ,breadcrumbStack : [breadcrumbStackList]};
         case CHANGE_PROPERTY_OF_NEW:
             const obj = {...state.newData};
             setProperty(obj , action.name , action.value);
-            console.log("newData=" + JSON.stringify(obj));
             return {...state , newData : obj ,addComplete:necessary };
         case ADD_REQUEST:
-            return {...state , operationType : ADD_REQUEST, addComplete : syncing};
+            return {...state , addComplete : syncing};
         case ADD_SUCCESS:
-            return {...state , operationType : ADD_SUCCESS,
-                addComplete : synced, newData : action.data , getDetailComplete : yet};
+            return {...state , addComplete : synced,
+                newData : action.data , getDetailComplete : yet};
         case ADD_FAILURE:
-            return {...state , operationType : ADD_FAILURE, addComplete : failed};
+            return {...state , addComplete : failed};
         case DEL_REQUEST:
-            return {...state , operationType : DEL_REQUEST, delComplete : syncing};
+            return {...state , delComplete : syncing};
         case DEL_SUCCESS:
-            return {...state , operationType : DEL_SUCCESS, delComplete : synced, loadSuccess: yet , datas : null};
+            return {...state , delComplete : synced, loadSuccess: yet , datas : null};
         case DEL_FAILURE:
-            return {...state , operationType : DEL_FAILURE, delComplete : failed};
+            return {...state , delComplete : failed};
             //ここから先は細かい処理
         case PUSH_EMPTY_TO_ARRAY_NEW:
             return {...state , operationType : PUSH_EMPTY_TO_ARRAY_NEW,
                 newData : pushEmptyToArray({...state.newData} , action.path,action.empty)
                 ,addComplete:necessary};
         case PUSH_EMPTY_TO_ARRAY:
-            console.log(JSON.stringify(action));
-            console.log(JSON.stringify(state.data));
             return {...state , operationType : PUSH_EMPTY_TO_ARRAY,
                 data : pushEmptyToArray({...state.data} , action.path,action.empty)
                 ,addComplete:necessary};
@@ -153,6 +154,15 @@ export default function reducer(state=initialState, action) {
             return {...state , operationType : DEL_FROM_ARRAY,
                 data : spliceObjOfArray({...state.data} , action.path , action.index)
                 ,addComplete:necessary};
+        case NEW_ENV_REQUEST:
+            return {...state , newEnvComplated: syncing};
+        case NEW_ENV_SUCCESS:
+            {
+                const tenantObj = {...state.data}
+                const environment = action.environment;
+                tenantObj.environments = tenantObj.environments.concat(environment);
+                return {...state , newEnvComplated : synced , data : tenantObj};
+            }
         default:
                 return state
     }
@@ -256,3 +266,10 @@ export const delFromArray = (path,index) => {
         index : index,
     }
 }
+
+export const requestNewEnv = (data) => {
+    return {
+        type: NEW_ENV_REQUEST,
+        data: data
+    }
+};

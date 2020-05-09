@@ -29,6 +29,7 @@ function TenantProfile(props) {
                                            delFromArray={props.delFromArray}
                                            data={props.data}
                                            requestUpdate={props.requestUpdate} backToList="/tenant/list"
+                                           requestNewEnv={props.requestNewEnv}
                         />
                     </React.Fragment>
                 );
@@ -54,6 +55,7 @@ const mapDispatchToProps = dispatch => {
         requestLoadDetail: (id) => dispatch(tenantAppModule.requestLoadDetail(id)),
         pushEmpty: (path,empty) => dispatch(tenantAppModule.pushEmpty(path,empty)),
         delFromArray: (path,index) => dispatch(tenantAppModule.delFromArray(path,index)),
+        requestNewEnv: (data) => dispatch(tenantAppModule.requestNewEnv(data)),
     }
 };
 
