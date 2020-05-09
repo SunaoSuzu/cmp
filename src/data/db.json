@@ -1,250 +1,76 @@
 {
   "tenant": [
     {
-      "id": 1,
-      "name": "株式会社三菱1",
-      "statusCaption": "本番運用中",
-      "environmentSetting": {
-        "vpcType": 1
-      },
-      "contract": {
-        "infraAnnualIncome": 10000000,
-        "boughtProducts": [
-          {
-            "id": 1,
-            "productMstId": 1,
-            "amount": 50000,
-            "validFrom": "2020/01/01"
-          },
-          {
-            "id": 2,
-            "productMstId": 2,
-            "amount": 50000,
-            "validFrom": "2020/01/01"
-          }
-        ],
-        "remarks": "大幅な値引きをしています"
-      },
-      "environments": [
-        {
-          "envId": 1,
-          "name": "開発環境1",
-          "ord": 1,
-          "landScape": 1,
-          "installedLicences": [
-            {
-              "id": 1,
-              "caption": "CJK",
-              "version": 8,
-              "patch": 10
-            },
-            {
-              "id": 10,
-              "caption": "CWS",
-              "version": 8,
-              "patch": 10
-            }
-          ]
-        },
-        {
-          "envId": 2,
-          "name": "本番環境1",
-          "ord": 2,
-          "landScape": 3,
-          "installedLicences": [
-            {
-              "id": 1,
-              "caption": "CJK",
-              "version": 8,
-              "patch": 10
-            },
-            {
-              "id": 10,
-              "caption": "CWS",
-              "version": 8,
-              "patch": 10
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 2,
-      "name": "住友商事12345",
-      "statusCaption": "導入中",
-      "environmentSetting": {
-        "vpcType": 2
-      },
-      "contract": "１大幅な値引きをしています",
-      "environments": [
-        {
-          "envId": 3,
-          "name": "開発環境1",
-          "ord": 1,
-          "landScape": 1,
-          "installedLicences": [
-            {
-              "id": 1,
-              "caption": "CJK",
-              "version": 8,
-              "patch": 10
-            },
-            {
-              "id": 10,
-              "caption": "CWS",
-              "version": 8,
-              "patch": 10
-            },
-            {
-              "id": 20,
-              "caption": "CSR",
-              "version": 8,
-              "patch": 10
-            }
-          ]
-        }
-      ],
-      "remarks": "１大幅な値引きをしています"
-    },
-    {
-      "id": 3,
-      "name": "帝国会社1",
-      "statusCaption": "本番運用中",
-      "environmentSetting": {
-        "vpcType": 9
-      },
-      "contract": {
-        "infraAnnualIncome": 10000000,
-        "boughtProducts": [
-          {
-            "id": 1,
-            "productMstId": 1,
-            "amount": 50000,
-            "validFrom": "2020/01/01"
-          },
-          {
-            "id": 2,
-            "productMstId": 2,
-            "amount": 50000,
-            "validFrom": "2020/01/01"
-          }
-        ],
-        "remarks": "大幅な値引きをしています"
-      },
-      "environments": [
-        {
-          "envId": 4,
-          "name": "開発環境1",
-          "ord": 1,
-          "landScape": 1,
-          "installedLicences": [
-            {
-              "id": 1,
-              "caption": "CJK",
-              "version": 8,
-              "patch": 10
-            }
-          ]
-        },
-        {
-          "envId": 5,
-          "ord": 2,
-          "name": "ステージング環境",
-          "landScape": 2,
-          "installedLicences": [
-            {
-              "id": 1,
-              "caption": "CJK",
-              "version": 8,
-              "patch": 10
-            }
-          ]
-        },
-        {
-          "envId": 6,
-          "ord": 3,
-          "name": "本番環境",
-          "landScape": 3,
-          "installedLicences": [
-            {
-              "id": 1,
-              "caption": "CJK",
-              "version": 8,
-              "patch": 10
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "住友商店",
-      "statusCaption": "本番運用中",
-      "environmentSetting": {
-        "vpcType": 1
-      },
-      "contract": {
-        "infraAnnualIncome": null,
-        "boughtProducts": [],
-        "remarks": null
-      },
-      "environments": [],
-      "id": 4
-    },
-    {
       "name": "鈴木商事",
-      "statusCaption": "本番運用中",
+      "alias": "スー",
+      "status": 1,
+      "statusCaption": "下書き",
+      "tags": [
+        {}
+      ],
       "environmentSetting": {
         "vpcType": 1
       },
       "contract": {
-        "infraAnnualIncome": null,
-        "boughtProducts": [],
-        "remarks": null
+        "infraAnnualIncome": "",
+        "details": [
+          {
+            "productMstId": 1,
+            "amount": "10000"
+          }
+        ],
+        "remarks": "狭いなこの欄なんで広がらないんだろうか。。"
       },
       "environments": [],
-      "id": 5
+      "id": 10
     },
     {
-      "name": "CCC",
-      "statusCaption": "本番運用中",
+      "name": "山田商事",
+      "alias": "ヤマだ",
+      "status": 1,
+      "statusCaption": "下書き",
+      "tags": [
+        {}
+      ],
       "environmentSetting": {
         "vpcType": 1
       },
       "contract": {
-        "infraAnnualIncome": null,
-        "boughtProducts": [],
-        "remarks": null
+        "infraAnnualIncome": "",
+        "details": [
+          {
+            "productMstId": 1,
+            "amount": "10000"
+          }
+        ],
+        "remarks": "なんでこの欄こんな狭いの？\n広がらないんだよね。。。"
       },
       "environments": [],
-      "id": 6
+      "id": 11
     },
     {
-      "name": "ZZZ",
-      "statusCaption": "本番運用中",
+      "name": "佐藤商事",
+      "alias": "sato",
+      "status": 1,
+      "statusCaption": "下書き",
+      "tags": [
+        {}
+      ],
       "environmentSetting": {
         "vpcType": 1
       },
       "contract": {
-        "infraAnnualIncome": null,
-        "boughtProducts": [],
-        "remarks": null
+        "infraAnnualIncome": "",
+        "details": [
+          {
+            "productMstId": 1,
+            "amount": "10000"
+          }
+        ],
+        "remarks": "狭いよここ\n画面ダサい。。\n"
       },
       "environments": [],
-      "id": 7
-    },
-    {
-      "name": "JJJ",
-      "statusCaption": "本番運用中",
-      "environmentSetting": {
-        "vpcType": 1
-      },
-      "contract": {
-        "infraAnnualIncome": null,
-        "boughtProducts": [],
-        "remarks": null
-      },
-      "environments": [],
-      "id": 8
+      "id": 12
     }
   ]
 }
