@@ -26,7 +26,7 @@ export function pushEmptyToArray(obj , path , empty){
     let base = obj;
     paths.forEach(function(path, index){
         if( index === (paths.length - 1) ){
-            base[path].push(empty);
+            base[path] = base[path].concat(empty);
         }else{
             base = base[path];
         }

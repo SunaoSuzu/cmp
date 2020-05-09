@@ -28,7 +28,7 @@ function DataRow(props ) {
         console.log("deleteHandler=" + id);
 
         if(deleteHandler!==null){
-//            deleteHandler(id);
+            deleteHandler(id);
         }
     };
 
