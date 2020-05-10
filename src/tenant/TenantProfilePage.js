@@ -17,6 +17,12 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Badge from "@material-ui/core/Badge";
+import getConfiguration from "../Configuration";
+import Select from "@material-ui/core/Select";
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
 
 //将来的にItemDetaiPageと統合したいけど、難しそう
 const useStyles = makeStyles((theme) => ({
@@ -32,8 +38,14 @@ const useStyles = makeStyles((theme) => ({
     functionPanelRight :{
         textAlign: "right",
     },
+    formControl: {
+        margin: theme.spacing(1),
+        alignItems : "center",
+        minWidth: 120,
+    },
     basicInformationPanel: {
         margin: theme.spacing(1),
+        alignItems : "center",
     },
     button: {
         margin: theme.spacing(1),
@@ -62,6 +74,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TenantProfilePage(props) {
+    const conf = getConfiguration();
+    const tenantStatusMst = conf.tenantStatusMst;
+    const vpcTypeMst = conf.vpcTypes;
     const classes = useStyles();
     const { requestUpdate , changeProperty } = props;
 
@@ -71,8 +86,6 @@ export default function TenantProfilePage(props) {
     const handleChange = (event, newTabValue) => {
         setValue(newTabValue);
     };
-
-
 
     //ここで新規登録画面との変数名の違いを吸収
     const targetData = props.data;
@@ -122,13 +135,38 @@ export default function TenantProfilePage(props) {
                     </div>
                 </div>
                 <div className={classes.basicInformationPanel}>
-                    <TextField name="name" onChange={uiToJson} id="standard-basic" label="テナント名" value={targetData.name} helperText="会社名を入れてください" />
-                    <TextField name="alias" onChange={uiToJson} id="standard-basic-alias" label="略称" value={targetData.alias} helperText="略称を入れてください" />
-                    <TextField name="statusCaption" onChange={uiToJson} id="standard-basic-status" label="ステータス" value={targetData.statusCaption}
-                               InputProps={{
-                                   readOnly: true,
-                               }}
-                               helperText="ステータス" />
+                    <TextField
+                        name="name" onChange={uiToJson}
+                        id="standard-basic" label="テナント名"
+                        value={targetData.name} helperText="会社名を入れてください"
+                        margin="dense"
+                    />
+                    <TextField name="alias" onChange={uiToJson}
+                               id="standard-basic-alias" label="略称"
+                               value={targetData.alias} helperText="略称を入れてください"
+                               margin="dense"
+                    />
+                    <FormControl className={classes.formControl} >
+                        <InputLabel shrink id="standard-basic-status-label" >ステータス</InputLabel>
+                        <Select name="status" onChange={uiToJson}
+                                id="standard-basic-status"
+                                value={targetData.status}
+                                inputProps={{
+                                    readOnly: true,
+                                }}
+                                label="ステータス" helperText="ステータス"
+                                margin="dense"
+                                labelId="standard-basic-status-label"
+                        >
+                            {tenantStatusMst.map((statusMst) => (
+                                <MenuItem value={statusMst.id}
+                                          key={statusMst.id}>
+                                    {statusMst.caption}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                        <FormHelperText>ステータス</FormHelperText>
+                    </FormControl>
                 </div>
                 <Divider/>
                 <div className={classes.tabRoot}>
@@ -141,8 +179,9 @@ export default function TenantProfilePage(props) {
                         className={classes.tabs}
                     >
                         <Tab label="契約内容" {...a11yProps(0)} icon={<AssignmentIcon />} wrapped className={classes.tabPanel} />
+                        <Tab label="環境方針" {...a11yProps(1)} icon={<AssignmentIcon />} wrapped className={classes.tabPanel} />
                         {targetData.environments.map((env , index ) => (
-                            <Tab label={env.name} {...a11yProps((index + 1))}
+                            <Tab label={env.name} {...a11yProps((index + 2))}
                                  icon={env.status===1 ?
                                      <Badge badgeContent="draft"
                                             color="primary"
@@ -158,15 +197,38 @@ export default function TenantProfilePage(props) {
                         <ContractDetails targetData={targetData} uiToJson={uiToJson}
                                          addDetail={addDetail} delDetail={delDetail} />
                     </TabPanel>
+                    <TabPanel value={tabValue} index={1}>
+                        <FormControl className={classes.formControl} >
+                            <InputLabel shrink id="environment-setting-vpc-label" >VPC方針</InputLabel>
+                            <Select name="status" onChange={uiToJson}
+                                    id="environment-setting-vpc"
+                                    value={targetData.environmentSetting.vpcType}
+                                    inputProps={{
+                                        readOnly: true,
+                                    }}
+                                    label="VPC方針" helperText="VPC方針"
+                                    margin="dense"
+                                    labelId="environment-setting-vpc-label"
+                            >
+                                {vpcTypeMst.map((vpc) => (
+                                    <MenuItem value={vpc.id}
+                                              key={vpc.id}>
+                                        {vpc.caption}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                            <FormHelperText>VPC作成方針</FormHelperText>
+                        </FormControl>
+                    </TabPanel>
                     {targetData.environments.map((env , index ) => (
-                        <TabPanel value={tabValue} index={index + 1} key={index}>
+                        <TabPanel value={tabValue} index={index + 2} key={index}>
                             <h4>基礎情報</h4>
                             <TextField name={"environments." + index + ".name"}  onChange={uiToJson}
                                        id="standard-env-name" label="環境名" value={env.name}
                                        helperText="環境名を入れてください" />
                             <TextField name={"environments." + index + ".statusCaption"}  onChange={uiToJson}
                                        id="standard-env-status" label="状態" value={env.statusCaption}
-                                       InputProps={{
+                                       inputProps={{
                                            readOnly: true,
                                        }}
                                        helperText="状態" />
@@ -178,14 +240,14 @@ export default function TenantProfilePage(props) {
                                        helperText="VPCタイプ" />
                             <TextField name={"environments." + index + ".specLevel"}  onChange={uiToJson}
                                        id="standard-env-spec-level" label="SPECレベル" value={env.specLevel}
-                                       InputProps={{
+                                       inputProps={{
                                            readOnly: true,
                                        }}
                                        helperText="SPECレベル" />
                             <h4>コンポーネント</h4>
-                            {env.mainComponents.map((component, index) => (
-                                <div className={classes.componentPane} key={index}>
-                                    <ExpansionPanel defaultExpanded="true">
+                            {env.mainComponents.map((component,c ) => (
+                                <div className={classes.componentPane} key={c}>
+                                    <ExpansionPanel defaultExpanded >
                                         <ExpansionPanelSummary
                                             expandIcon={<ExpandMoreIcon />}
                                             aria-controls="panel1a-content"
@@ -195,9 +257,9 @@ export default function TenantProfilePage(props) {
                                         </ExpansionPanelSummary>
                                         <ExpansionPanelDetails>
                                             {component.params.map((param , i) => (
-                                                <TextField name={"environments." + index + ".params." + i}  onChange={uiToJson}
+                                                <TextField name={"environments." + index + ".mainComponents." + c + ".params." + i + ".now"}  onChange={uiToJson}
                                                            id={"standard-env-params-" + i} label={param.caption} value={param.now}
-                                                           InputProps={{
+                                                           inputProps={{
                                                            }}
                                                            key={i}
                                                            helperText={param.caption} />

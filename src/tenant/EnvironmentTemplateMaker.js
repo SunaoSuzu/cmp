@@ -1,5 +1,5 @@
 //所有しているライセンスから、環境の雛形を決定する
-//ロジックは適当なので、いずれチャンと作らないといけない
+//ロジックをどんどん進化させていかないといけない
 
 import getConfiguration from "../Configuration";
 
@@ -9,12 +9,14 @@ function EnvironmentTemplateMaker(tenant) {
         "landScape": 1,
         "status" : 1,
         "statusCaption" : "下書き",
-        "specLevel" : 1,
-        "vpcType" : 1,
+        "specLevel" : null,
+        "vpcType" : null,
         "vpcTypeCaption" : "独自VPC",
         "mainComponents": null,
         "subComponents": null,
     };
+
+    environment["vpcType"]=tenant.environmentSetting.vpcType;
 
     const conf = getConfiguration();
     let productArray = [];
@@ -51,26 +53,23 @@ function EnvironmentTemplateMaker(tenant) {
         return self.indexOf(x) === i&&retMain.indexOf(x) === -1;
     });
 
+
     //パラメータを付与（設定をちゃんと読むように直さないとダメ）
+    const componentDefConf = conf.installableComponentConf;
     let mainComponents = [];
+    console.log("componentDefConf=" + componentDefConf)
     retMain.map(function (main) {
-        let component = {};
-        component["name"]=main;
-        component["params"]=[
-            {name : "memory"  , caption : "メモリ", default : 8 , now : 8 , pattern : [2,4,6,8,12,16]},
-            {name : "p1"  , caption : "パラメータ１", default : "" , now : "hoge" , pattern : ["","hoge","foo"]}
-        ]
+        console.log("main=" + main)
+        let componentDef = componentDefConf[main];
+        console.log("componentDefConf=" + componentDef);
+        let component    = {...componentDef}
         mainComponents.push(component);
         return null;
     })
     let subComponents = [];
     retSub.map(function (sub) {
-        let component = {};
-        component["name"]=sub;
-        component["params"]=[
-            {name : "memory"  , default : 8 , now : 8 , pattern : [2,4,6,8,12,16]},
-            {name : "p1"  , default : "" , now : "hoge" , pattern : ["","hoge","foo"]}
-        ]
+        let componentDef = componentDefConf[sub];
+        let component    = {...componentDef}
         subComponents.push(component);
         return null;
     })
