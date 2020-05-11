@@ -71,6 +71,31 @@
       },
       "environments": [],
       "id": 12
+    },
+    {
+      "name": "適当正直",
+      "alias": "テキトー２",
+      "status": 1,
+      "statusCaption": "下書き",
+      "tags": [
+        {}
+      ],
+      "environmentSetting": {
+        "vpcType": 1
+      },
+      "contract": {
+        "infraAnnualIncome": "",
+        "details": [
+          {
+            "productMstId": 2,
+            "amount": "50000"
+          }
+        ],
+        "remarks": "大規模ユーザ"
+      },
+      "environments": [],
+      "revision": 2,
+      "id": 13
     }
   ]
 }
