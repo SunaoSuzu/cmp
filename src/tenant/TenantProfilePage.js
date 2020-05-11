@@ -76,7 +76,9 @@ const useStyles = makeStyles((theme) => ({
 export default function TenantProfilePage(props) {
     const conf = getConfiguration();
     const tenantStatusMst = conf.tenantStatusMst;
-    const vpcTypeMst = conf.vpcTypes;
+    const tenantVpcTypeMst = conf.tenantVpcTypeMst;
+    const environmentVpcTypeMst = conf.environmentVpcTypeMst;
+    const environmentStatusMst = conf.environmentStatusMst;
     const classes = useStyles();
     const { requestUpdate , changeProperty } = props;
 
@@ -210,7 +212,7 @@ export default function TenantProfilePage(props) {
                                     margin="dense"
                                     labelId="environment-setting-vpc-label"
                             >
-                                {vpcTypeMst.map((vpc) => (
+                                {tenantVpcTypeMst.map((vpc) => (
                                     <MenuItem value={vpc.id}
                                               key={vpc.id}>
                                         {vpc.caption}
@@ -225,24 +227,56 @@ export default function TenantProfilePage(props) {
                             <h4>基礎情報</h4>
                             <TextField name={"environments." + index + ".name"}  onChange={uiToJson}
                                        id="standard-env-name" label="環境名" value={env.name}
+                                       margin="dense"
                                        helperText="環境名を入れてください" />
-                            <TextField name={"environments." + index + ".statusCaption"}  onChange={uiToJson}
-                                       id="standard-env-status" label="状態" value={env.statusCaption}
-                                       inputProps={{
-                                           readOnly: true,
-                                       }}
-                                       helperText="状態" />
-                            <TextField name={"environments." + index + ".vpcTypeCaption"}  onChange={uiToJson}
-                                       id="standard-env-vpc-type" label="VPCタイプ" value={env.vpcTypeCaption}
-                                       InputProps={{
-                                           readOnly: true,
-                                       }}
-                                       helperText="VPCタイプ" />
+                            <FormControl className={classes.formControl} >
+                                <InputLabel shrink id="environment-status-label" >ステータス</InputLabel>
+                                <Select name={"environments." + index + ".status"}  onChange={uiToJson}
+                                        id="standard-env-status"
+                                        value={env.status}
+                                        inputProps={{
+                                            readOnly: true,
+                                        }}
+                                        label="ステータス" helperText="ステータス"
+                                        margin="dense"
+                                        labelId="environment-status-label"
+                                >
+                                    {environmentStatusMst.map((status) => (
+                                        <MenuItem value={status.id}
+                                                  key={status.id}>
+                                            {status.caption}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                <FormHelperText>ステータス</FormHelperText>
+                            </FormControl>
+                            <FormControl className={classes.formControl} >
+                                <InputLabel shrink id="standard-env-vpc-type-label" >VPC方針</InputLabel>
+                                <Select name={"environments." + index + ".vpcType"} onChange={uiToJson}
+                                        id="standard-env-vpc-type"
+                                        value={env.vpcType}
+                                        inputProps={{
+                                            readOnly: true,
+                                        }}
+                                        label="VPC方針" helperText="VPC方針"
+                                        margin="dense"
+                                        labelId="standard-env-vpc-type-label"
+                                >
+                                    {environmentVpcTypeMst.map((vpc) => (
+                                        <MenuItem value={vpc.id}
+                                                  key={vpc.id}>
+                                            {vpc.caption}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                <FormHelperText>VPC作成方針</FormHelperText>
+                            </FormControl>
                             <TextField name={"environments." + index + ".specLevel"}  onChange={uiToJson}
                                        id="standard-env-spec-level" label="SPECレベル" value={env.specLevel}
                                        inputProps={{
                                            readOnly: true,
                                        }}
+                                       margin="dense"
                                        helperText="SPECレベル" />
                             <h4>コンポーネント</h4>
                             {env.mainComponents.map((component,c ) => (
@@ -262,6 +296,7 @@ export default function TenantProfilePage(props) {
                                                            inputProps={{
                                                            }}
                                                            key={i}
+                                                           margin="dense"
                                                            helperText={param.caption} />
 
                                             ))}
