@@ -27,11 +27,18 @@ const productGridColumnsDef = {
      3:   {caption : 'Patch' , propName : 'patch'},
 };
 
-const vpcTypeMst = {
+const tenantVpcTypeMst = {
     1: {id: 1 , caption : "環境毎にVPC"    , description : "環境数分VPCの作成を行います" },
     2: {id: 2 , caption : "テナント毎にVPC" , description : "テナント専用VPCに全環境を構築します"},
     9: {id: 9 , caption : "マルチテナント"  , description : "マルチテナント環境に配備します"},
 };
+
+const environmentVpcTypeMst = {
+    1: {id: 1 , caption : "独自VPC"          , description : "環境数分VPCの作成を行います" },
+    2: {id: 2 , caption : "テナントVPC"       , description : "テナント専用VPCに全環境を構築します"},
+    9: {id: 9 , caption : "マルチテナントVPC"  , description : "マルチテナント環境に配備します"},
+};
+
 
 const landscapeTypeMst = {
     1: {id: 1 , caption : "開発環境"  , description : "開発専用の環境です", use:1},
@@ -69,8 +76,6 @@ export const installableComponentConf = {
         {name : "p1"  , caption : "パラメータ1", default : "" , now : "hoge" , pattern : ["","hoge","foo"]},
         {name : "p2"  , caption : "パラメータ2", default : "" , now : "hoge" , pattern : ["","hoge","foo"]},
         {name : "p3"  , caption : "パラメータ3", default : "" , now : "hoge" , pattern : ["","hoge","foo"]},
-        {name : "p4"  , caption : "パラメータ4", default : "" , now : "hoge" , pattern : ["","hoge","foo"]},
-        {name : "p5"  , caption : "パラメータ5", default : "" , now : "hoge" , pattern : ["","hoge","foo"]},
         ]     },
     "CJK_DB" : { id : 2  , name:"CJK_DB" , caption : "CJK_DB", type:2, params: [
         {name : "p1"  , caption : "param1", default : "" , now : "hoge" , pattern : ["","hoge","foo"]},
@@ -98,7 +103,9 @@ const whi_configuration = {
     tenantStatusMst:tenantStatusMst,
     requiredComponent : requiredComponentConf,
     installableComponentConf : installableComponentConf,
-    vpcTypes : [vpcTypeMst[1],vpcTypeMst[2]],
+    tenantVpcTypeMst : [tenantVpcTypeMst[1],tenantVpcTypeMst[2]],
+    environmentVpcTypeMst : [environmentVpcTypeMst[1],environmentVpcTypeMst[2]],
+
     landscapeTypes : [landscapeTypeMst[1],landscapeTypeMst[10],landscapeTypeMst[100]],
     productLicensesConf : [productLicensesConf["CJK"],productLicensesConf["CWS"],productLicensesConf["CSR"],productLicensesConf["CTM"]],
     environmentStatusMst : environmentStatusMst,
