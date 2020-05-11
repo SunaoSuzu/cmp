@@ -12,8 +12,10 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
 
-JSON-Server is working for development with port 3011
+JSON-Server is working for development with port 3011.
+See package.json about this.
 .env file is the place url is written.
+(Sunao is written this)
 
 ### `npm test`
 
