@@ -46,6 +46,12 @@ function* handleRequestData(action) {
 function* handleRequestUpdate(action) {
     try {
         const data = action.data;
+        let currentRevision = data["revision"];
+        if(currentRevision===null){
+            //for dirty data
+            currentRevision=1;
+        }
+        data["revision"]=currentRevision+1;
         const res = yield axios.put(baseEndPoint + `/tenant/` + data.id , data)
         yield put(
             {
@@ -64,6 +70,7 @@ function* handleRequestUpdate(action) {
 function* handleRequestAdd(action) {
     try {
         const data = action.data;
+        data["revision"]=1;
         const res = yield axios.post(baseEndPoint + `/tenant` , data)
         yield put(
             {
@@ -125,7 +132,7 @@ function sleep(waitMsec) {
     var startMsec = new Date();
 
     // 指定ミリ秒間だけループさせる（CPUは常にビジー状態）
-    while (new Date() - startMsec < waitMsec){};
+    while (new Date() - startMsec < waitMsec){}
 }
 
 export default mySaga;
