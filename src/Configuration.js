@@ -1,20 +1,22 @@
+import DashboardIcon from "@material-ui/icons/DashboardOutlined";
+import InboxIcon from "@material-ui/icons/MoveToInbox";
 // 設定系の　JSON
 // Mst 仕様
 // Conf (configuration) 顧客定義(のちにテナント毎にデータを分ける)
 
 const menuIconsDef= {
-    1:{menuId:1 , caption : "Activity" , icon:"" , appTo:"/activity"},
-    2:{menuId:2 , caption : "テナント" , icon:"", appTo:"/tenant" },
-    3:{menuId:3 , caption : "プロダクト" , icon:"", appTo:"/product" },
-    4:{menuId:4 , caption : "作業予実" , icon:"", appTo:"/operation" },
-    5:{menuId:5 , caption : "通知" , icon:"" , appTo:"/home"},
-    11:{menuId:11 , caption : "AWS Asset" , icon:"" , appTo:"/aws/asset"},
+    1:{menuId:1 ,   caption : "Activity" ,  icon: DashboardIcon , appTo:"/activity"},
+    2:{menuId:2 ,   caption : "テナント" ,    icon:DashboardIcon, appTo:"/tenant" },
+    3:{menuId:3 ,   caption : "プロダクト" ,  icon:DashboardIcon, appTo:"/product" },
+    4:{menuId:4 ,   caption : "作業予実" ,    icon:DashboardIcon, appTo:"/operation" },
+    5:{menuId:5 ,   caption : "通知" ,       icon:DashboardIcon , appTo:"/home"},
+    11:{menuId:11 , caption : "AWS Asset" , icon:DashboardIcon , appTo:"/aws/asset"},
 };
 
 const reportIconsDef= {
-    11:{reportId:11 , caption : "レポート" , icon:"" ,reportTo:"/report"},
-    12:{reportId:12 , caption : "レポート2" , icon:"" ,reportTo:"/report"},
-    13:{reportId:13 , caption : "レポート" , icon:"" ,reportTo:"/report"},
+    11:{reportId:11 , caption : "レポート" , icon:InboxIcon ,reportTo:"/report"},
+    12:{reportId:12 , caption : "レポート2" , icon:InboxIcon ,reportTo:"/report"},
+    13:{reportId:13 , caption : "レポート" , icon:InboxIcon ,reportTo:"/report"},
 };
 
 const tenantListGridColumnsDef = {

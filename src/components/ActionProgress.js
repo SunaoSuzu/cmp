@@ -12,10 +12,10 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ActionProgress() {
     const classes = useStyles();
-
+    const open=true;
     return (
         <div>
-            <Backdrop className={classes.backdrop} open="true">
+            <Backdrop className={classes.backdrop} open={open} >
                 <CircularProgress color="inherit" />
             </Backdrop>
         </div>
