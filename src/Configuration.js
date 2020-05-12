@@ -1,12 +1,14 @@
 import DashboardIcon from "@material-ui/icons/DashboardOutlined";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
+import AccountBoxIcon from "@material-ui/icons/AccountBoxOutlined";
+
 // 設定系の　JSON
 // Mst 仕様
 // Conf (configuration) 顧客定義(のちにテナント毎にデータを分ける)
 
 const menuIconsDef= {
     1:{menuId:1 ,   caption : "Activity" ,  icon: DashboardIcon , appTo:"/activity"},
-    2:{menuId:2 ,   caption : "テナント" ,    icon:DashboardIcon, appTo:"/tenant" },
+    2:{menuId:2 ,   caption : "テナント" ,    icon:AccountBoxIcon, appTo:"/tenant" },
     3:{menuId:3 ,   caption : "プロダクト" ,  icon:DashboardIcon, appTo:"/product" },
     4:{menuId:4 ,   caption : "作業予実" ,    icon:DashboardIcon, appTo:"/operation" },
     5:{menuId:5 ,   caption : "通知" ,       icon:DashboardIcon , appTo:"/home"},
