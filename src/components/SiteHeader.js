@@ -21,7 +21,6 @@ import Divider from "@material-ui/core/Divider";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import SideMenu from "./SideMenu";
 
-
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -285,9 +284,6 @@ export default function SiteHeader(prop) {
                     <Link to="/home" >
                         <SuTechIcon onClick={prop.selectHome}/>
                     </Link>
-                    <Typography className={classes.title} variant="h6" noWrap>
-                        Cloud Mangaement Platform
-                    </Typography>
                     <div className={classes.search}>
                         <div className={classes.searchIcon}>
                             <SearchIcon />
