@@ -1,24 +1,31 @@
 import DashboardIcon from "@material-ui/icons/DashboardOutlined";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import AccountBoxIcon from "@material-ui/icons/AccountBoxOutlined";
+import BusinessIcon from '@material-ui/icons/Business';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import AssignmentIcon from '@material-ui/icons/Assignment';
+import CodeIcon from '@material-ui/icons/Code';
+import ReportIcon from '@material-ui/icons/Report';
+import NoteIcon from '@material-ui/icons/Note';
 
 // 設定系の　JSON
 // Mst 仕様
 // Conf (configuration) 顧客定義(のちにテナント毎にデータを分ける)
 
 const menuIconsDef= {
-    1:{menuId:1 ,   caption : "Activity" ,  icon: DashboardIcon , appTo:"/activity"},
-    2:{menuId:2 ,   caption : "テナント" ,    icon:AccountBoxIcon, appTo:"/tenant" },
-    3:{menuId:3 ,   caption : "プロダクト" ,  icon:DashboardIcon, appTo:"/product" },
-    4:{menuId:4 ,   caption : "作業予実" ,    icon:DashboardIcon, appTo:"/operation" },
-    5:{menuId:5 ,   caption : "通知" ,       icon:DashboardIcon , appTo:"/home"},
-    11:{menuId:11 , caption : "AWS Asset" , icon:DashboardIcon , appTo:"/aws/asset"},
+    1:{menuId:1 ,   caption : "Activity" ,  icon: AccountBoxIcon , appTo:"/activity"},
+    2:{menuId:2 ,   caption : "テナント" ,    icon:BusinessIcon, appTo:"/tenant" },
+    3:{menuId:3 ,   caption : "プロダクト" ,  icon:CodeIcon, appTo:"/product" },
+    4:{menuId:4 ,   caption : "作業予実" ,    icon:AssignmentIcon, appTo:"/operation" },
+    5:{menuId:5 ,   caption : "通知" ,       icon:NotificationsIcon , appTo:"/home"},
+    11:{menuId:11 , caption : "AWS Asset" , icon:CloudDownloadIcon , appTo:"/aws/asset"},
 };
 
 const reportIconsDef= {
-    11:{reportId:11 , caption : "レポート" , icon:InboxIcon ,reportTo:"/report"},
-    12:{reportId:12 , caption : "レポート2" , icon:InboxIcon ,reportTo:"/report"},
-    13:{reportId:13 , caption : "レポート" , icon:InboxIcon ,reportTo:"/report"},
+    11:{reportId:11 , caption : "レポート" , icon:DashboardIcon ,reportTo:"/report"},
+    12:{reportId:12 , caption : "レポート2" , icon:ReportIcon ,reportTo:"/report"},
+    13:{reportId:13 , caption : "レポート" , icon:NoteIcon ,reportTo:"/report"},
 };
 
 const tenantListGridColumnsDef = {
