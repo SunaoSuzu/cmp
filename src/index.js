@@ -9,15 +9,22 @@ import createStore from './NavigationStore';
 import { ConnectedRouter } from 'connected-react-router'
 import history from './asset/history';
 import {Route, Switch} from "react-router";
+import theme from "./theme";
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { ThemeProvider } from '@material-ui/core/styles';
+
 
 const store = createStore();
 ReactDOM.render(
   <React.StrictMode>
       <Provider store={store} >
           <ConnectedRouter history={history}>
-              <Switch>
-                  <Route path="/" component={App}></Route>
-              </Switch>
+              <ThemeProvider theme={theme} >
+                  <CssBaseline />
+                  <Switch>
+                      <Route path="/" component={App} />
+                  </Switch>
+              </ThemeProvider>
           </ConnectedRouter>
       </Provider>
   </React.StrictMode>,

@@ -1,6 +1,5 @@
 import React , { Component } from 'react';
-import SuTechGrid from "../asset/SuTechGrid";
-import TenantList from "../tenant/TenantList";
+import SuTechGrid from "../components/SuTechGrid";
 
 class ActivityList extends Component {
 

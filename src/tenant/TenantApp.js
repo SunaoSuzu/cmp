@@ -1,11 +1,11 @@
 import React from "react";
-import {Link, Route, useRouteMatch , Switch} from "react-router-dom";
+import {Route, useRouteMatch , Switch} from "react-router-dom";
 import NewTenant from "./NewTenant";
 import TenantList from "./TenantList";
 import TenantDetail from "./TenantProfile";
-import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Paper from "@material-ui/core/Paper";
 import {makeStyles} from "@material-ui/core/styles";
+import PageTitle from "../components/PageTitle";
 
 const useStyles = makeStyles((theme) => ({
     appHeader: {
@@ -34,27 +34,18 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function TenantApp(props) {
+export default function TenantApp() {
     const classes = useStyles();
     let { path } = useRouteMatch();
 
-    let breadcrumbStack=props.breadcrumbStack;
-
     return (
         <React.Fragment>
-            <Paper elevation={3} className={classes.appHeader}>
-                <div className={classes.appHeaderWrap}>
+            <div className={classes.appHeaderWrap}>
 
-                    <h2 className={classes.appTitle}>テナントプロファイル</h2>
-                    <Breadcrumbs aria-label="breadcrumb" className={classes.appBreadcrumbs}>
-                        {breadcrumbStack.map((step,index ) => (
-                            <Link to={step.to} onClick={props.selectList} className={classes.appBreadcrumbs} key={index}>
-                                {step.caption}
-                            </Link>
-                        ))}
-                    </Breadcrumbs>
-                </div>
-            </Paper>
+                <PageTitle>
+                    テナントプロファイル
+                </PageTitle>
+            </div>
             <Paper elevation={3} className={classes.appContent}>
                 <Switch>
                     <Route exact path={path + "/list"} component={TenantList} />

@@ -3,11 +3,12 @@
 // Conf (configuration) 顧客定義(のちにテナント毎にデータを分ける)
 
 const menuIconsDef= {
-    1: {menuId:1 , caption : "Activity" , icon:"" , appTo:"/activity"},
+    1:{menuId:1 , caption : "Activity" , icon:"" , appTo:"/activity"},
     2:{menuId:2 , caption : "テナント" , icon:"", appTo:"/tenant" },
     3:{menuId:3 , caption : "プロダクト" , icon:"", appTo:"/product" },
     4:{menuId:4 , caption : "作業予実" , icon:"", appTo:"/operation" },
     5:{menuId:5 , caption : "通知" , icon:"" , appTo:"/home"},
+    11:{menuId:11 , caption : "AWS Asset" , icon:"" , appTo:"/aws/asset"},
 };
 
 const reportIconsDef= {
@@ -47,14 +48,14 @@ const landscapeTypeMst = {
     200: {id: 200 , caption : "訓練環境"    , description : "本番ユーザがオペレーションを訓練する環境" , use:1},
 };
 
-export const environmentStatusMst = [
+const environmentStatusMst = [
     {id: 1 , caption : "未作成（予定なし）"  , description : "下書き", use:1},
     {id: 10 , caption : "未作成（予定あり）" , description : "作業待ち", use:1},
     {id: 100 , caption : "作成済み"    , description : "作成済み（予定なし）" , use:1},
     {id: 200 , caption : "作成済み(予定あり)"    , description : "作成済み（予定あり）" , use:1},
 ];
 
-export const tenantStatusMst = [
+const tenantStatusMst = [
     {id: 1 , caption : "下書き"  , description : "下書き", use:1},
     {id: 10 , caption : "導入中" , description : "作業待ち", use:1},
     {id: 100 , caption : "本番稼働"    , description : "作成済み（予定なし）" , use:1},
@@ -63,7 +64,7 @@ export const tenantStatusMst = [
 
 //以下は設定ではなくマスタ。将来は不要になるはず
 //販売製品
-export const productLicensesConf = {
+const productLicensesConf = {
     "CJK" : { id : 1 , name:"CJK" , caption : "CJK"  , options : []   },
     "CWS" : { id : 2 , name:"CWS" , caption : "CWS"  , options : []   },
     "CSR" : { id : 3 , name:"CSR" , caption : "CSR"  , options : []   },
@@ -71,7 +72,7 @@ export const productLicensesConf = {
 };
 
 
-export const installableComponentConf = {
+const installableComponentConf = {
     "CJK_AP" : { id : 1  , name:"CJK_AP" , caption : "CJK_AP", type:1, params: [
         {name : "p1"  , caption : "パラメータ1", default : "" , now : "hoge" , pattern : ["","hoge","foo"]},
         {name : "p2"  , caption : "パラメータ2", default : "" , now : "hoge" , pattern : ["","hoge","foo"]},
@@ -91,15 +92,23 @@ export const installableComponentConf = {
     "CTM_BS" : { id : 10 , name:"CTM_BS" , caption : "CTM_BS", type:3, params: []     },
 };
 
-export const requiredComponentConf = {
+const requiredComponentConf = {
     "CJK"    : { "main" : ["CJK_AP","CJK_DB","CJK_BS" ] , sub : []},
     "CWS" : { "main" : ["CWS_AP","CWS_DB","CWS_BS", "CWS_DL" ] , "sub" : ["CJK_AP","CJK_DB","CJK_BS" ]},
     "CSR" : { "main" : [] , "sub" : ["CWS_AP","CWS_DB","CWS_BS", "CWS_DL" , "CJK_AP","CJK_DB","CJK_BS" ]},
     "CTM"    : { "main" : ["CTM_AP","CTM_DB","CTM_ES" , "CTM_BS" ] , sub : []},
 }
 
+const awsTagUsage = {
+    flg : true ,
+    tenant : "tenant",
+    environment : "landscape",
+    system : "system",
+    component : "component" ,
+}
 
 const whi_configuration = {
+    tagUsage : awsTagUsage,
     tenantStatusMst:tenantStatusMst,
     requiredComponent : requiredComponentConf,
     installableComponentConf : installableComponentConf,
@@ -110,7 +119,7 @@ const whi_configuration = {
     productLicensesConf : [productLicensesConf["CJK"],productLicensesConf["CWS"],productLicensesConf["CSR"],productLicensesConf["CTM"]],
     environmentStatusMst : environmentStatusMst,
 
-    menuIcons : [ menuIconsDef[1] , menuIconsDef[2],menuIconsDef[3],menuIconsDef[4],menuIconsDef[5]],
+    menuIcons : [ menuIconsDef[1] , menuIconsDef[2],menuIconsDef[3],menuIconsDef[4],menuIconsDef[5],menuIconsDef[11]],
     reportIcons : [ reportIconsDef[11] , reportIconsDef[12]],
     tenantListGridConf : { columnsDef :[
             tenantListGridColumnsDef[1],tenantListGridColumnsDef[2]

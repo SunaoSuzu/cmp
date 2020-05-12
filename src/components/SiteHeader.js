@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from "clsx";
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -13,30 +14,92 @@ import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import SuTechIcon from "../asset/SuTechIcon";
-import {NavLink, Link} from "react-router-dom";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
+import SuTechIcon from "./SuTechIcon";
+import {Link} from "react-router-dom";
 import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
 import Divider from "@material-ui/core/Divider";
-
-import Configuration from "../Configuration";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import SideMenu from "./SideMenu";
 
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
+    toolbar: {
+        paddingRight: 24 // keep right padding when drawer closed
+    },
+    toolbarIcon: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        padding: "0 8px",
+        ...theme.mixins.toolbar,
+        "& Button": {
+            color: "rgba(255,255,255,0.54)"
+        }
+    },
     appBar: {
+        marginLeft: theme.spacing(2),
+        width: `calc(100% -  ` + theme.spacing(7) + `px)`,
+        [theme.breakpoints.up("sm")]: {
+            width: `calc(100% -  ` + theme.spacing(9) + `px)`
+        },
+        //backgroundColor: theme.palette.background.appbar,
+        //color: theme.palette.text.appbar,
         zIndex: theme.zIndex.drawer + 1,
+        transition: theme.transitions.create(["width", "margin"], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen
+        })
+    },
+    appBarShift: {
+        marginLeft: drawerWidth,
+        width: `calc(100% - ${drawerWidth}px)`,
+        transition: theme.transitions.create(["width", "margin"], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen
+        })
+    },
+    menuButton: {
+        marginRight: 5
+    },
+    menuButtonHidden: {
+        display: "none"
+    },
+    logo: {
+        flexGrow: 1
+    },
+    drawerPaper: {
+        position: "relative",
+        whiteSpace: "nowrap",
+        width: drawerWidth,
+        transition: theme.transitions.create("width", {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen
+        })
+    },
+    drawerPaperClose: {
+        overflowX: "hidden",
+        transition: theme.transitions.create("width", {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen
+        }),
+        width: theme.spacing(7),
+        [theme.breakpoints.up("sm")]: {
+            width: theme.spacing(9)
+        }
+    },
+    paper: {
+        padding: theme.spacing(2),
+        display: "flex",
+        overflow: "auto",
+        flexDirection: "column"
+    },
+    fixedHeight: {
+        height: 240
     },
     grow: {
         flexGrow: 1,
-    },
-    menuButton: {
-        marginRight: theme.spacing(2),
     },
     title: {
         display: 'none',
@@ -97,23 +160,25 @@ const useStyles = makeStyles((theme) => ({
         width: drawerWidth,
         flexShrink: 0,
     },
-    drawerPaper: {
-        width: drawerWidth,
-    },
     drawerContainer: {
         overflow: 'auto',
     },
     menuLink:{
         textDecoration : "none" ,
     },
+    menuIcon: {
+        color: "#eee",
+        marginLeft: 8,
+        minWitdh: 48,
+        "& svg": {
+            opacity: 0.5
+        }
+    }
 }));
 
 
 
 export default function SiteHeader(prop) {
-    const conf = Configuration();
-    const menuIcons = conf.menuIcons;
-    const reportIcons = conf.reportIcons;
     const classes=useStyles();
     const { selectMenu,selectReport  } = prop;
     const { functionType , selectedMenuId,selectedReportId } = prop;
@@ -174,6 +239,7 @@ export default function SiteHeader(prop) {
         </Menu>
     );
 
+    const open = state[anchor];
     const mobileMenuId = 'primary-search-account-menu-mobile';
     const renderMobileMenu = (
         <Menu
@@ -211,17 +277,11 @@ export default function SiteHeader(prop) {
 
     return (
         <React.Fragment>
-            <AppBar className={classes.appBar}>
-                <Toolbar>
-                    <IconButton
-                        edge="start"
-                        className={classes.menuButton}
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={toggleDrawer('left', true)}
-                    >
-                        <MenuIcon />
-                    </IconButton>
+            <AppBar
+                position="absolute"
+                className={clsx(classes.appBar, open && classes.appBarShift)}
+            >
+                <Toolbar className={classes.toolbar}>
                     <Link to="/home" >
                         <SuTechIcon onClick={prop.selectHome}/>
                     </Link>
@@ -276,63 +336,42 @@ export default function SiteHeader(prop) {
             </AppBar>
             {renderMobileMenu}
             {renderMenu}
-            <Drawer anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}
-                    classes={{
-                        paper: classes.drawerPaper,
-                    }}
+            <Drawer
+                variant="permanent"
+                classes={{
+                    paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose)
+                }}
+                anchor={anchor}
+                open={open}
             >
-
-                <div className={classes.drawerContainer}
-                     tabIndex={0}
-                     role="button"
-                     onClick={toggleDrawer('left', false)}
-                     onKeyDown={toggleDrawer('left', false)}
-
-                >
-                    <List>
-                        {menuIcons.map((menu) => (
-                            <ListItemLink  className={classes.menuLink} key={menu.menuId} id={menu.menuId} onClick={() => selectMenu(menu)}
-                                           to={menu.appTo}
-                                           selected={ functionType==="MENU"&&selectedMenuId===menu.menuId}
-                                           primary={menu.caption} icon={<InboxIcon />}
-                            />
-                        ))}
-                    </List>
-                    <Divider />
-                    <List>
-                        {reportIcons.map((report ) => (
-                            <ListItemLink key={report.reportId} id={report.reportId} onClick={() => selectReport(report)}
-                                          to={"/report/" + report.reportId}
-                                          primary={report.caption} icon={<InboxIcon />}
-                                          selected={ functionType==="REPORT"&&selectedReportId===report.reportId}
-                            />
-                        ))}
-                    </List>
+                <div className={classes.toolbarIcon}>
+                    <IconButton
+                        onClick={toggleDrawer('left', true)}
+                        className={clsx(
+                            classes.menuButton,
+                            open && classes.menuButtonHidden
+                        )}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <IconButton
+                        onClick={toggleDrawer(anchor, false)}
+                        className={clsx(
+                            classes.menuButton,
+                            !open && classes.menuButtonHidden
+                        )}
+                    >
+                        <ChevronLeftIcon />
+                    </IconButton>
                 </div>
+                <Divider/>
+                <SideMenu
+                    selectMenu={selectMenu} selectReport={selectReport}
+                    functionType={functionType}
+                    selectedMenuId={selectedMenuId} selectedReportId={selectedReportId}
+                />
+                <Divider/>
             </Drawer>
         </React.Fragment>
     );
 }
-
-
-
-function ListItemLink(props) {
-    const { icon, primary, to, id , onClick , selected,className } = props;
-
-    const renderLink = React.useMemo(
-        () => React.forwardRef((itemProps, ref) => <NavLink to={to} ref={ref} className="className" {...itemProps} />),
-        [to],
-    );
-
-    return (
-        <li>
-            <ListItem button key={id} component={renderLink} selected={selected} onClick={onClick} className={className}>
-                {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
-                <ListItemText primary={primary} />
-            </ListItem>
-        </li>
-    );
-}
-
-
-

@@ -1,10 +1,10 @@
 import React from "react";
-import SuTechGrid from "../asset/SuTechGrid";
+import SuTechGrid from "../components/SuTechGrid";
 import * as tenantAppModule from "./TenantAppModule";
 import {connect} from "react-redux";
-import CircularProgress from '@material-ui/core/CircularProgress';
 import FabLink from "../asset/FabLink";
 import getConfiguration from "../Configuration";
+import ActionProgress from "../components/ActionProgress";
 
 
 function TenantList(props) {
@@ -13,10 +13,10 @@ function TenantList(props) {
 
     if (props.loadSuccess===tenantAppModule.yet){
         props.requestGetList();
-        return       <CircularProgress />
+        return        <ActionProgress/>;
     }
     if (props.loadSuccess===tenantAppModule.requested||props.deleteComplete===tenantAppModule.syncing){
-        return       <CircularProgress />
+        return        <ActionProgress/>;
     }
     if(props.loadSuccess===tenantAppModule.loadSuccess){
         return (

@@ -1,21 +1,21 @@
 import NewTenantPage from "./NewTenentPage";
-import {connect} from "react-redux";
 import * as tenantAppModule from "./TenantAppModule";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import ActionProgress from "../components/ActionProgress";
 import React from "react";
 import { Redirect } from 'react-router-dom';
+import {connect} from "react-redux";
 
 function NewTenant(props) {
 
     if(props.addComplete === tenantAppModule.syncing) {
-        return <CircularProgress/>
+        return <ActionProgress/>
     }else if (props.addComplete === tenantAppModule.synced){
         return <Redirect to={'/tenant/profile/' + props.newData.id} />
     }else{
         if(props.newData.name===undefined){
             //HOT DEPLOYで進められるようにする
             props.selectGoToAdd();
-            return <CircularProgress/>;
+            return <ActionProgress />;
         }
 
         return <NewTenantPage addComplete={props.addComplete}
