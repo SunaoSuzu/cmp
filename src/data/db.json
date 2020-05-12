@@ -1,8 +1,38 @@
 {
+  "aws": [
+    {
+      "ec2": {
+        "error": {
+          "message": "Missing credentials in config, if using AWS_CONFIG_FILE, set AWS_SDK_LOAD_CONFIG=1",
+          "code": "CredentialsError",
+          "time": "2020-05-11T11:07:26.459Z",
+          "originalError": {
+            "message": "No credentials to load",
+            "code": "CredentialsError",
+            "time": "2020-05-11T11:07:26.459Z"
+          }
+        }
+      },
+      "vpcs": {
+        "error": {
+          "message": "Missing credentials in config, if using AWS_CONFIG_FILE, set AWS_SDK_LOAD_CONFIG=1",
+          "code": "CredentialsError",
+          "time": "2020-05-11T11:07:26.451Z",
+          "originalError": {
+            "message": "No credentials to load",
+            "code": "CredentialsError",
+            "time": "2020-05-11T11:07:26.451Z"
+          }
+        }
+      },
+      "revision": null,
+      "id": 1
+    }
+  ],
   "tenant": [
     {
       "name": "鈴木商事",
-      "alias": "スー",
+      "alias": "スー1",
       "status": 1,
       "statusCaption": "下書き",
       "tags": [
@@ -21,8 +51,102 @@
         ],
         "remarks": "狭いなこの欄なんで広がらないんだろうか。。"
       },
-      "environments": [],
-      "id": 10
+      "environments": [
+        {
+          "name": "開発環境1",
+          "landScape": 1,
+          "status": 1,
+          "statusCaption": "下書き",
+          "specLevel": 2,
+          "vpcType": 1,
+          "vpcTypeCaption": "独自VPC",
+          "mainComponents": [
+            {
+              "id": 1,
+              "name": "CJK_AP",
+              "caption": "CJK_AP",
+              "type": 1,
+              "params": [
+                {
+                  "name": "p1",
+                  "caption": "パラメータ1",
+                  "default": "",
+                  "now": "hoge1",
+                  "pattern": [
+                    "",
+                    "hoge",
+                    "foo"
+                  ]
+                },
+                {
+                  "name": "p2",
+                  "caption": "パラメータ2",
+                  "default": "",
+                  "now": "hoge2",
+                  "pattern": [
+                    "",
+                    "hoge",
+                    "foo"
+                  ]
+                },
+                {
+                  "name": "p3",
+                  "caption": "パラメータ3",
+                  "default": "",
+                  "now": "hoge3",
+                  "pattern": [
+                    "",
+                    "hoge",
+                    "foo"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "name": "CJK_DB",
+              "caption": "CJK_DB",
+              "type": 2,
+              "params": [
+                {
+                  "name": "p1",
+                  "caption": "param1",
+                  "default": "",
+                  "now": "hoge111",
+                  "pattern": [
+                    "",
+                    "hoge",
+                    "foo"
+                  ]
+                },
+                {
+                  "name": "p2",
+                  "caption": "param2",
+                  "default": "",
+                  "now": "hoge1133",
+                  "pattern": [
+                    "",
+                    "hoge",
+                    "foo"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 3,
+              "name": "CJK_BS",
+              "caption": "CJK_BS",
+              "type": 3,
+              "params": []
+            }
+          ],
+          "subComponents": [],
+          "awsTag": "111111"
+        }
+      ],
+      "id": 10,
+      "revision": 3,
+      "awsTag": "suTech"
     },
     {
       "name": "山田商事",
@@ -71,31 +195,6 @@
       },
       "environments": [],
       "id": 12
-    },
-    {
-      "name": "適当正直",
-      "alias": "テキトー２",
-      "status": 1,
-      "statusCaption": "下書き",
-      "tags": [
-        {}
-      ],
-      "environmentSetting": {
-        "vpcType": 1
-      },
-      "contract": {
-        "infraAnnualIncome": "",
-        "details": [
-          {
-            "productMstId": 2,
-            "amount": "50000"
-          }
-        ],
-        "remarks": "大規模ユーザ"
-      },
-      "environments": [],
-      "revision": 2,
-      "id": 13
     }
   ]
 }

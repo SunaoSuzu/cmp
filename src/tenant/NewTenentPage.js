@@ -5,11 +5,10 @@ import Divider from "@material-ui/core/Divider";
 import FormControl from "@material-ui/core/FormControl";
 import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
-
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import AssignmentIcon from "@material-ui/icons/Assignment";
-import {TabPanel} from "./TenantProfilePage";
+import TabPanel from "./TabPanel";
 import ContractDetails from "./ContractDetails";
 
 const useStyles = makeStyles((theme) => ({
@@ -98,14 +97,21 @@ export default function NewTenantPage(props) {
                         <TextField name="name" onChange={uiToJson} id="standard-basic"
                                    label="テナント名"  helperText="会社名を入れてください"
                                    margin="normal" required
-                                   value={targetData.name === null ? "": targetData.name}
+                                   value={targetData.name}
                         />
                     </FormControl>
                     <FormControl variant="outlined" className={classes.formControl}>
                         <TextField name="alias" onChange={uiToJson}
                                    id="standard-basic-alias" label="略称"
                                    helperText="略称を入れてください"
-                                   value={targetData.alias === null ? "": targetData.alias}
+                                   value={targetData.alias}
+                        />
+                    </FormControl>
+                    <FormControl variant="outlined" className={classes.formControl}>
+                        <TextField name="tag(aws)" onChange={uiToJson}
+                                   id="standard-basic-awsTag" label="awsTag"
+                                   helperText="tag(aws)を入れてください"
+                                   value={targetData.awsTag}
                         />
                     </FormControl>
                 </div>

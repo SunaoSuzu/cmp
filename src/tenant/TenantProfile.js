@@ -2,10 +2,7 @@ import React from "react";
 import * as tenantAppModule from "./TenantAppModule";
 import {connect} from "react-redux";
 import TenantProfilePage from "./TenantProfilePage";
-import CircularProgress from "@material-ui/core/CircularProgress";
-
-//
-
+import ActionProgress from "../components/ActionProgress";
 
 function TenantProfile(props) {
     const tenantId=props.match.params.tenantId;
@@ -14,12 +11,12 @@ function TenantProfile(props) {
     switch (getDetailComplete) {
         case tenantAppModule.yet:
             requestLoadDetail(tenantId);
-            return       <CircularProgress />;
+            return        <ActionProgress/>;
         case tenantAppModule.requested:
-            return       <CircularProgress />;
+            return       <ActionProgress/>;
         case tenantAppModule.loadSuccess:
             if(updateComplete===tenantAppModule.syncing){
-                return       <CircularProgress />;
+                return       <ActionProgress/>;
             }else{
                 return (
                     <React.Fragment>

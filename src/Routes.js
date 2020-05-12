@@ -9,6 +9,7 @@ import TenantSubApp from "./tenant/TenantSubApp";
 import ProductApp from "./product/ProductApp";
 import OperationApp from "./operation/OperationApp";
 import ReportApp from "./report/ReportApp";
+import AwsSubApp from "./aws/AwsSubApp";
 
 const Routes = ({ match }) =>
             <Switch>
@@ -22,6 +23,7 @@ const Routes = ({ match }) =>
                     <Route path={`${match.url}operation`} component={OperationApp}/>
                     <Route exact path={`${match.url}report`} component={ReportApp}/>
                     <Route path={`${match.url}report/:reportId`} component={ReportApp}/>
+                    <Route path={`${match.url}aws`} component={AwsSubApp}/>
             </Switch>;
 
 
