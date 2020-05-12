@@ -147,7 +147,7 @@ const EnvironmentDetail = (props) => {
                                     <Typography className={classes.heading}>{component.name}</Typography>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails>
-                                    {component.params.map((param , i) => (
+                                    {component.params != null ? component.params.map((param , i) => (
                                         <TextField name={"environments." + index + ".mainComponents." + c + ".params." + i + ".now"}  onChange={uiToJson}
                                                    id={"standard-env-params-" + i} label={param.caption} value={param.now}
                                                    inputProps={{
@@ -156,7 +156,7 @@ const EnvironmentDetail = (props) => {
                                                    margin="dense"
                                                    helperText={param.caption} />
 
-                                    ))}
+                                    )) : ""}
                                 </ExpansionPanelDetails>
                             </ExpansionPanel>
 
