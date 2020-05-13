@@ -141,6 +141,7 @@ if( vpc.add===true ){
     //VPC＋αを作る
     //VPCにタグを付ける（名前もタグ？）
     //https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createVpc-property
+    //CLIの例（メソッド構造はjsとほぼ同様）https://docs.aws.amazon.com/ja_jp/vpc/latest/userguide/vpc-subnets-commands-example.html
     console.log("vpc:" + vpc.name);
     vpc.tags.map(function (tag) {
         console.log("tag:" + tag.name + "=" + tag.value);
@@ -151,7 +152,6 @@ vpc.ec2.map(function (instance) {
     if(instance.add){
         //上のVPC上にEC2を作って必要な設定を施していく
         //https://docs.aws.amazon.com/ja_jp/sdk-for-javascript/v2/developer-guide/ec2-example-creating-an-instance.html
-        //CLIの例（メソッド構造はjsとほぼ同様）https://docs.aws.amazon.com/ja_jp/vpc/latest/userguide/vpc-subnets-commands-example.html
 
         console.log("ec2:" + instance.instanceType);
 
