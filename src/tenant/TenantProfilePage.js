@@ -59,7 +59,7 @@ export default function TenantProfilePage(props) {
     const tenantStatusMst = conf.tenantStatusMst;
     const tenantVpcTypeMst = conf.tenantVpcTypeMst;
     const classes = useStyles();
-    const { requestUpdate , changeProperty } = props;
+    const { requestUpdate , changeProperty , attachAws } = props;
 
     const [tabValue, setValue] = React.useState(0);
 
@@ -222,6 +222,14 @@ export default function TenantProfilePage(props) {
                                 env = {env}
                                 uiToJson = {uiToJson}
                                 key = {index}
+                                attachAws={attachAws}
+                                tenant = {targetData}
+                                attachedAwsInfo={props.attachedAwsInfo}
+                                attachAwsCompleted={props.attachAwsCompleted}
+                                requestGetOperation={props.requestGetOperation}
+                                requestInvokeOperation={props.requestInvokeOperation}
+                                getOperationCompleted={props.getOperationCompleted}
+                                operations={props.operations}
                             />
                         </TabPanel>
                     ))}

@@ -76,14 +76,16 @@ const tenantStatusMst = [
 //以下は設定ではなくマスタ。将来は不要になるはず
 //販売製品
 const productLicensesConf = {
-    "CJK" : { id : 1 , name:"CJK" , caption : "CJK"  , options : []   },
-    "CWS" : { id : 2 , name:"CWS" , caption : "CWS"  , options : []   },
-    "CSR" : { id : 3 , name:"CSR" , caption : "CSR"  , options : []   },
-    "CTM" : { id : 4 , name:"CTM" , caption : "CTM"  , options : []   },
+    "TEST" : { id : 99 , name:"TEST" , caption : "Ryoさんに作ってもらった試験用"  , options : []   },
+    "CJK" :  { id : 1 ,  name:"CJK" , caption : "CJK"  , options : []   },
+    "CWS" :  { id : 2 ,  name:"CWS" , caption : "CWS"  , options : []   },
+    "CSR" :  { id : 3 ,  name:"CSR" , caption : "CSR"  , options : []   },
+    "CTM" :  { id : 4 ,  name:"CTM" , caption : "CTM"  , options : []   },
 };
 
 
 const installableComponentConf = {
+    "SpringBootAp" : { id : 99  , name:"SpringBootAp" , caption : "SpringBootAp", type:1, params: []},
     "CJK_AP" : { id : 1  , name:"CJK_AP" , caption : "CJK_AP", type:1, params: [
         {name : "p1"  , caption : "パラメータ1", default : "" , now : "hoge" , pattern : ["","hoge","foo"]},
         {name : "p2"  , caption : "パラメータ2", default : "" , now : "hoge" , pattern : ["","hoge","foo"]},
@@ -104,6 +106,7 @@ const installableComponentConf = {
 };
 
 const requiredComponentConf = {
+    "TEST"    : { "main" : ["SpringBootAp" ] , sub : []},
     "CJK"    : { "main" : ["CJK_AP","CJK_DB","CJK_BS" ] , sub : []},
     "CWS" : { "main" : ["CWS_AP","CWS_DB","CWS_BS", "CWS_DL" ] , "sub" : ["CJK_AP","CJK_DB","CJK_BS" ]},
     "CSR" : { "main" : [] , "sub" : ["CWS_AP","CWS_DB","CWS_BS", "CWS_DL" , "CJK_AP","CJK_DB","CJK_BS" ]},
@@ -114,8 +117,8 @@ const awsTagUsage = {
     flg : true ,
     tenant : "tenant",
     environment : "landscape",
-    system : "system",
-    component : "component" ,
+    system : "",
+    component : "" ,
 }
 
 const whi_configuration = {
@@ -127,7 +130,7 @@ const whi_configuration = {
     environmentVpcTypeMst : [environmentVpcTypeMst[1],environmentVpcTypeMst[2]],
 
     landscapeTypes : [landscapeTypeMst[1],landscapeTypeMst[10],landscapeTypeMst[100]],
-    productLicensesConf : [productLicensesConf["CJK"],productLicensesConf["CWS"],productLicensesConf["CSR"],productLicensesConf["CTM"]],
+    productLicensesConf : [productLicensesConf["TEST"],productLicensesConf["CJK"],productLicensesConf["CWS"],productLicensesConf["CSR"],productLicensesConf["CTM"]],
     environmentStatusMst : environmentStatusMst,
 
     menuIcons : [ menuIconsDef[1] , menuIconsDef[2],menuIconsDef[3],menuIconsDef[4],menuIconsDef[5],menuIconsDef[11]],

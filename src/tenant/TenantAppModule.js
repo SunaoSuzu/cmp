@@ -36,6 +36,19 @@ export const DEL_FROM_ARRAY_NEW = "DEL_FROM_ARRAY_NEW";
 export const NEW_ENV_REQUEST = "NEW_ENV_REQUEST";
 export const NEW_ENV_SUCCESS = "NEW_ENV_SUCCESS";
 
+export const ATTACH_AWS_REQUEST = "ATTACH_AWS_REQUEST";
+export const ATTACH_AWS_SUCCESS = "ATTACH_AWS_SUCCESS";
+export const ATTACH_AWS_FAIL = "ATTACH_AWS_FAIL";
+
+export const GET_OPERATION_REQUEST = "GET_OPERATION_REQUEST";
+export const GET_OPERATION_SUCCESS = "GET_OPERATION_SUCCESS";
+export const GET_OPERATION_FAIL    = "GET_OPERATION_FAIL";
+
+export const INVOKE_OPERATION_REQUEST = "INVOKE_OPERATION_REQUEST";
+export const INVOKE_OPERATION_SUCCESS = "INVOKE_OPERATION_SUCCESS";
+export const INVOKE_OPERATION_FAIL    = "INVOKE_OPERATION_FAIL";
+
+
 export const noNeed = 1;
 export const necessary = 2;
 export const syncing = 3;
@@ -87,6 +100,12 @@ const initialState = {
     deleteComplete : yet,
 
     newEnvComplated : yet,
+
+    attachAwsCompleted : yet ,
+    attachedAwsInfo : null,
+
+    getOperationCompleted : yet ,
+    operations : null,
 };
 
 const breadcrumbStackList = { caption : "テナント一覧" , to : "/tenant/list"};
@@ -163,6 +182,25 @@ export default function reducer(state=initialState, action) {
                 tenantObj.environments = tenantObj.environments.concat(environment);
                 return {...state , newEnvComplated : synced , data : tenantObj};
             }
+        case ATTACH_AWS_REQUEST:
+            return {...state , attachAwsCompleted: requested , attachedAwsInfo: null};
+        case ATTACH_AWS_SUCCESS:
+            return {...state , attachAwsCompleted: loadSuccess , attachedAwsInfo: action.data};
+        case ATTACH_AWS_FAIL:
+            return {...state , attachAwsCompleted: loadFailed , attachedAwsInfo: null};
+        case GET_OPERATION_REQUEST:
+            return {...state , getOperationCompleted: requested , operations: null};
+        case GET_OPERATION_SUCCESS:
+            {
+                let tenantObj = {...state.data}
+                let env = tenantObj.environments[action.envIndex];
+                env["resources"]=action.resources;
+                env["operations"]=action.operations;
+                return {...state , getOperationCompleted: loadSuccess , data : tenantObj , operations: action.resources};
+
+            }
+        case GET_OPERATION_FAIL:
+            return {...state , getOperationCompleted: loadFailed , operations: null};
         default:
                 return state
     }
@@ -271,5 +309,30 @@ export const requestNewEnv = (data) => {
     return {
         type: NEW_ENV_REQUEST,
         data: data
+    }
+};
+
+export const requestAttachAws = (tenantTag , envTag) => {
+    return {
+        type: ATTACH_AWS_REQUEST,
+        tenantTag: tenantTag,
+        envTag: envTag ,
+    }
+};
+
+export const requestGetOperation = (tenant , env, envIndex) => {
+    return {
+        type: GET_OPERATION_REQUEST,
+        tenant: tenant,
+        env: env ,
+        envIndex : envIndex,
+    }
+};
+
+export const requestInvokeOperation = (tenant , env ) => {
+    return {
+        type: INVOKE_OPERATION_REQUEST,
+        tenant: tenant,
+        env: env ,
     }
 };

@@ -1,34 +1,4 @@
 {
-  "aws": [
-    {
-      "ec2": {
-        "error": {
-          "message": "Missing credentials in config, if using AWS_CONFIG_FILE, set AWS_SDK_LOAD_CONFIG=1",
-          "code": "CredentialsError",
-          "time": "2020-05-11T11:07:26.459Z",
-          "originalError": {
-            "message": "No credentials to load",
-            "code": "CredentialsError",
-            "time": "2020-05-11T11:07:26.459Z"
-          }
-        }
-      },
-      "vpcs": {
-        "error": {
-          "message": "Missing credentials in config, if using AWS_CONFIG_FILE, set AWS_SDK_LOAD_CONFIG=1",
-          "code": "CredentialsError",
-          "time": "2020-05-11T11:07:26.451Z",
-          "originalError": {
-            "message": "No credentials to load",
-            "code": "CredentialsError",
-            "time": "2020-05-11T11:07:26.451Z"
-          }
-        }
-      },
-      "revision": null,
-      "id": 1
-    }
-  ],
   "tenant": [
     {
       "name": "鈴木商事",
@@ -136,11 +106,9 @@
               "id": 3,
               "name": "CJK_BS",
               "caption": "CJK_BS",
-              "type": 3,
-              "params": []
+              "type": 3
             }
           ],
-          "subComponents": [],
           "awsTag": "111111"
         }
       ],
@@ -169,8 +137,98 @@
         ],
         "remarks": "なんでこの欄こんな狭いの？\n広がらないんだよね。。。"
       },
-      "environments": [],
-      "id": 11
+      "environments": [
+        {
+          "name": "開発環境",
+          "landScape": 1,
+          "status": 1,
+          "statusCaption": "下書き",
+          "specLevel": 2,
+          "vpcType": 1,
+          "vpcTypeCaption": "独自VPC",
+          "mainComponents": [
+            {
+              "id": 1,
+              "name": "CJK_AP",
+              "caption": "CJK_AP",
+              "type": 1,
+              "params": [
+                {
+                  "name": "p1",
+                  "caption": "パラメータ1",
+                  "default": "",
+                  "now": "hoge",
+                  "pattern": [
+                    "",
+                    "hoge",
+                    "foo"
+                  ]
+                },
+                {
+                  "name": "p2",
+                  "caption": "パラメータ2",
+                  "default": "",
+                  "now": "hoge",
+                  "pattern": [
+                    "",
+                    "hoge",
+                    "foo"
+                  ]
+                },
+                {
+                  "name": "p3",
+                  "caption": "パラメータ3",
+                  "default": "",
+                  "now": "hoge",
+                  "pattern": [
+                    "",
+                    "hoge",
+                    "foo"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "name": "CJK_DB",
+              "caption": "CJK_DB",
+              "type": 2,
+              "params": [
+                {
+                  "name": "p1",
+                  "caption": "param1",
+                  "default": "",
+                  "now": "hoge",
+                  "pattern": [
+                    "",
+                    "hoge",
+                    "foo"
+                  ]
+                },
+                {
+                  "name": "p2",
+                  "caption": "param2",
+                  "default": "",
+                  "now": "hoge",
+                  "pattern": [
+                    "",
+                    "hoge",
+                    "foo"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 3,
+              "name": "CJK_BS",
+              "caption": "CJK_BS",
+              "type": 3
+            }
+          ]
+        }
+      ],
+      "id": 11,
+      "revision": null
     },
     {
       "name": "佐藤商事",
@@ -193,8 +251,98 @@
         ],
         "remarks": "狭いよここ\n画面ダサい。。\n"
       },
-      "environments": [],
-      "id": 12
+      "environments": [
+        {
+          "name": "開発環境",
+          "landScape": 1,
+          "status": 1,
+          "statusCaption": "下書き",
+          "specLevel": 2,
+          "vpcType": 1,
+          "vpcTypeCaption": "独自VPC",
+          "mainComponents": [
+            {
+              "id": 1,
+              "name": "CJK_AP",
+              "caption": "CJK_AP",
+              "type": 1,
+              "params": [
+                {
+                  "name": "p1",
+                  "caption": "パラメータ1",
+                  "default": "",
+                  "now": "hoge",
+                  "pattern": [
+                    "",
+                    "hoge",
+                    "foo"
+                  ]
+                },
+                {
+                  "name": "p2",
+                  "caption": "パラメータ2",
+                  "default": "",
+                  "now": "hoge",
+                  "pattern": [
+                    "",
+                    "hoge",
+                    "foo"
+                  ]
+                },
+                {
+                  "name": "p3",
+                  "caption": "パラメータ3",
+                  "default": "",
+                  "now": "hoge",
+                  "pattern": [
+                    "",
+                    "hoge",
+                    "foo"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "name": "CJK_DB",
+              "caption": "CJK_DB",
+              "type": 2,
+              "params": [
+                {
+                  "name": "p1",
+                  "caption": "param1",
+                  "default": "",
+                  "now": "hoge",
+                  "pattern": [
+                    "",
+                    "hoge",
+                    "foo"
+                  ]
+                },
+                {
+                  "name": "p2",
+                  "caption": "param2",
+                  "default": "",
+                  "now": "hoge",
+                  "pattern": [
+                    "",
+                    "hoge",
+                    "foo"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": 3,
+              "name": "CJK_BS",
+              "caption": "CJK_BS",
+              "type": 3
+            }
+          ]
+        }
+      ],
+      "id": 12,
+      "revision": null
     }
   ]
 }
