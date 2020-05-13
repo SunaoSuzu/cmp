@@ -4,21 +4,20 @@ import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
 import InputBase from "@material-ui/core/InputBase";
 import Badge from "@material-ui/core/Badge";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import MenuIcon from "@material-ui/icons/Menu";
-import SearchIcon from "@material-ui/icons/Search";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import MoreIcon from "@material-ui/icons/MoreVert";
+import SearchIcon from "@material-ui/icons/SearchOutlined";
+import AccountCircle from "@material-ui/icons/AccountCircleOutlined";
+import NotificationsIcon from "@material-ui/icons/NotificationsOutlined";
+import MoreIcon from "@material-ui/icons/MoreVertOutlined";
 import SuTechIcon from "./SuTechIcon";
 import { Link } from "react-router-dom";
 import Drawer from "@material-ui/core/Drawer";
 import Divider from "@material-ui/core/Divider";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeftOutlined";
 import SideMenu from "./SideMenu";
 
 const drawerWidth = 240;
@@ -31,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-end",
-    padding: "0 8px",
+    padding: "0 4px",
     ...theme.mixins.toolbar,
     "& Button": {
       color: "rgba(255,255,255,0.54)"
@@ -60,7 +59,10 @@ const useStyles = makeStyles(theme => ({
     })
   },
   menuButton: {
-    marginRight: 5
+    marginRight: 0,
+    [theme.breakpoints.up("sm")]: {
+      marginRight: 9
+    }
   },
   menuButtonHidden: {
     display: "none"
@@ -109,15 +111,15 @@ const useStyles = makeStyles(theme => ({
   search: {
     position: "relative",
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
+    backgroundColor: "#fff",
     "&:hover": {
-      backgroundColor: fade(theme.palette.common.white, 0.25)
+      backgroundColor: fade(theme.palette.common.black, 0.05)
     },
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(1),
     marginLeft: 0,
-    width: "100%",
+    width: "auto",
     [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(3),
+      marginLeft: theme.spacing(2),
       width: "auto"
     }
   },
@@ -138,9 +140,15 @@ const useStyles = makeStyles(theme => ({
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch"
+    width: "0ch",
+    "&:focus": {
+      width: "12ch"
+    },
+    [theme.breakpoints.up("sm")]: {
+      width: "8ch",
+      "&:focus": {
+        width: "20ch"
+      }
     }
   },
   sectionDesktop: {
@@ -232,16 +240,20 @@ export default function SiteHeader(prop) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <Link to="/profile">
-        <MenuItem onClick={prop.selectProfile}>Profile</MenuItem>
-      </Link>
-      <Link to="/account">
-        <MenuItem onClick={prop.selectAccount}>My account</MenuItem>
-      </Link>
-      <MenuItem onClick={handleMenuClose}>Close</MenuItem>
-      <Link to="/login">
-        <MenuItem onClick={prop.selectLogout}>Logout</MenuItem>
-      </Link>
+      {/* modified by asaka 0513 */}
+      <MenuItem onClick={prop.selectProfile} component={Link} to="/profile">
+        Profile
+      </MenuItem>
+      <MenuItem onClick={prop.selectAccount} component={Link} to="/account">
+        My account
+      </MenuItem>
+      <MenuItem onClick={handleMenuClose} component={Link}>
+        Close
+      </MenuItem>
+      <MenuItem onClick={prop.selectLogout} component={Link} to="/login">
+        Logout
+      </MenuItem>
+      {/* modified by asaka 0513 */}
     </Menu>
   );
 
@@ -288,9 +300,10 @@ export default function SiteHeader(prop) {
         className={clsx(classes.appBar, open && classes.appBarShift)}
       >
         <Toolbar className={classes.toolbar}>
-          <Link to="/home">
-            <SuTechIcon onClick={prop.selectHome} />
-          </Link>
+          {/* <Link to="/home"> */}
+          <SuTechIcon onClick={prop.selectHome} component={Link} to="/home" />
+          {/* </Link> */}
+          <div className={classes.grow} />
           <div className={classes.search}>
             <div className={classes.searchIcon}>
               <SearchIcon />
@@ -304,19 +317,18 @@ export default function SiteHeader(prop) {
               inputProps={{ "aria-label": "search" }}
             />
           </div>
-          <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <Link to="/notice">
-              <IconButton
-                aria-label="show 4 new mails"
-                color="inherit"
-                onClick={prop.selectNotice}
-              >
-                <Badge badgeContent={4} color="secondary">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
-            </Link>
+            {/* <Link to="/notice"> */}
+            <IconButton
+              aria-label="show 4 new mails"
+              color="inherit"
+              onClick={prop.selectNotice}
+            >
+              <Badge badgeContent={4} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            {/* </Link> */}
             <IconButton
               edge="end"
               aria-label="account of current user"
