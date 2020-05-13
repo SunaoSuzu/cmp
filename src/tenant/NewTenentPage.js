@@ -108,7 +108,7 @@ export default function NewTenantPage(props) {
                         />
                     </FormControl>
                     <FormControl variant="outlined" className={classes.formControl}>
-                        <TextField name="tag(aws)" onChange={uiToJson}
+                        <TextField name="awsTag" onChange={uiToJson}
                                    id="standard-basic-awsTag" label="awsTag"
                                    helperText="tag(aws)を入れてください"
                                    value={targetData.awsTag}
