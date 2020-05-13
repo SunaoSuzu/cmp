@@ -110,7 +110,6 @@ function* handleRequestDel(action) {
 function* handleRequestNewEnv(action) {
     const tenant = action.data;
     let ret = makeTemplateMaker(tenant);
-    sleep(500);
     yield put({
         type: TenantAppModule.NEW_ENV_SUCCESS,
         environment : ret,
@@ -122,7 +121,6 @@ function* handleRequestGetOperation(action) {
     const env = action.env;
     const envIndex = action.envIndex;
     let {resources , operations} = makeOperation(tenant , env);
-    sleep(500);
     yield put({
         type: TenantAppModule.GET_OPERATION_SUCCESS,
         resources : resources,
@@ -145,11 +143,5 @@ function* mySaga() {
     )
 }
 
-function sleep(waitMsec) {
-    var startMsec = new Date();
-
-    // 指定ミリ秒間だけループさせる（CPUは常にビジー状態）
-    while (new Date() - startMsec < waitMsec){}
-}
 
 export default mySaga;
