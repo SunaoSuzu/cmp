@@ -2,7 +2,8 @@ import { put, takeEvery, all } from 'redux-saga/effects'
 import * as TenantAppModule from "./TenantAppModule";
 import axios from 'axios'
 import makeTemplateMaker from "./EnvironmentTemplateMaker";
-
+import * as AwsAppSaga from "../aws/AwsAppSaga";
+import makeOperation from "./OperationTemplateMaker";
 
 
 const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
@@ -116,6 +117,20 @@ function* handleRequestNewEnv(action) {
     });
 }
 
+function* handleRequestGetOperation(action) {
+    const tenant = action.tenant;
+    const env = action.env;
+    const envIndex = action.envIndex;
+    let {resources , operations} = makeOperation(tenant , env);
+    sleep(500);
+    yield put({
+        type: TenantAppModule.GET_OPERATION_SUCCESS,
+        resources : resources,
+        operations : operations,
+        envIndex:envIndex,
+    });
+}
+
 
 function* mySaga() {
     all(
@@ -125,6 +140,8 @@ function* mySaga() {
         yield takeEvery(TenantAppModule.ADD_REQUEST , handleRequestAdd),
         yield takeEvery(TenantAppModule.DEL_REQUEST , handleRequestDel),
         yield takeEvery(TenantAppModule.NEW_ENV_REQUEST , handleRequestNewEnv),
+        yield takeEvery(TenantAppModule.GET_OPERATION_REQUEST , handleRequestGetOperation),
+        yield takeEvery(TenantAppModule.ATTACH_AWS_REQUEST , AwsAppSaga.handleAttachByTag),
     )
 }
 
