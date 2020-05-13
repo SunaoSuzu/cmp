@@ -66,8 +66,8 @@ const mapDispatchToProps = dispatch => {
         delFromArray: (path,index) => dispatch(tenantAppModule.delFromArray(path,index)),
         requestNewEnv: (data) => dispatch(tenantAppModule.requestNewEnv(data)),
         requestGetOperation: (tenant , env , envIndex) => dispatch(tenantAppModule.requestGetOperation(tenant , env , envIndex)),
-        requestInvokeOperation: (tenant , env) => dispatch(tenantAppModule.requestInvokeOperation(tenant , env)),
-        attachAws: (tenantTag , envTag) => dispatch(tenantAppModule.requestAttachAws(tenantTag , envTag)),
+        requestInvokeOperation: (tenant , env, envIndex) => dispatch(tenantAppModule.requestInvokeOperation(tenant , env, envIndex)),
+        attachAws: (tenantTag , envTag, envIndex) => dispatch(tenantAppModule.requestAttachAws(tenantTag , envTag, envIndex)),
     }
 };
 

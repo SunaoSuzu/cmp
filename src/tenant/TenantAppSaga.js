@@ -129,6 +129,13 @@ function* handleRequestGetOperation(action) {
     });
 }
 
+function* handleInvokeOperation(action) {
+    const envIndex = action.envIndex;
+    yield put({
+        type: TenantAppModule.INVOKE_OPERATION_SUCCESS,
+        envIndex:envIndex,
+    });
+}
 
 function* mySaga() {
     all(
@@ -140,6 +147,7 @@ function* mySaga() {
         yield takeEvery(TenantAppModule.NEW_ENV_REQUEST , handleRequestNewEnv),
         yield takeEvery(TenantAppModule.GET_OPERATION_REQUEST , handleRequestGetOperation),
         yield takeEvery(TenantAppModule.ATTACH_AWS_REQUEST , AwsAppSaga.handleAttachByTag),
+        yield takeEvery(TenantAppModule.INVOKE_OPERATION_REQUEST , handleInvokeOperation),
     )
 }
 

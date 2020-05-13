@@ -106,6 +106,8 @@ const initialState = {
 
     getOperationCompleted : yet ,
     operations : null,
+
+    invokeOperation : yet ,
 };
 
 const breadcrumbStackList = { caption : "テナント一覧" , to : "/tenant/list"};
@@ -201,6 +203,17 @@ export default function reducer(state=initialState, action) {
             }
         case GET_OPERATION_FAIL:
             return {...state , getOperationCompleted: loadFailed , operations: null};
+        case INVOKE_OPERATION_REQUEST:
+            return {...state , invokeOperation: requested };
+        case INVOKE_OPERATION_SUCCESS:
+            {
+                let tenantObj = {...state.data}
+                let env = tenantObj.environments[action.envIndex];
+                env.status=10;
+                return {...state , invokeOperation: loadSuccess,data : tenantObj };
+            }
+        case INVOKE_OPERATION_FAIL:
+            return {...state , invokeOperation: loadFailed };
         default:
                 return state
     }
@@ -312,11 +325,12 @@ export const requestNewEnv = (data) => {
     }
 };
 
-export const requestAttachAws = (tenantTag , envTag) => {
+export const requestAttachAws = (tenantTag , envTag, envIndex) => {
     return {
         type: ATTACH_AWS_REQUEST,
         tenantTag: tenantTag,
         envTag: envTag ,
+        envIndex : envIndex,
     }
 };
 
@@ -329,10 +343,11 @@ export const requestGetOperation = (tenant , env, envIndex) => {
     }
 };
 
-export const requestInvokeOperation = (tenant , env ) => {
+export const requestInvokeOperation = (tenant , env , envIndex) => {
     return {
         type: INVOKE_OPERATION_REQUEST,
         tenant: tenant,
         env: env ,
+        envIndex : envIndex,
     }
 };

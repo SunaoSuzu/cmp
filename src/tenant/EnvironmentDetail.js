@@ -84,7 +84,7 @@ const EnvironmentDetail = (props) => {
         setInnerTavLavlue(newValue);
     };
 
-    const attach = function attach(t  ,e){
+    const attach = function attach(t  ,e, i){
         attachAws(t.awsTag , e.awsTag );
 //        attachAws("cmp-tenant-stech" , "develop" );
     };
@@ -94,9 +94,9 @@ const EnvironmentDetail = (props) => {
         requestGetOperation(t , e , i)
     };
 
-    const invokeOperation = function getOperation(t  ,e){
+    const invokeOperation = function getOperation(t  ,e, i){
         console.log("invokeOperation");
-        requestInvokeOperation(t , e);
+        requestInvokeOperation(t , e , i);
     };
 
     if(attachAwsCompleted===TenantAppModule.loadSuccess){
@@ -210,7 +210,7 @@ const EnvironmentDetail = (props) => {
                         color="primary"
                         className={classes.button}
                         startIcon={<StorageIcon />}
-                        onClick={()=>attach(tenant , env)}
+                        onClick={()=>attach(tenant , env, index)}
                     >
                         アタッチ
                     </Button>
@@ -219,11 +219,11 @@ const EnvironmentDetail = (props) => {
                         color="primary"
                         className={classes.button}
                         startIcon={<StorageIcon />}
-                        onClick={()=>invokeOperation(tenant , env)}
+                        onClick={()=>invokeOperation(tenant , env, index)}
                     >
                         作業実行
                     </Button>
-                    {getOperationCompleted===TenantAppModule.loadSuccess ?
+                    {env.resources != null ?
                         <List
                             component="nav"
                             aria-labelledby="nested-list-subheader"
