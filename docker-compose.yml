@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  json-server:
+    build:
+      context: ./docker/jsonserver
+      dockerfile: Dockerfile
+    container_name: cmp-json-server
+    volumes:
+      - ./src/data:/data
+    ports:
+      - '3011:3011'
+    tty: true
+    stdin_open: true
+    privileged: true
+    command: json-server --watch db.json --host 0.0.0.0 --port 3011 --delay 500
+    #command: json-server --watch db.json --port 3011 --delay 500
+
+  node:
+    build:
+      context: ./docker/cmp
+      dockerfile: Dockerfile
+    container_name: cmp
+    #environment:
+    #  - NODE_ENV=production
+    volumes:
+      - ./:/usr/src/app
+      - ./src/data:/data
+    ports:
+      - "3000:3000"
+    tty: true
+    stdin_open: true
+    privileged: true
+    command: sh -c "npm install && yarn start"
