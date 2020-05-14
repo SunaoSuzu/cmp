@@ -5,16 +5,16 @@ import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { Divider } from "@material-ui/core";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     color: "rgba(0,0,0,0.87)",
     fontSize: "1.2rem",
-    lineHeight: 1.2
+    lineHeight: 1.2,
   },
   pgtdivide: {
     marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(1)
-  }
+    marginBottom: theme.spacing(1),
+  },
 }));
 
 export default function PageTitle(props) {
@@ -35,5 +35,5 @@ export default function PageTitle(props) {
 }
 
 PageTitle.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
 };

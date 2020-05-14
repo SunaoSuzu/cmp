@@ -2,11 +2,11 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import logo from "../asset/logoIcon.png"; // Tell Webpack this JS file uses this image
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     "& img": {
-      height: "36px"
+      height: "36px",
     },
     "& div": {
       flexGrow: 1,
@@ -19,10 +19,10 @@ const useStyles = makeStyles(theme => ({
       marginLeft: 8,
       display: "none",
       [theme.breakpoints.up("sm")]: {
-        display: "inline-block"
-      }
-    }
-  }
+        display: "inline-block",
+      },
+    },
+  },
 }));
 
 export default function Logo() {

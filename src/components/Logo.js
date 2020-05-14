@@ -7,7 +7,7 @@ const useStyles = makeStyles({
   root: {
     flexGrow: 1,
     "& img": {
-      height: "36px"
+      height: "36px",
     },
     "& div": {
       display: "inline-block",
@@ -16,9 +16,9 @@ const useStyles = makeStyles({
       color: "#263340",
       fontWeight: 500,
       verticalAlign: "bottom",
-      marginLeft: 8
-    }
-  }
+      marginLeft: 8,
+    },
+  },
 });
 
 export default function Logo() {

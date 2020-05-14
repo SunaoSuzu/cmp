@@ -22,9 +22,9 @@ import SideMenu from "./SideMenu";
 
 const drawerWidth = 240;
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   toolbar: {
-    paddingRight: 24 // keep right padding when drawer closed
+    paddingRight: 24, // keep right padding when drawer closed
   },
   toolbarIcon: {
     display: "flex",
@@ -33,42 +33,42 @@ const useStyles = makeStyles(theme => ({
     padding: "0 4px",
     ...theme.mixins.toolbar,
     "& Button": {
-      color: "rgba(255,255,255,0.54)"
-    }
+      color: "rgba(255,255,255,0.54)",
+    },
   },
   appBar: {
     marginLeft: theme.spacing(2),
     width: `calc(100% -  ` + theme.spacing(7) + `px)`,
     [theme.breakpoints.up("sm")]: {
-      width: `calc(100% -  ` + theme.spacing(9) + `px)`
+      width: `calc(100% -  ` + theme.spacing(9) + `px)`,
     },
     //backgroundColor: theme.palette.background.appbar,
     //color: theme.palette.text.appbar,
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
+      duration: theme.transitions.duration.leavingScreen,
+    }),
   },
   appBarShift: {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen
-    })
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
   menuButton: {
     marginRight: 0,
     [theme.breakpoints.up("sm")]: {
-      marginRight: 9
-    }
+      marginRight: 9,
+    },
   },
   menuButtonHidden: {
-    display: "none"
+    display: "none",
   },
   logo: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   drawerPaper: {
     position: "relative",
@@ -76,52 +76,52 @@ const useStyles = makeStyles(theme => ({
     width: drawerWidth,
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen
-    })
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
   drawerPaperClose: {
     overflowX: "hidden",
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
+      duration: theme.transitions.duration.leavingScreen,
     }),
     width: theme.spacing(7),
     [theme.breakpoints.up("sm")]: {
-      width: theme.spacing(9)
-    }
+      width: theme.spacing(9),
+    },
   },
   paper: {
     padding: theme.spacing(2),
     display: "flex",
     overflow: "auto",
-    flexDirection: "column"
+    flexDirection: "column",
   },
   fixedHeight: {
-    height: 240
+    height: 240,
   },
   grow: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   title: {
     display: "none",
     [theme.breakpoints.up("sm")]: {
-      display: "block"
-    }
+      display: "block",
+    },
   },
   search: {
     position: "relative",
     borderRadius: theme.shape.borderRadius,
     backgroundColor: "#fff",
     "&:hover": {
-      backgroundColor: fade(theme.palette.common.black, 0.05)
+      backgroundColor: fade(theme.palette.common.black, 0.05),
     },
     marginRight: theme.spacing(1),
     marginLeft: 0,
     width: "auto",
     [theme.breakpoints.up("sm")]: {
       marginLeft: theme.spacing(2),
-      width: "auto"
-    }
+      width: "auto",
+    },
   },
   searchIcon: {
     padding: theme.spacing(0, 2),
@@ -130,10 +130,10 @@ const useStyles = makeStyles(theme => ({
     pointerEvents: "none",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   inputRoot: {
-    color: "inherit"
+    color: "inherit",
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
@@ -142,45 +142,45 @@ const useStyles = makeStyles(theme => ({
     transition: theme.transitions.create("width"),
     width: "0ch",
     "&:focus": {
-      width: "12ch"
+      width: "12ch",
     },
     [theme.breakpoints.up("sm")]: {
       width: "8ch",
       "&:focus": {
-        width: "20ch"
-      }
-    }
+        width: "20ch",
+      },
+    },
   },
   sectionDesktop: {
     display: "none",
     [theme.breakpoints.up("md")]: {
-      display: "flex"
-    }
+      display: "flex",
+    },
   },
   sectionMobile: {
     display: "flex",
     [theme.breakpoints.up("md")]: {
-      display: "none"
-    }
+      display: "none",
+    },
   },
   drawer: {
     width: drawerWidth,
-    flexShrink: 0
+    flexShrink: 0,
   },
   drawerContainer: {
-    overflow: "auto"
+    overflow: "auto",
   },
   menuLink: {
-    textDecoration: "none"
+    textDecoration: "none",
   },
   menuIcon: {
     color: "#eee",
     marginLeft: 8,
     minWitdh: 48,
     "& svg": {
-      opacity: 0.5
-    }
-  }
+      opacity: 0.5,
+    },
+  },
 }));
 
 export default function SiteHeader(prop) {
@@ -193,10 +193,10 @@ export default function SiteHeader(prop) {
     top: false,
     left: false,
     bottom: false,
-    right: false
+    right: false,
   });
 
-  const toggleDrawer = (anchor, open) => event => {
+  const toggleDrawer = (anchor, open) => (event) => {
     if (
       event.type === "keydown" &&
       (event.key === "Tab" || event.key === "Shift")
@@ -212,7 +212,7 @@ export default function SiteHeader(prop) {
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-  const handleProfileMenuOpen = event => {
+  const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -225,7 +225,7 @@ export default function SiteHeader(prop) {
     handleMobileMenuClose();
   };
 
-  const handleMobileMenuOpen = event => {
+  const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
@@ -312,7 +312,7 @@ export default function SiteHeader(prop) {
               placeholder="Search…"
               classes={{
                 root: classes.inputRoot,
-                input: classes.inputInput
+                input: classes.inputInput,
               }}
               inputProps={{ "aria-label": "search" }}
             />
@@ -358,7 +358,7 @@ export default function SiteHeader(prop) {
       <Drawer
         variant="permanent"
         classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose)
+          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
         }}
         anchor={anchor}
         open={open}

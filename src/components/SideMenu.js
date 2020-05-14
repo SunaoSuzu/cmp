@@ -7,18 +7,18 @@ import ListItemText from "@material-ui/core/ListItemText";
 import { Link } from "react-router-dom";
 import Configuration from "../Configuration";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   menuIcon: {
     color: "#eee",
     marginLeft: 0,
     [theme.breakpoints.up("sm")]: {
-      marginLeft: 8
+      marginLeft: 8,
     },
     minWitdh: 48,
     "& svg": {
-      opacity: 0.5
-    }
-  }
+      opacity: 0.5,
+    },
+  },
 }));
 
 export default function SideMenu(props) {
@@ -30,7 +30,7 @@ export default function SideMenu(props) {
   const { functionType, selectedMenuId, selectedReportId } = props;
   return (
     <List>
-      {menuIcons.map(menu => {
+      {menuIcons.map((menu) => {
         const IconTag = menu.icon;
         return (
           <ListItem
@@ -49,7 +49,7 @@ export default function SideMenu(props) {
           </ListItem>
         );
       })}
-      {reportIcons.map(report => {
+      {reportIcons.map((report) => {
         const IconTag = report.icon;
         return (
           <ListItem

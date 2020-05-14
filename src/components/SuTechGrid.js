@@ -12,10 +12,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import DeleteIcon from "@material-ui/icons/Delete";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   dataRow: {
-    textDecoration: "none"
-  }
+    textDecoration: "none",
+  },
 }));
 
 function DataRow(props) {
@@ -25,7 +25,7 @@ function DataRow(props) {
     gridConf,
     goDetailHandler,
     className,
-    deleteHandler
+    deleteHandler,
   } = props;
 
   const to = baseTo + "/" + data.id;
@@ -79,7 +79,7 @@ export default function SuTechGrid(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.datas.map(data => (
+          {props.datas.map((data) => (
             <DataRow
               className={classes.dataRow}
               button

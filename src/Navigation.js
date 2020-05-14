@@ -9,30 +9,30 @@ import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
 import Container from "@material-ui/core/Container";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    display: "flex"
+    display: "flex",
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
     height: "100vh",
-    overflow: "auto"
+    overflow: "auto",
   },
   container: {
     paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4)
-  }
+    paddingBottom: theme.spacing(4),
+  },
 }));
 
-const Navigation = props => {
+const Navigation = (props) => {
   const {
     selectHome,
     selectProfile,
     selectAccount,
     selectNotice,
     selectSearch,
-    selectLogout
+    selectLogout,
   } = props;
 
   const { functionType, selectedMenuId, selectedReportId } = props;

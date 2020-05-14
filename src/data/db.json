@@ -5,9 +5,7 @@
       "alias": "スー1",
       "status": 1,
       "statusCaption": "下書き",
-      "tags": [
-        {}
-      ],
+      "tags": [{}],
       "environmentSetting": {
         "vpcType": 1
       },
@@ -42,33 +40,21 @@
                   "caption": "パラメータ1",
                   "default": "",
                   "now": "hoge1",
-                  "pattern": [
-                    "",
-                    "hoge",
-                    "foo"
-                  ]
+                  "pattern": ["", "hoge", "foo"]
                 },
                 {
                   "name": "p2",
                   "caption": "パラメータ2",
                   "default": "",
                   "now": "hoge2",
-                  "pattern": [
-                    "",
-                    "hoge",
-                    "foo"
-                  ]
+                  "pattern": ["", "hoge", "foo"]
                 },
                 {
                   "name": "p3",
                   "caption": "パラメータ3",
                   "default": "",
                   "now": "hoge3",
-                  "pattern": [
-                    "",
-                    "hoge",
-                    "foo"
-                  ]
+                  "pattern": ["", "hoge", "foo"]
                 }
               ]
             },
@@ -83,22 +69,14 @@
                   "caption": "param1",
                   "default": "",
                   "now": "hoge111",
-                  "pattern": [
-                    "",
-                    "hoge",
-                    "foo"
-                  ]
+                  "pattern": ["", "hoge", "foo"]
                 },
                 {
                   "name": "p2",
                   "caption": "param2",
                   "default": "",
                   "now": "hoge1133",
-                  "pattern": [
-                    "",
-                    "hoge",
-                    "foo"
-                  ]
+                  "pattern": ["", "hoge", "foo"]
                 }
               ]
             },
@@ -121,9 +99,7 @@
       "alias": "ヤマだ",
       "status": 1,
       "statusCaption": "下書き",
-      "tags": [
-        {}
-      ],
+      "tags": [{}],
       "environmentSetting": {
         "vpcType": 1
       },
@@ -158,33 +134,21 @@
                   "caption": "パラメータ1",
                   "default": "",
                   "now": "hoge",
-                  "pattern": [
-                    "",
-                    "hoge",
-                    "foo"
-                  ]
+                  "pattern": ["", "hoge", "foo"]
                 },
                 {
                   "name": "p2",
                   "caption": "パラメータ2",
                   "default": "",
                   "now": "hoge",
-                  "pattern": [
-                    "",
-                    "hoge",
-                    "foo"
-                  ]
+                  "pattern": ["", "hoge", "foo"]
                 },
                 {
                   "name": "p3",
                   "caption": "パラメータ3",
                   "default": "",
                   "now": "hoge",
-                  "pattern": [
-                    "",
-                    "hoge",
-                    "foo"
-                  ]
+                  "pattern": ["", "hoge", "foo"]
                 }
               ]
             },
@@ -199,22 +163,14 @@
                   "caption": "param1",
                   "default": "",
                   "now": "hoge",
-                  "pattern": [
-                    "",
-                    "hoge",
-                    "foo"
-                  ]
+                  "pattern": ["", "hoge", "foo"]
                 },
                 {
                   "name": "p2",
                   "caption": "param2",
                   "default": "",
                   "now": "hoge",
-                  "pattern": [
-                    "",
-                    "hoge",
-                    "foo"
-                  ]
+                  "pattern": ["", "hoge", "foo"]
                 }
               ]
             },
@@ -235,9 +191,7 @@
       "alias": "sato",
       "status": 1,
       "statusCaption": "下書き",
-      "tags": [
-        {}
-      ],
+      "tags": [{}],
       "environmentSetting": {
         "vpcType": 1
       },
@@ -272,33 +226,21 @@
                   "caption": "パラメータ1",
                   "default": "",
                   "now": "hoge",
-                  "pattern": [
-                    "",
-                    "hoge",
-                    "foo"
-                  ]
+                  "pattern": ["", "hoge", "foo"]
                 },
                 {
                   "name": "p2",
                   "caption": "パラメータ2",
                   "default": "",
                   "now": "hoge",
-                  "pattern": [
-                    "",
-                    "hoge",
-                    "foo"
-                  ]
+                  "pattern": ["", "hoge", "foo"]
                 },
                 {
                   "name": "p3",
                   "caption": "パラメータ3",
                   "default": "",
                   "now": "hoge",
-                  "pattern": [
-                    "",
-                    "hoge",
-                    "foo"
-                  ]
+                  "pattern": ["", "hoge", "foo"]
                 }
               ]
             },
@@ -313,22 +255,14 @@
                   "caption": "param1",
                   "default": "",
                   "now": "hoge",
-                  "pattern": [
-                    "",
-                    "hoge",
-                    "foo"
-                  ]
+                  "pattern": ["", "hoge", "foo"]
                 },
                 {
                   "name": "p2",
                   "caption": "param2",
                   "default": "",
                   "now": "hoge",
-                  "pattern": [
-                    "",
-                    "hoge",
-                    "foo"
-                  ]
+                  "pattern": ["", "hoge", "foo"]
                 }
               ]
             },
