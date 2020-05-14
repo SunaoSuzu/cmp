@@ -1,4 +1,4 @@
-#For cloud-managemen-platform for mock/
+#For cloud-managemen-platform for mock
 FROM node:13.14.0
 
 RUN npm install -g json-server
