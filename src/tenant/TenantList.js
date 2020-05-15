@@ -42,7 +42,6 @@ function TenantList(props) {
 }
 
 const mapStateToProps = (state) => {
-  console.log("mapStateToProps " + JSON.stringify(state));
   return {
     operationType: state.operationType,
     loadSuccess: state.loadSuccess,
