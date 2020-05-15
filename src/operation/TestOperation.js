@@ -1,3 +1,5 @@
+var EC2 = require("aws-sdk/clients/ec2");
+
 const environment = {
   name: "開発環境",
   landScape: 1,
@@ -137,13 +139,44 @@ const environment = {
 const vpc = environment.resources;
 if (vpc.add === true) {
   //VPC＋αを作る
-  //VPCにタグを付ける（名前もタグ？）
+
+  const ec2 = new EC2({
+    //AccessKey/PWDはとりあえずDefaultを使ってくれるから不要
+    region: "ap-northeast-1",
+  });
+
+  //Tag用の情報
+  let tags = [{ Key: "Name", Value: vpc.vpcName }];
+  vpc.tags.map(function (tag) {
+    tags.push({ Key: tag.name, Value: tag.value });
+  });
+
+  const vpcParams = {
+    CidrBlock: "10.0.0.0/16",
+  };
+
+  ec2
+    .createVpc(vpcParams)
+    .promise()
+    .then(function (vpcInstance) {
+      const createTagParams = {
+        Resources: [vpcInstance.Vpc.VpcId],
+        Tags: tags,
+      };
+
+      //Tag付ける
+      ec2
+        .createTags(createTagParams)
+        .promise()
+        .then(function (data) {
+          console.log("できた");
+        })
+        .catch((error) => console.log(error));
+    })
+    .catch((error) => console.log(error));
+
   //https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createVpc-property
   //CLIの例（メソッド構造はjsとほぼ同様）https://docs.aws.amazon.com/ja_jp/vpc/latest/userguide/vpc-subnets-commands-example.html
-  console.log("vpc:" + vpc.name);
-  vpc.tags.map(function (tag) {
-    console.log("tag:" + tag.name + "=" + tag.value);
-  });
 }
 
 vpc.ec2.map(function (instance) {
