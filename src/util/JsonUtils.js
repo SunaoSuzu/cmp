@@ -4,7 +4,11 @@ export function setProperty(obj, path, value) {
   paths.forEach(function (p, index) {
     if (index === paths.length - 1) {
       try {
-        base[p] = value;
+        if (value === null || "" === value) {
+          delete base[p]; //項目削除。Dynamo対策
+        } else {
+          base[p] = value;
+        }
       } catch (e) {
         if (path.indexOf(" ") > 0) {
           console.log(
