@@ -59,7 +59,7 @@ const reportIconsDef = {
 
 const tenantListGridColumnsDef = {
   1: { caption: "テナント", propName: "name" },
-  2: { caption: "状況", propName: "statusCaption" },
+  2: { caption: "状況", propName: "status" },
 };
 
 const productGridColumnsDef = {

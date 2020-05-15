@@ -65,7 +65,6 @@ export const empty_contract = { productMstId: "", amount: "" };
 
 export const empty = {
   name: "",
-  alias: "",
   status: 1,
   statusCaption: "下書き",
   tags: [{}],
@@ -73,11 +72,9 @@ export const empty = {
     vpcType: 1,
   },
   contract: {
-    infraAnnualIncome: "",
     details: [
       { productMstId: "", amount: "" }, //empty_contractを参照できない
     ],
-    remarks: "",
   },
   environments: [],
 };
