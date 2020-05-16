@@ -3,7 +3,6 @@ import * as tenantAppModule from "./TenantAppModule";
 import { connect } from "react-redux";
 import TenantProfilePage from "./TenantProfilePage";
 import ActionProgress from "../components/ActionProgress";
-import { yet } from "./TenantAppModule";
 
 function TenantProfile(props) {
   const tenantId = props.match.params.tenantId;
@@ -36,6 +35,7 @@ function TenantProfile(props) {
               requestGetOperation={props.requestGetOperation}
               requestInvokeOperation={props.requestInvokeOperation}
               getOperationCompleted={props.getOperationCompleted}
+              requestResetOperation={props.requestResetOperation}
               operations={props.operations}
             />
           </React.Fragment>
@@ -72,6 +72,8 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(tenantAppModule.requestGetOperation(tenant, env, envIndex)),
     requestInvokeOperation: (tenant, env, envIndex) =>
       dispatch(tenantAppModule.requestInvokeOperation(tenant, env, envIndex)),
+    requestResetOperation: (tenant, env, envIndex) =>
+      dispatch(tenantAppModule.requestResetOperation(tenant, env, envIndex)),
     attachAws: (tenantTag, envTag, envIndex) =>
       dispatch(tenantAppModule.requestAttachAws(tenantTag, envTag, envIndex)),
   };

@@ -75,8 +75,7 @@ const EnvironmentDetail = (props) => {
   const attachAwsCompleted = props.attachAwsCompleted;
   const requestGetOperation = props.requestGetOperation;
   const requestInvokeOperation = props.requestInvokeOperation;
-  const getOperationCompleted = props.getOperationCompleted;
-  const operations = props.operations;
+  const requestResetOperation = props.requestResetOperation;
 
   //for tab
   const [innerTabValue, setInnerTavLavlue] = React.useState(0);
@@ -97,6 +96,11 @@ const EnvironmentDetail = (props) => {
   const invokeOperation = function getOperation(t, e, i) {
     console.log("invokeOperation");
     requestInvokeOperation(t, e, i);
+  };
+
+  const resetOperation = function getOperation(t, e, i) {
+    console.log("invokeOperation");
+    requestResetOperation(t, e, i);
   };
 
   if (attachAwsCompleted === TenantAppModule.loadSuccess) {
@@ -253,6 +257,15 @@ const EnvironmentDetail = (props) => {
           >
             作業実行
           </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            startIcon={<StorageIcon />}
+            onClick={() => resetOperation(tenant, env, index)}
+          >
+            破棄
+          </Button>
           {env.resources != null ? (
             <List
               component="nav"
@@ -266,12 +279,15 @@ const EnvironmentDetail = (props) => {
                 <ListItemText primary={"vpc=" + env.resources.vpcName} />
                 <ListItemText primary={"add=" + env.resources.add} />
                 <ListItemText primary={"attached=" + env.resources.attached} />
-                {env.resources.tags.map((tag) => (
-                  <ListItemText primary={"t:" + tag.name + "=" + tag.value} />
+                {env.resources.tags.map((tag, t) => (
+                  <ListItemText
+                    primary={"t:" + tag.name + "=" + tag.value}
+                    key={t}
+                  />
                 ))}
               </ListItem>
-              {env.resources.ec2.map((instance) => (
-                <List component="div" disablePadding>
+              {env.resources.ec2.map((instance, ei) => (
+                <List component="div" disablePadding key={ei}>
                   <ListItem button className={classes.nested}>
                     <ListItemIcon>
                       <EC2Logo />
@@ -279,14 +295,15 @@ const EnvironmentDetail = (props) => {
                     <ListItemText primary={"type=" + instance.instanceType} />
                     <ListItemText primary={"add=" + instance.add} />
                     <ListItemText primary={"attached=" + instance.attached} />
-                    {instance.tags.map((tag) => (
+                    {instance.tags.map((tag, t) => (
                       <ListItemText
+                        key={t}
                         primary={"t:" + tag.name + "=" + tag.value}
                       />
                     ))}
                   </ListItem>
-                  {instance.components.map((component) => (
-                    <List component="div" disablePadding>
+                  {instance.components.map((component, ci) => (
+                    <List component="div" disablePadding key={ci}>
                       <ListItem button className={classes.doubleNested}>
                         <ListItemIcon>
                           <CodeIcon />
@@ -303,29 +320,29 @@ const EnvironmentDetail = (props) => {
           )}
 
           {attachAwsCompleted === TenantAppModule.loadSuccess
-            ? attachedAwsInfo.vpcs.map((vpc) => (
-                <>
+            ? attachedAwsInfo.vpcs.map((vpc, v) => (
+                <React.Fragment key={v}>
                   <Divider />
                   <div>
                     <VpcLogo />
                     {getName(vpc.Tags)} {vpc.VpcId}
                   </div>
-                </>
+                </React.Fragment>
               ))
             : ""}
           {attachAwsCompleted === TenantAppModule.loadSuccess
-            ? attachedAwsInfo.ec2.map((ec2) => (
-                <>
-                  {ec2.Instances.map((instance) => (
-                    <>
+            ? attachedAwsInfo.ec2.map((ec2, ei) => (
+                <React.Fragment ket={ei}>
+                  {ec2.Instances.map((instance, ii) => (
+                    <React.Fragment key={ii}>
                       <div>
                         <EC2Logo />
                         {getName(instance.Tags)} {instance.InstanceId}{" "}
                         {instance.InstanceType}
                       </div>
-                    </>
+                    </React.Fragment>
                   ))}
-                </>
+                </React.Fragment>
               ))
             : ""}
         </TabPanel>

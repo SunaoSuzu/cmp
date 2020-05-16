@@ -49,6 +49,8 @@ export const INVOKE_OPERATION_REQUEST = "INVOKE_OPERATION_REQUEST";
 export const INVOKE_OPERATION_SUCCESS = "INVOKE_OPERATION_SUCCESS";
 export const INVOKE_OPERATION_FAIL = "INVOKE_OPERATION_FAIL";
 
+export const RESET_OPERATION_REQUEST = "RESET_OPERATION_REQUEST";
+
 export const noNeed = 1;
 export const necessary = 2;
 export const syncing = 3;
@@ -260,6 +262,14 @@ export default function reducer(state = initialState, action) {
     }
     case INVOKE_OPERATION_FAIL:
       return { ...state, invokeOperation: loadFailed };
+    case RESET_OPERATION_REQUEST: {
+      let tenantObj = { ...state.data };
+      let env = tenantObj.environments[action.envIndex];
+      delete env.operations;
+      delete env.resources;
+      env.status = 1;
+      return { ...state, invokeOperation: loadSuccess, data: tenantObj };
+    }
     default:
       return state;
   }
@@ -391,6 +401,15 @@ export const requestGetOperation = (tenant, env, envIndex) => {
 export const requestInvokeOperation = (tenant, env, envIndex) => {
   return {
     type: INVOKE_OPERATION_REQUEST,
+    tenant: tenant,
+    env: env,
+    envIndex: envIndex,
+  };
+};
+
+export const requestResetOperation = (tenant, env, envIndex) => {
+  return {
+    type: RESET_OPERATION_REQUEST,
     tenant: tenant,
     env: env,
     envIndex: envIndex,

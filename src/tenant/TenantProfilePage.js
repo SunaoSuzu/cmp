@@ -88,7 +88,7 @@ export default function TenantProfilePage(props) {
       <form encType="multipart/form-data">
         <div style={{ width: "100%" }}>
           <Box display="flex" p={0} bgcolor="background.paper">
-            <Box p={0} flexGrow={1} bgcolor="grey.300"></Box>
+            <Box p={0} flexGrow={1} bgcolor="grey.300" />
             <Box p={0} bgcolor="grey.300">
               <Button
                 variant="contained"
@@ -268,6 +268,7 @@ export default function TenantProfilePage(props) {
                 attachAwsCompleted={props.attachAwsCompleted}
                 requestGetOperation={props.requestGetOperation}
                 requestInvokeOperation={props.requestInvokeOperation}
+                requestResetOperation={props.requestResetOperation}
                 getOperationCompleted={props.getOperationCompleted}
                 operations={props.operations}
               />
