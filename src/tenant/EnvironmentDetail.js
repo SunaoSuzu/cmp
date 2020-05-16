@@ -173,8 +173,6 @@ const EnvironmentDetail = (props) => {
               inputProps={{
                 readOnly: true,
               }}
-              label="ステータス"
-              helperText="ステータス"
               margin="dense"
               labelId="environment-status-label"
             >
@@ -198,8 +196,6 @@ const EnvironmentDetail = (props) => {
               inputProps={{
                 readOnly: true,
               }}
-              label="VPC方針"
-              helperText="VPC方針"
               margin="dense"
               labelId="standard-env-vpc-type-label"
             >

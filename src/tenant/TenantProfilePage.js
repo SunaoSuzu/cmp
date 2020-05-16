@@ -160,8 +160,6 @@ export default function TenantProfilePage(props) {
               inputProps={{
                 readOnly: true,
               }}
-              label="ステータス"
-              helperText="ステータス"
               margin="dense"
               labelId="standard-basic-status-label"
             >
@@ -241,8 +239,6 @@ export default function TenantProfilePage(props) {
                 inputProps={{
                   readOnly: true,
                 }}
-                label="VPC方針"
-                helperText="VPC方針"
                 margin="dense"
                 labelId="environment-setting-vpc-label"
               >
