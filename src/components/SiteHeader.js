@@ -247,9 +247,7 @@ export default function SiteHeader(prop) {
       <MenuItem onClick={prop.selectAccount} component={Link} to="/account">
         My account
       </MenuItem>
-      <MenuItem onClick={handleMenuClose} component={Link}>
-        Close
-      </MenuItem>
+      <MenuItem onClick={handleMenuClose}>Close</MenuItem>
       <MenuItem onClick={prop.selectLogout} component={Link} to="/login">
         Logout
       </MenuItem>
