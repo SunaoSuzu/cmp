@@ -4,49 +4,56 @@ import TextField from "@material-ui/core/TextField";
 import Divider from "@material-ui/core/Divider";
 import FormControl from "@material-ui/core/FormControl";
 import Button from "@material-ui/core/Button";
-import SaveIcon from "@material-ui/icons/Save";
+import SaveIcon from "@material-ui/icons/SaveOutlined";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import TabPanel from "./TabPanel";
 import ContractDetails from "./ContractDetails";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   functionPanel: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.grey["200"],
-    width: "100%",
-    alignItems: "center",
+    backgroundColor: theme.palette.background.toolbar,
+    alignItems: "center"
   },
   functionPanelLeft: {
     flexGrow: 1,
+    backgroundColor: "inherit"
   },
   functionPanelRight: {
     textAlign: "right",
+    backgroundColor: "inherit"
   },
   basicInformationPanel: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(0)
   },
   tabRoot: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
     display: "flex",
-    height: 500,
+    height: 500
   },
   tabs: {
-    borderRight: `1px solid ${theme.palette.divider}`,
+    borderRight: `1px solid ${theme.palette.divider}`
+  },
+  sideTab: {
+    width: "100%",
+    borderRight: `1px solid ${theme.palette.divider}`
+  },
+  tabPanel: {
+    padding: theme.spacing(1, 2),
+    flexGrow: 1,
+    "& .MuiBox-root": {
+      boxShadow: "none"
+    }
   },
   button: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(1)
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 120,
-  },
-  tabPanel: {
-    width: "100%",
-    borderRight: `1px solid ${theme.palette.divider}`,
-  },
+    minWidth: 120
+  }
 }));
 
 export default function NewTenantPage(props) {
@@ -62,7 +69,7 @@ export default function NewTenantPage(props) {
   const save = function save() {
     requestAdd(targetData);
   };
-  const uiToJson = (event) => {
+  const uiToJson = event => {
     props.changePropertyOfNew(event);
   };
   const delDetail = function addDetail(path, index) {
@@ -76,7 +83,7 @@ export default function NewTenantPage(props) {
     <React.Fragment>
       <form encType="multipart/form-data">
         <div className={classes.functionPanel}>
-          <div className={classes.functionPanelLeft}></div>
+          <div className={classes.functionPanelLeft} />
           <div className={classes.functionPanelRight}>
             <Button
               variant="contained"
@@ -98,7 +105,6 @@ export default function NewTenantPage(props) {
               id="standard-basic"
               label="テナント名"
               helperText="会社名を入れてください"
-              margin="normal"
               required
               value={targetData.name}
             />
@@ -139,9 +145,10 @@ export default function NewTenantPage(props) {
               {...a11yProps(0)}
               icon={<AssignmentIcon />}
               wrapped
+              className={classes.sideTab}
             />
           </Tabs>
-          <TabPanel value={tabValue} index={0}>
+          <TabPanel className={classes.tabPanel} value={tabValue} index={0}>
             <ContractDetails
               targetData={targetData}
               uiToJson={uiToJson}
@@ -157,6 +164,6 @@ export default function NewTenantPage(props) {
 function a11yProps(index) {
   return {
     id: `vertical-tab-${index}`,
-    "aria-controls": `vertical-tabpanel-${index}`,
+    "aria-controls": `vertical-tabpanel-${index}`
   };
 }

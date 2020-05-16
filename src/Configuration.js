@@ -1,12 +1,12 @@
 import DashboardIcon from "@material-ui/icons/DashboardOutlined";
 import AccountBoxIcon from "@material-ui/icons/AccountBoxOutlined";
-import BusinessIcon from "@material-ui/icons/Business";
-import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import AssignmentIcon from "@material-ui/icons/Assignment";
-import CodeIcon from "@material-ui/icons/Code";
-import ReportIcon from "@material-ui/icons/Report";
-import NoteIcon from "@material-ui/icons/Note";
+import BusinessIcon from "@material-ui/icons/BusinessOutlined";
+import CloudDownloadIcon from "@material-ui/icons/CloudDownloadOutlined";
+import NotificationsIcon from "@material-ui/icons/NotificationsOutlined";
+import AssignmentIcon from "@material-ui/icons/AssignmentOutlined";
+import CodeIcon from "@material-ui/icons/CodeOutlined";
+import ReportIcon from "@material-ui/icons/ReportOutlined";
+import NoteIcon from "@material-ui/icons/NoteOutlined";
 
 // 設定系の　JSON
 // Mst 仕様
@@ -17,7 +17,7 @@ const menuIconsDef = {
     menuId: 1,
     caption: "Activity",
     icon: AccountBoxIcon,
-    appTo: "/activity",
+    appTo: "/activity"
   },
   2: { menuId: 2, caption: "テナント", icon: BusinessIcon, appTo: "/tenant" },
   3: { menuId: 3, caption: "プロダクト", icon: CodeIcon, appTo: "/product" },
@@ -25,15 +25,15 @@ const menuIconsDef = {
     menuId: 4,
     caption: "作業予実",
     icon: AssignmentIcon,
-    appTo: "/operation",
+    appTo: "/operation"
   },
   5: { menuId: 5, caption: "通知", icon: NotificationsIcon, appTo: "/home" },
   11: {
     menuId: 11,
     caption: "AWS Asset",
     icon: CloudDownloadIcon,
-    appTo: "/aws/asset",
-  },
+    appTo: "/aws/asset"
+  }
 };
 
 const reportIconsDef = {
@@ -41,49 +41,49 @@ const reportIconsDef = {
     reportId: 11,
     caption: "レポート",
     icon: DashboardIcon,
-    reportTo: "/report",
+    reportTo: "/report"
   },
   12: {
     reportId: 12,
     caption: "レポート2",
     icon: ReportIcon,
-    reportTo: "/report",
+    reportTo: "/report"
   },
   13: {
     reportId: 13,
     caption: "レポート",
     icon: NoteIcon,
-    reportTo: "/report",
-  },
+    reportTo: "/report"
+  }
 };
 
 const tenantListGridColumnsDef = {
   1: { caption: "テナント", propName: "name" },
-  2: { caption: "状況", propName: "statusCaption" },
+  2: { caption: "状況", propName: "statusCaption" }
 };
 
 const productGridColumnsDef = {
   1: { caption: "ライセンス名称", propName: "caption" },
   2: { caption: "Version", propName: "version" },
-  3: { caption: "Patch", propName: "patch" },
+  3: { caption: "Patch", propName: "patch" }
 };
 
 const tenantVpcTypeMst = {
   1: {
     id: 1,
     caption: "環境毎にVPC",
-    description: "環境数分VPCの作成を行います",
+    description: "環境数分VPCの作成を行います"
   },
   2: {
     id: 2,
     caption: "テナント毎にVPC",
-    description: "テナント専用VPCに全環境を構築します",
+    description: "テナント専用VPCに全環境を構築します"
   },
   9: {
     id: 9,
     caption: "マルチテナント",
-    description: "マルチテナント環境に配備します",
-  },
+    description: "マルチテナント環境に配備します"
+  }
 };
 
 const environmentVpcTypeMst = {
@@ -91,13 +91,13 @@ const environmentVpcTypeMst = {
   2: {
     id: 2,
     caption: "テナントVPC",
-    description: "テナント専用VPCに全環境を構築します",
+    description: "テナント専用VPCに全環境を構築します"
   },
   9: {
     id: 9,
     caption: "マルチテナントVPC",
-    description: "マルチテナント環境に配備します",
-  },
+    description: "マルチテナント環境に配備します"
+  }
 };
 
 const landscapeTypeMst = {
@@ -106,15 +106,15 @@ const landscapeTypeMst = {
     id: 10,
     caption: "ステージング環境",
     description: "受け入れ試験を行う環境です",
-    use: 1,
+    use: 1
   },
   100: { id: 100, caption: "本番環境", description: "本番環境です", use: 1 },
   200: {
     id: 200,
     caption: "訓練環境",
     description: "本番ユーザがオペレーションを訓練する環境",
-    use: 1,
-  },
+    use: 1
+  }
 };
 
 const environmentStatusMst = [
@@ -125,8 +125,8 @@ const environmentStatusMst = [
     id: 200,
     caption: "作成済み(予定あり)",
     description: "作成済み（予定あり）",
-    use: 1,
-  },
+    use: 1
+  }
 ];
 
 const tenantStatusMst = [
@@ -137,8 +137,8 @@ const tenantStatusMst = [
     id: 200,
     caption: "本番稼働(変更予定あり)",
     description: "作成済み（予定あり）",
-    use: 1,
-  },
+    use: 1
+  }
 ];
 
 //以下は設定ではなくマスタ。将来は不要になるはず
@@ -148,12 +148,12 @@ const productLicensesConf = {
     id: 99,
     name: "TEST",
     caption: "Ryoさんに作ってもらった試験用",
-    options: [],
+    options: []
   },
   CJK: { id: 1, name: "CJK", caption: "CJK", options: [] },
   CWS: { id: 2, name: "CWS", caption: "CWS", options: [] },
   CSR: { id: 3, name: "CSR", caption: "CSR", options: [] },
-  CTM: { id: 4, name: "CTM", caption: "CTM", options: [] },
+  CTM: { id: 4, name: "CTM", caption: "CTM", options: [] }
 };
 
 const installableComponentConf = {
@@ -162,7 +162,7 @@ const installableComponentConf = {
     name: "SpringBootAp",
     caption: "SpringBootAp",
     type: 1,
-    params: [],
+    params: []
   },
   CJK_AP: {
     id: 1,
@@ -175,23 +175,23 @@ const installableComponentConf = {
         caption: "パラメータ1",
         default: "",
         now: "hoge",
-        pattern: ["", "hoge", "foo"],
+        pattern: ["", "hoge", "foo"]
       },
       {
         name: "p2",
         caption: "パラメータ2",
         default: "",
         now: "hoge",
-        pattern: ["", "hoge", "foo"],
+        pattern: ["", "hoge", "foo"]
       },
       {
         name: "p3",
         caption: "パラメータ3",
         default: "",
         now: "hoge",
-        pattern: ["", "hoge", "foo"],
-      },
-    ],
+        pattern: ["", "hoge", "foo"]
+      }
+    ]
   },
   CJK_DB: {
     id: 2,
@@ -204,16 +204,16 @@ const installableComponentConf = {
         caption: "param1",
         default: "",
         now: "hoge",
-        pattern: ["", "hoge", "foo"],
+        pattern: ["", "hoge", "foo"]
       },
       {
         name: "p2",
         caption: "param2",
         default: "",
         now: "hoge",
-        pattern: ["", "hoge", "foo"],
-      },
-    ],
+        pattern: ["", "hoge", "foo"]
+      }
+    ]
   },
   CJK_BS: { id: 3, name: "CJK_BS", caption: "CJK_BS", type: 3, params: [] },
   CWS_AP: { id: 4, name: "CWS_AP", caption: "CWS_AP", type: 1, params: [] },
@@ -222,7 +222,7 @@ const installableComponentConf = {
   CTM_AP: { id: 7, name: "CTM_AP", caption: "CTM_AP", type: 1, params: [] },
   CTM_DB: { id: 8, name: "CTM_DB", caption: "CTM_DB", type: 2, params: [] },
   CTM_ES: { id: 9, name: "CTM_ES", caption: "CTM_ES", type: 4, params: [] },
-  CTM_BS: { id: 10, name: "CTM_BS", caption: "CTM_BS", type: 3, params: [] },
+  CTM_BS: { id: 10, name: "CTM_BS", caption: "CTM_BS", type: 3, params: [] }
 };
 
 const requiredComponentConf = {
@@ -230,13 +230,13 @@ const requiredComponentConf = {
   CJK: { main: ["CJK_AP", "CJK_DB", "CJK_BS"], sub: [] },
   CWS: {
     main: ["CWS_AP", "CWS_DB", "CWS_BS", "CWS_DL"],
-    sub: ["CJK_AP", "CJK_DB", "CJK_BS"],
+    sub: ["CJK_AP", "CJK_DB", "CJK_BS"]
   },
   CSR: {
     main: [],
-    sub: ["CWS_AP", "CWS_DB", "CWS_BS", "CWS_DL", "CJK_AP", "CJK_DB", "CJK_BS"],
+    sub: ["CWS_AP", "CWS_DB", "CWS_BS", "CWS_DL", "CJK_AP", "CJK_DB", "CJK_BS"]
   },
-  CTM: { main: ["CTM_AP", "CTM_DB", "CTM_ES", "CTM_BS"], sub: [] },
+  CTM: { main: ["CTM_AP", "CTM_DB", "CTM_ES", "CTM_BS"], sub: [] }
 };
 
 const awsTagUsage = {
@@ -244,7 +244,7 @@ const awsTagUsage = {
   tenant: "tenant",
   environment: "landscape",
   system: "",
-  component: "",
+  component: ""
 };
 
 const whi_configuration = {
@@ -258,14 +258,14 @@ const whi_configuration = {
   landscapeTypes: [
     landscapeTypeMst[1],
     landscapeTypeMst[10],
-    landscapeTypeMst[100],
+    landscapeTypeMst[100]
   ],
   productLicensesConf: [
     productLicensesConf["TEST"],
     productLicensesConf["CJK"],
     productLicensesConf["CWS"],
     productLicensesConf["CSR"],
-    productLicensesConf["CTM"],
+    productLicensesConf["CTM"]
   ],
   environmentStatusMst: environmentStatusMst,
 
@@ -275,19 +275,19 @@ const whi_configuration = {
     menuIconsDef[3],
     menuIconsDef[4],
     menuIconsDef[5],
-    menuIconsDef[11],
+    menuIconsDef[11]
   ],
   reportIcons: [reportIconsDef[11], reportIconsDef[12]],
   tenantListGridConf: {
-    columnsDef: [tenantListGridColumnsDef[1], tenantListGridColumnsDef[2]],
+    columnsDef: [tenantListGridColumnsDef[1], tenantListGridColumnsDef[2]]
   },
   productGridConf: {
     columnsDef: [
       productGridColumnsDef[1],
       productGridColumnsDef[2],
-      productGridColumnsDef[3],
-    ],
-  },
+      productGridColumnsDef[3]
+    ]
+  }
 };
 
 //いずれテナントで分岐
