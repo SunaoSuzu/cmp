@@ -7,31 +7,31 @@ import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 import PageTitle from "../components/PageTitle";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   appHeader: {
     padding: theme.spacing(1),
     margin: theme.spacing(2),
-    position: "relative",
+    position: "relative"
   },
   appHeaderWrap: {
     width: "100%",
     alignItems: "center",
-    display: "flex",
+    display: "flex"
   },
   appTitle: {
-    flexGrow: 1,
+    flexGrow: 1
   },
   appBreadcrumbs: {
-    textAlign: "right",
+    textAlign: "right"
   },
   appContent: {
     padding: theme.spacing(2),
     margin: theme.spacing(2, 0),
     "& .MuiTextField-root": {
       margin: theme.spacing(1),
-      width: "25ch",
-    },
-  },
+      width: "25ch"
+    }
+  }
 }));
 
 export default function TenantApp() {

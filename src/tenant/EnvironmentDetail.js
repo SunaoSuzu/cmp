@@ -29,41 +29,41 @@ import ListItemText from "@material-ui/core/ListItemText";
 import CodeIcon from "@material-ui/icons/Code";
 import Divider from "@material-ui/core/Divider";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
-    width: "100%",
+    width: "100%"
   },
   formControl: {
     margin: theme.spacing(1),
     // alignItems: "center",
-    minWidth: 120,
+    minWidth: 120
   },
   componentPane: {
-    width: "100%",
+    width: "100%"
   },
   tabPanel: {
-    width: "100%",
+    width: "100%"
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
+    fontWeight: theme.typography.fontWeightRegular
   },
   resources: {
     width: "100%",
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.background.paper
   },
   nested: {
-    paddingLeft: theme.spacing(3),
+    paddingLeft: theme.spacing(3)
   },
   doubleNested: {
-    paddingLeft: theme.spacing(4),
+    paddingLeft: theme.spacing(4)
   },
   button: {
-    margin: theme.spacing(1),
-  },
+    margin: theme.spacing(1)
+  }
 }));
 
-const EnvironmentDetail = (props) => {
+const EnvironmentDetail = props => {
   const classes = useStyles();
   const conf = getConfiguration();
   const environmentVpcTypeMst = conf.environmentVpcTypeMst;
@@ -108,7 +108,7 @@ const EnvironmentDetail = (props) => {
 
   function getName(tags) {
     let retVal = "";
-    tags.map((tag) => {
+    tags.map(tag => {
       if (tag.Key === "Name") {
         retVal = tag.Value;
       }
@@ -156,7 +156,7 @@ const EnvironmentDetail = (props) => {
             label="tag(aws)"
             helperText="tag(aws)を入れてください"
             inputProps={{
-              required: true,
+              required: true
             }}
             value={env.awsTag}
           />
@@ -170,14 +170,14 @@ const EnvironmentDetail = (props) => {
               id="standard-env-status"
               value={env.status}
               inputProps={{
-                readOnly: true,
+                readOnly: true
               }}
               label="ステータス"
               helperText="ステータス"
               margin="dense"
               labelId="environment-status-label"
             >
-              {environmentStatusMst.map((status) => (
+              {environmentStatusMst.map(status => (
                 <MenuItem value={status.id} key={status.id}>
                   {status.caption}
                 </MenuItem>
@@ -195,14 +195,14 @@ const EnvironmentDetail = (props) => {
               id="standard-env-vpc-type"
               value={env.vpcType}
               inputProps={{
-                readOnly: true,
+                readOnly: true
               }}
               label="VPC方針"
               helperText="VPC方針"
               margin="dense"
               labelId="standard-env-vpc-type-label"
             >
-              {environmentVpcTypeMst.map((vpc) => (
+              {environmentVpcTypeMst.map(vpc => (
                 <MenuItem value={vpc.id} key={vpc.id}>
                   {vpc.caption}
                 </MenuItem>
@@ -217,7 +217,7 @@ const EnvironmentDetail = (props) => {
             label="SPECレベル"
             value={env.specLevel}
             inputProps={{
-              readOnly: true,
+              readOnly: true
             }}
             margin="dense"
             helperText="SPECレベル"
@@ -269,11 +269,11 @@ const EnvironmentDetail = (props) => {
                 <ListItemText primary={"vpc=" + env.resources.vpcName} />
                 <ListItemText primary={"add=" + env.resources.add} />
                 <ListItemText primary={"attached=" + env.resources.attached} />
-                {env.resources.tags.map((tag) => (
+                {env.resources.tags.map(tag => (
                   <ListItemText primary={"t:" + tag.name + "=" + tag.value} />
                 ))}
               </ListItem>
-              {env.resources.ec2.map((instance) => (
+              {env.resources.ec2.map(instance => (
                 <List component="div" disablePadding>
                   <ListItem button className={classes.nested}>
                     <ListItemIcon>
@@ -282,13 +282,13 @@ const EnvironmentDetail = (props) => {
                     <ListItemText primary={"type=" + instance.instanceType} />
                     <ListItemText primary={"add=" + instance.add} />
                     <ListItemText primary={"attached=" + instance.attached} />
-                    {instance.tags.map((tag) => (
+                    {instance.tags.map(tag => (
                       <ListItemText
                         primary={"t:" + tag.name + "=" + tag.value}
                       />
                     ))}
                   </ListItem>
-                  {instance.components.map((component) => (
+                  {instance.components.map(component => (
                     <List component="div" disablePadding>
                       <ListItem button className={classes.doubleNested}>
                         <ListItemIcon>
@@ -306,7 +306,7 @@ const EnvironmentDetail = (props) => {
           )}
 
           {attachAwsCompleted === TenantAppModule.loadSuccess
-            ? attachedAwsInfo.vpcs.map((vpc) => (
+            ? attachedAwsInfo.vpcs.map(vpc => (
                 <>
                   <Divider />
                   <div>
@@ -317,9 +317,9 @@ const EnvironmentDetail = (props) => {
               ))
             : ""}
           {attachAwsCompleted === TenantAppModule.loadSuccess
-            ? attachedAwsInfo.ec2.map((ec2) => (
+            ? attachedAwsInfo.ec2.map(ec2 => (
                 <>
-                  {ec2.Instances.map((instance) => (
+                  {ec2.Instances.map(instance => (
                     <>
                       <div>
                         <EC2Logo />
@@ -386,7 +386,7 @@ const EnvironmentDetail = (props) => {
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`
   };
 }
 export default EnvironmentDetail;

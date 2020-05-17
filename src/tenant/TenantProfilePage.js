@@ -21,43 +21,43 @@ import TabPanel from "./TabPanel";
 import Box from "@material-ui/core/Box";
 
 //将来的にItemDetaiPageと統合したいけど、難しそう
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   formControl: {
     margin: theme.spacing(1),
     // alignItems: "center",
-    minWidth: 120,
+    minWidth: 120
   },
   basicInformationPanel: {
     margin: theme.spacing(0),
-    alignItems: "center",
+    alignItems: "center"
   },
   button: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(1)
   },
   tabRoot: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
     display: "flex",
-    height: 800,
+    height: 800
   },
   tabs: {
-    borderRight: `1px solid ${theme.palette.divider}`,
+    borderRight: `1px solid ${theme.palette.divider}`
   },
   sideTab: {
     width: "100%",
-    borderRight: `1px solid ${theme.palette.divider}`,
+    borderRight: `1px solid ${theme.palette.divider}`
   },
   tabPanel: {
     padding: theme.spacing(1, 2),
     flexGrow: 1,
     "& .MuiBox-root": {
-      boxShadow: "none",
-    },
+      boxShadow: "none"
+    }
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
-  },
+    fontWeight: theme.typography.fontWeightRegular
+  }
 }));
 
 export default function TenantProfilePage(props) {
@@ -78,7 +78,7 @@ export default function TenantProfilePage(props) {
   const save = function save() {
     requestUpdate(props.data);
   };
-  const uiToJson = (event) => {
+  const uiToJson = event => {
     changeProperty(event);
   };
   const delDetail = function addDetail(path, index) {
@@ -130,7 +130,7 @@ export default function TenantProfilePage(props) {
             value={targetData.name}
             helperText="会社名を入れてください"
             inputProps={{
-              required: true,
+              required: true
             }}
           />
           <TextField
@@ -141,7 +141,7 @@ export default function TenantProfilePage(props) {
             value={targetData.alias}
             helperText="略称を入れてください"
             inputProps={{
-              required: true,
+              required: true
             }}
           />
           <TextField
@@ -152,7 +152,7 @@ export default function TenantProfilePage(props) {
             helperText="tag(aws)を入れてください"
             value={targetData.awsTag}
             inputProps={{
-              required: true,
+              required: true
             }}
           />
           <FormControl className={classes.formControl}>
@@ -165,13 +165,13 @@ export default function TenantProfilePage(props) {
               id="standard-basic-status"
               value={targetData.status}
               inputProps={{
-                readOnly: true,
+                readOnly: true
               }}
               label="ステータス"
               helperText="ステータス"
               labelId="standard-basic-status-label"
             >
-              {tenantStatusMst.map((statusMst) => (
+              {tenantStatusMst.map(statusMst => (
                 <MenuItem value={statusMst.id} key={statusMst.id}>
                   {statusMst.caption}
                 </MenuItem>
@@ -245,14 +245,14 @@ export default function TenantProfilePage(props) {
                 id="environment-setting-vpc"
                 value={targetData.environmentSetting.vpcType}
                 inputProps={{
-                  readOnly: true,
+                  readOnly: true
                 }}
                 label="VPC方針"
                 helperText="VPC方針"
                 margin="dense"
                 labelId="environment-setting-vpc-label"
               >
-                {tenantVpcTypeMst.map((vpc) => (
+                {tenantVpcTypeMst.map(vpc => (
                   <MenuItem value={vpc.id} key={vpc.id}>
                     {vpc.caption}
                   </MenuItem>
@@ -293,6 +293,6 @@ export default function TenantProfilePage(props) {
 function a11yProps(index) {
   return {
     id: `vertical-tab-${index}`,
-    "aria-controls": `vertical-tabpanel-${index}`,
+    "aria-controls": `vertical-tabpanel-${index}`
   };
 }

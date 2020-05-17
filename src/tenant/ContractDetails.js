@@ -14,35 +14,35 @@ import getConfiguration from "../Configuration";
 import IndeterminateCheckBoxIcon from "@material-ui/icons/IndeterminateCheckBox";
 import { empty_contract } from "./TenantAppModule";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   button: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(1)
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 120,
+    minWidth: 120
   },
   selectEmpty: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(2)
   },
   contractBasic: {
     width: "100%",
-    alignItems: "center",
+    alignItems: "center"
   },
   contractDetails: {
     width: "100%",
-    alignItems: "center",
+    alignItems: "center"
   },
   contractDetailsItem: {
     display: "inline-block",
-    verticalAlign: "middle",
+    verticalAlign: "middle"
   },
   contractRemarks: {
-    width: "100ch!important",
-  },
+    width: "100ch!important"
+  }
 }));
 
-const ContractDetails = (props) => {
+const ContractDetails = props => {
   const classes = useStyles();
   const conf = getConfiguration();
   const productLicenses = conf.productLicensesConf;
@@ -56,7 +56,7 @@ const ContractDetails = (props) => {
     addDetail("contract.details", { ...empty_contract });
   };
 
-  const delDetailHandler = (index) => {
+  const delDetailHandler = index => {
     console.log("delDetailHandler:" + index);
     delDetail("contract.details", index);
   };
@@ -90,7 +90,7 @@ const ContractDetails = (props) => {
                 className={classes.contractDetailsItem}
                 name={"contract.details." + index + ".productMstId"}
               >
-                {productLicenses.map((p) => (
+                {productLicenses.map(p => (
                   <MenuItem value={p.id} key={p.id}>
                     {p.caption}
                   </MenuItem>
@@ -103,7 +103,7 @@ const ContractDetails = (props) => {
               label="ライセンス数"
               type="number"
               InputLabelProps={{
-                shrink: true,
+                shrink: true
               }}
               value={detail.amount}
               onChange={uiToJson}
@@ -147,7 +147,7 @@ ContractDetails.propTypes = {
   targetData: PropTypes.any.isRequired,
   uiToJson: PropTypes.any.isRequired,
   addDetail: PropTypes.any.isRequired,
-  delDetail: PropTypes.any.isRequired,
+  delDetail: PropTypes.any.isRequired
 };
 
 export default ContractDetails;

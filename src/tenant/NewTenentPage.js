@@ -11,49 +11,49 @@ import AssignmentIcon from "@material-ui/icons/Assignment";
 import TabPanel from "./TabPanel";
 import ContractDetails from "./ContractDetails";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   functionPanel: {
     backgroundColor: theme.palette.background.toolbar,
-    alignItems: "center",
+    alignItems: "center"
   },
   functionPanelLeft: {
     flexGrow: 1,
-    backgroundColor: "inherit",
+    backgroundColor: "inherit"
   },
   functionPanelRight: {
     textAlign: "right",
-    backgroundColor: "inherit",
+    backgroundColor: "inherit"
   },
   basicInformationPanel: {
-    margin: theme.spacing(0),
+    margin: theme.spacing(0)
   },
   tabRoot: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
     display: "flex",
-    height: 500,
+    height: 500
   },
   tabs: {
-    borderRight: `1px solid ${theme.palette.divider}`,
+    borderRight: `1px solid ${theme.palette.divider}`
   },
   sideTab: {
     width: "100%",
-    borderRight: `1px solid ${theme.palette.divider}`,
+    borderRight: `1px solid ${theme.palette.divider}`
   },
   tabPanel: {
     padding: theme.spacing(1, 2),
     flexGrow: 1,
     "& .MuiBox-root": {
-      boxShadow: "none",
-    },
+      boxShadow: "none"
+    }
   },
   button: {
-    margin: theme.spacing(1),
+    margin: theme.spacing(1)
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 120,
-  },
+    minWidth: 120
+  }
 }));
 
 export default function NewTenantPage(props) {
@@ -69,7 +69,7 @@ export default function NewTenantPage(props) {
   const save = function save() {
     requestAdd(targetData);
   };
-  const uiToJson = (event) => {
+  const uiToJson = event => {
     props.changePropertyOfNew(event);
   };
   const delDetail = function addDetail(path, index) {
@@ -164,6 +164,6 @@ export default function NewTenantPage(props) {
 function a11yProps(index) {
   return {
     id: `vertical-tab-${index}`,
-    "aria-controls": `vertical-tabpanel-${index}`,
+    "aria-controls": `vertical-tabpanel-${index}`
   };
 }
