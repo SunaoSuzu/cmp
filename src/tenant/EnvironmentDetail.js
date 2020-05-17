@@ -78,8 +78,7 @@ const EnvironmentDetail = props => {
   const attachAwsCompleted = props.attachAwsCompleted;
   const requestGetOperation = props.requestGetOperation;
   const requestInvokeOperation = props.requestInvokeOperation;
-  const getOperationCompleted = props.getOperationCompleted;
-  const operations = props.operations;
+  const requestResetOperation = props.requestResetOperation;
 
   //for tab
   const [innerTabValue, setInnerTavLavlue] = React.useState(0);
@@ -89,7 +88,6 @@ const EnvironmentDetail = props => {
 
   const attach = function attach(t, e, i) {
     attachAws(t.awsTag, e.awsTag);
-    //        attachAws("cmp-tenant-stech" , "develop" );
   };
 
   const getOperation = function getOperation(t, e, i) {
@@ -100,6 +98,11 @@ const EnvironmentDetail = props => {
   const invokeOperation = function getOperation(t, e, i) {
     console.log("invokeOperation");
     requestInvokeOperation(t, e, i);
+  };
+
+  const resetOperation = function getOperation(t, e, i) {
+    console.log("resetOperation");
+    requestResetOperation(t, e, i);
   };
 
   if (attachAwsCompleted === TenantAppModule.loadSuccess) {
@@ -251,6 +254,15 @@ const EnvironmentDetail = props => {
             onClick={() => invokeOperation(tenant, env, index)}
           >
             作業実行
+          </Button>
+          <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              startIcon={<StorageIcon />}
+              onClick={() => resetOperation(tenant, env, index)}
+          >
+            破棄
           </Button>
           {env.resources != null ? (
             <List

@@ -275,6 +275,7 @@ export default function TenantProfilePage(props) {
                 attachAwsCompleted={props.attachAwsCompleted}
                 requestGetOperation={props.requestGetOperation}
                 requestInvokeOperation={props.requestInvokeOperation}
+                requestResetOperation={props.requestResetOperation}
                 getOperationCompleted={props.getOperationCompleted}
                 operations={props.operations}
               />
