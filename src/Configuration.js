@@ -1,12 +1,12 @@
 import DashboardIcon from "@material-ui/icons/DashboardOutlined";
 import AccountBoxIcon from "@material-ui/icons/AccountBoxOutlined";
-import BusinessIcon from "@material-ui/icons/Business";
-import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import AssignmentIcon from "@material-ui/icons/Assignment";
-import CodeIcon from "@material-ui/icons/Code";
-import ReportIcon from "@material-ui/icons/Report";
-import NoteIcon from "@material-ui/icons/Note";
+import BusinessIcon from "@material-ui/icons/BusinessOutlined";
+import CloudDownloadIcon from "@material-ui/icons/CloudDownloadOutlined";
+import NotificationsIcon from "@material-ui/icons/NotificationsOutlined";
+import AssignmentIcon from "@material-ui/icons/AssignmentOutlined";
+import CodeIcon from "@material-ui/icons/CodeOutlined";
+import ReportIcon from "@material-ui/icons/ReportOutlined";
+import NoteIcon from "@material-ui/icons/NoteOutlined";
 
 // 設定系の　JSON
 // Mst 仕様
@@ -59,7 +59,7 @@ const reportIconsDef = {
 
 const tenantListGridColumnsDef = {
   1: { caption: "テナント", propName: "name" },
-  2: { caption: "状況", propName: "status" },
+  2: { caption: "状況", propName: "statusCaption" },
 };
 
 const productGridColumnsDef = {

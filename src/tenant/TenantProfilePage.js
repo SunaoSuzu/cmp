@@ -4,10 +4,10 @@ import Tab from "@material-ui/core/Tab";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import SaveIcon from "@material-ui/icons/Save";
+import SaveIcon from "@material-ui/icons/SaveOutlined";
 import Divider from "@material-ui/core/Divider";
-import AssignmentIcon from "@material-ui/icons/Assignment";
-import StorageIcon from "@material-ui/icons/Storage";
+import AssignmentIcon from "@material-ui/icons/AssignmentOutlined";
+import StorageIcon from "@material-ui/icons/StorageOutlined";
 import ContractDetails from "./ContractDetails";
 import Badge from "@material-ui/core/Badge";
 import getConfiguration from "../Configuration";
@@ -24,7 +24,7 @@ import Box from "@material-ui/core/Box";
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
-    alignItems: "center",
+    // alignItems: "center",
     minWidth: 120,
   },
   basicInformationPanel: {
@@ -43,9 +43,16 @@ const useStyles = makeStyles((theme) => ({
   tabs: {
     borderRight: `1px solid ${theme.palette.divider}`,
   },
-  tabPanel: {
+  sideTab: {
     width: "100%",
     borderRight: `1px solid ${theme.palette.divider}`,
+  },
+  tabPanel: {
+    padding: theme.spacing(1, 2),
+    flexGrow: 1,
+    "& .MuiBox-root": {
+      boxShadow: "none",
+    },
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -88,11 +95,12 @@ export default function TenantProfilePage(props) {
       <form encType="multipart/form-data">
         <div style={{ width: "100%" }}>
           <Box display="flex" p={0} bgcolor="background.paper">
-            <Box p={0} flexGrow={1} bgcolor="grey.300" />
-            <Box p={0} bgcolor="grey.300">
+            <Box p={0} flexGrow={1} bgcolor="background.toolbar" />
+            <Box p={0} bgcolor="background.toolbar">
               <Button
                 variant="contained"
                 color="primary"
+                size="large"
                 className={classes.button}
                 startIcon={<SaveIcon />}
                 onClick={save.bind(this)}
@@ -102,6 +110,7 @@ export default function TenantProfilePage(props) {
               <Button
                 variant="contained"
                 color="primary"
+                size="large"
                 className={classes.button}
                 startIcon={<StorageIcon />}
                 onClick={newEnv.bind(this)}
@@ -120,7 +129,6 @@ export default function TenantProfilePage(props) {
             label="テナント名"
             value={targetData.name}
             helperText="会社名を入れてください"
-            margin="dense"
             inputProps={{
               required: true,
             }}
@@ -132,7 +140,6 @@ export default function TenantProfilePage(props) {
             label="略称"
             value={targetData.alias}
             helperText="略称を入れてください"
-            margin="dense"
             inputProps={{
               required: true,
             }}
@@ -160,7 +167,8 @@ export default function TenantProfilePage(props) {
               inputProps={{
                 readOnly: true,
               }}
-              margin="dense"
+              label="ステータス"
+              helperText="ステータス"
               labelId="standard-basic-status-label"
             >
               {tenantStatusMst.map((statusMst) => (
@@ -187,14 +195,14 @@ export default function TenantProfilePage(props) {
               {...a11yProps(0)}
               icon={<AssignmentIcon />}
               wrapped
-              className={classes.tabPanel}
+              className={classes.sideTab}
             />
             <Tab
               label="環境方針"
               {...a11yProps(1)}
               icon={<AssignmentIcon />}
               wrapped
-              className={classes.tabPanel}
+              className={classes.sideTab}
             />
             {targetData.environments.map((env, index) => (
               <Tab
@@ -213,12 +221,12 @@ export default function TenantProfilePage(props) {
                     <StorageIcon />
                   )
                 }
-                className={classes.tabPanel}
+                className={classes.sideTab}
                 key={index}
               />
             ))}
           </Tabs>
-          <TabPanel value={tabValue} index={0}>
+          <TabPanel className={classes.tabPanel} value={tabValue} index={0}>
             <ContractDetails
               targetData={targetData}
               uiToJson={uiToJson}
@@ -226,7 +234,7 @@ export default function TenantProfilePage(props) {
               delDetail={delDetail}
             />
           </TabPanel>
-          <TabPanel value={tabValue} index={1}>
+          <TabPanel className={classes.tabPanel} value={tabValue} index={1}>
             <FormControl className={classes.formControl}>
               <InputLabel shrink id="environment-setting-vpc-label">
                 VPC方針
@@ -239,6 +247,8 @@ export default function TenantProfilePage(props) {
                 inputProps={{
                   readOnly: true,
                 }}
+                label="VPC方針"
+                helperText="VPC方針"
                 margin="dense"
                 labelId="environment-setting-vpc-label"
               >
@@ -252,7 +262,12 @@ export default function TenantProfilePage(props) {
             </FormControl>
           </TabPanel>
           {targetData.environments.map((env, index) => (
-            <TabPanel value={tabValue} index={index + 2} key={index}>
+            <TabPanel
+              className={classes.tabPanel}
+              value={tabValue}
+              index={index + 2}
+              key={index}
+            >
               <EnvironmentDetail
                 index={index}
                 env={env}
@@ -264,7 +279,6 @@ export default function TenantProfilePage(props) {
                 attachAwsCompleted={props.attachAwsCompleted}
                 requestGetOperation={props.requestGetOperation}
                 requestInvokeOperation={props.requestInvokeOperation}
-                requestResetOperation={props.requestResetOperation}
                 getOperationCompleted={props.getOperationCompleted}
                 operations={props.operations}
               />
