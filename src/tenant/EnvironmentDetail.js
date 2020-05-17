@@ -172,8 +172,6 @@ const EnvironmentDetail = props => {
               inputProps={{
                 readOnly: true
               }}
-              label="ステータス"
-              helperText="ステータス"
               margin="dense"
               labelId="environment-status-label"
             >
@@ -197,8 +195,6 @@ const EnvironmentDetail = props => {
               inputProps={{
                 readOnly: true
               }}
-              label="VPC方針"
-              helperText="VPC方針"
               margin="dense"
               labelId="standard-env-vpc-type-label"
             >
@@ -269,12 +265,12 @@ const EnvironmentDetail = props => {
                 <ListItemText primary={"vpc=" + env.resources.vpcName} />
                 <ListItemText primary={"add=" + env.resources.add} />
                 <ListItemText primary={"attached=" + env.resources.attached} />
-                {env.resources.tags.map(tag => (
-                  <ListItemText primary={"t:" + tag.name + "=" + tag.value} />
+                {env.resources.tags.map((tag,ti) => (
+                  <ListItemText primary={"t:" + tag.name + "=" + tag.value} key={ti}/>
                 ))}
               </ListItem>
-              {env.resources.ec2.map(instance => (
-                <List component="div" disablePadding>
+              {env.resources.ec2.map( (instance,ei)  => (
+                <List component="div" disablePadding key={ei}>
                   <ListItem button className={classes.nested}>
                     <ListItemIcon>
                       <EC2Logo />
@@ -282,14 +278,15 @@ const EnvironmentDetail = props => {
                     <ListItemText primary={"type=" + instance.instanceType} />
                     <ListItemText primary={"add=" + instance.add} />
                     <ListItemText primary={"attached=" + instance.attached} />
-                    {instance.tags.map(tag => (
+                    {instance.tags.map( (tag,ti) => (
                       <ListItemText
-                        primary={"t:" + tag.name + "=" + tag.value}
+                          key={ti}
+                          primary={"t:" + tag.name + "=" + tag.value}
                       />
                     ))}
                   </ListItem>
-                  {instance.components.map(component => (
-                    <List component="div" disablePadding>
+                  {instance.components.map( (component , ci) => (
+                    <List component="div" disablePadding key={ci}>
                       <ListItem button className={classes.doubleNested}>
                         <ListItemIcon>
                           <CodeIcon />
@@ -306,19 +303,19 @@ const EnvironmentDetail = props => {
           )}
 
           {attachAwsCompleted === TenantAppModule.loadSuccess
-            ? attachedAwsInfo.vpcs.map(vpc => (
-                <>
+            ? attachedAwsInfo.vpcs.map( (vpc , vi) => (
+                <React.Fragment key={vi}>
                   <Divider />
                   <div>
                     <VpcLogo />
                     {getName(vpc.Tags)} {vpc.VpcId}
                   </div>
-                </>
+                </React.Fragment>
               ))
             : ""}
           {attachAwsCompleted === TenantAppModule.loadSuccess
-            ? attachedAwsInfo.ec2.map(ec2 => (
-                <>
+            ? attachedAwsInfo.ec2.map( (ec2,ei ) => (
+                <React.Fragment key={ei}>
                   {ec2.Instances.map(instance => (
                     <>
                       <div>
@@ -328,7 +325,7 @@ const EnvironmentDetail = props => {
                       </div>
                     </>
                   ))}
-                </>
+                </React.Fragment>
               ))
             : ""}
         </TabPanel>

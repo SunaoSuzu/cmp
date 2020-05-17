@@ -167,8 +167,6 @@ export default function TenantProfilePage(props) {
               inputProps={{
                 readOnly: true
               }}
-              label="ステータス"
-              helperText="ステータス"
               labelId="standard-basic-status-label"
             >
               {tenantStatusMst.map(statusMst => (
@@ -247,8 +245,6 @@ export default function TenantProfilePage(props) {
                 inputProps={{
                   readOnly: true
                 }}
-                label="VPC方針"
-                helperText="VPC方針"
                 margin="dense"
                 labelId="environment-setting-vpc-label"
               >
