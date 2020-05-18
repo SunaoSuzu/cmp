@@ -5,14 +5,28 @@ import makeTemplateMaker from "./EnvironmentTemplateMaker";
 import * as AwsAppSaga from "../aws/AwsAppSaga";
 import makeOperation from "./OperationTemplateMaker";
 
+const searchSource = process.env.REACT_APP_DEV_SEARCH_SOURCE_URL;
 const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
 
 function* handleRequestList() {
   try {
-    const res = yield axios.get(baseEndPoint + `/tenant`);
+    const query = {
+      "query": {
+        "match_all": {}
+      },
+      "_source" : ["data"]
+    };
+    const res = yield axios.post(searchSource + '/cmp/tenant/_search',
+        JSON.stringify(query) ,
+        {headers: {'Content-Type': 'application/json'}}
+        );
+    const ret = res.data.hits.hits.map(function (hit) {
+          return hit._source.data;
+        }
+    )
     yield put({
       type: TenantAppModule.GET_LIST_SUCCESS,
-      datas: res.data,
+      datas: ret,
       receivedAt: Date.now(),
     });
   } catch (e) {

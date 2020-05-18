@@ -38,7 +38,7 @@ function TenantList(props) {
       </React.Fragment>
     );
   }
-  return <div>ERROE!!!!</div>;
+  return <div>ERROR!!!!</div>;
 }
 
 const mapStateToProps = (state) => {
