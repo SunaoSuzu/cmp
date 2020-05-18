@@ -14,6 +14,7 @@ import AwsSubApp from "./aws/AwsSubApp";
 const Routes = ({ match }) => (
   <Switch>
     <Redirect exact from="/" to="/home" />
+    <Redirect exact from="/login" to="/home" />
     <Route path={`${match.url}home`} component={HomeApp} />
     <Route path={`${match.url}profile`} component={ProfileApp} />
     <Route path={`${match.url}notice`} component={NoticeApp} />
