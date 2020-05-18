@@ -191,7 +191,7 @@ if (vpc.add === true) {
     console.log("Created VPC");
     ec2.createVpc(VPC_PARAMS, function (err, vpcData) {
         if (err) console.log(err, err.stack);
-        else console.log(vpcData);           // successful response
+        else console.log(vpcData); 
 
         console.log("Created SUBNET");
         const subNetParams = {
@@ -200,7 +200,7 @@ if (vpc.add === true) {
         };
         const subNetPromise = ec2.createSubnet(subNetParams, function (err, subNetData) {
             if (err) console.log(err, err.stack);
-            else console.log(subNetData);           // successful response
+            else console.log(subNetData); 
             /*
           Subnet: {
             AvailabilityZone: 'ap-northeast-1a',
@@ -222,7 +222,7 @@ if (vpc.add === true) {
             console.log("Created Internet Gateway");
             const internetGatewayPromise = ec2.createInternetGateway(function (err, igwData) {
                 if (err) console.log(err, err.stack);
-                else console.log(igwData);           // successful response
+                else console.log(igwData); 
                 const attachParams = {
                     VpcId: vpcData.Vpc.VpcId,
                     InternetGatewayId: igwData.InternetGateway.InternetGatewayId,
@@ -230,7 +230,7 @@ if (vpc.add === true) {
                 console.log("Attach Internet Gateway");
                 ec2.attachInternetGateway(attachParams, function (err, attachData) {
                     if (err) console.log(err, err.stack);
-                    else console.log(attachData);           // successful response
+                    else console.log(attachData); 
                 });
                 console.log("Create Routetable");
                 const routeParams = {
@@ -238,7 +238,7 @@ if (vpc.add === true) {
                 };
                 ec2.createRouteTable(routeParams, function (err, routeData) {
                     if (err) console.log(err, err.stack);
-                    else console.log(routeData);           // successful response
+                    else console.log(routeData); 
                     const routeTableParams = {
                         RouteTableId: routeData.RouteTable.RouteTableId,
                         DestinationCidrBlock: "0.0.0.0/0",
