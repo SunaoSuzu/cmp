@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import FabLink from "../asset/FabLink";
 import getConfiguration from "../Configuration";
 import Pagination from "@material-ui/lab/Pagination";
-import useDebouncedQuery from "./useDebouncedQuery";
+import useDebouncedQuery from "../util/useDebouncedQuery";
 import Input from '@material-ui/core/Input';
 import Select from '@material-ui/core/Select';
 import {Box} from "@material-ui/core";

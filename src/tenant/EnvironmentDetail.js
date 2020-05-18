@@ -4,8 +4,6 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Typography from "@material-ui/core/Typography";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
-import Button from "@material-ui/core/Button";
-import StorageIcon from "@material-ui/icons/StorageOutlined";
 import React from "react";
 import getConfiguration from "../Configuration";
 import { makeStyles } from "@material-ui/core/styles";
@@ -13,17 +11,8 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import TabPanel from "./TabPanel";
-import VpcLogo from "../components/VpcLogo";
-import EC2Logo from "../components/EC2Logo";
-import * as TenantAppModule from "./TenantAppModule";
-
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import CodeIcon from "@material-ui/icons/Code";
-import Divider from "@material-ui/core/Divider";
 import Selection from "../components/Selection";
+import AWSPanel from "./aws/AWSPanel";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -68,13 +57,7 @@ const EnvironmentDetail = props => {
   const index = props.index;
   const env = props.env;
   const uiToJson = props.uiToJson;
-  const attachAws = props.attachAws;
   const tenant = props.tenant;
-  const attachedAwsInfo = props.attachedAwsInfo;
-  const attachAwsCompleted = props.attachAwsCompleted;
-  const requestGetOperation = props.requestGetOperation;
-  const requestInvokeOperation = props.requestInvokeOperation;
-  const requestResetOperation = props.requestResetOperation;
 
   //for tab
   const [innerTabValue, setInnerTavLavlue] = React.useState(0);
@@ -82,43 +65,10 @@ const EnvironmentDetail = props => {
     setInnerTavLavlue(newValue);
   };
 
-  const attach = function attach(t, e, i) {
-    attachAws(t.awsTag, e.awsTag);
-  };
-
-  const getOperation = function getOperation(t, e, i) {
-    console.log("getOperation");
-    requestGetOperation(t, e, i);
-  };
-
-  const invokeOperation = function getOperation(t, e, i) {
-    console.log("invokeOperation");
-    requestInvokeOperation(t, e, i);
-  };
-
-  const resetOperation = function getOperation(t, e, i) {
-    console.log("resetOperation");
-    requestResetOperation(t, e, i);
-  };
-
-  if (attachAwsCompleted === TenantAppModule.loadSuccess) {
-    console.log("AWSから取り込み成功");
-  }
-
-  function getName(tags) {
-    let retVal = "";
-    tags.map(tag => {
-      if (tag.Key === "Name") {
-        retVal = tag.Value;
-      }
-    });
-    return retVal;
-  }
-
   return (
     <React.Fragment>
       <div className={classes.root}>
-        <AppBar position="static" color="default" elevation="0">
+        <AppBar position="static" color="default" elevation={0}>
           <Tabs
             value={innerTabValue}
             onChange={handleChange}
@@ -174,7 +124,7 @@ const EnvironmentDetail = props => {
                      label="VPC方針"
                      name={"environments." + index + ".vpcType"}
                      onChange={uiToJson}
-                     id="standard-basic-status"
+                     id="standard-basic-vpc-type"
                      value={env.vpcType}
                      readOnly={true}
                      helperText="VPC方針"
@@ -200,118 +150,7 @@ const EnvironmentDetail = props => {
           boxShadow={1}
           className={classes.tabPanel}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.button}
-            startIcon={<StorageIcon />}
-            onClick={() => getOperation(tenant, env, index)}
-          >
-            構成決定
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.button}
-            startIcon={<StorageIcon />}
-            onClick={() => attach(tenant, env, index)}
-          >
-            アタッチ
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.button}
-            startIcon={<StorageIcon />}
-            onClick={() => invokeOperation(tenant, env, index)}
-          >
-            作業実行
-          </Button>
-          <Button
-              variant="contained"
-              color="primary"
-              className={classes.button}
-              startIcon={<StorageIcon />}
-              onClick={() => resetOperation(tenant, env, index)}
-          >
-            破棄
-          </Button>
-          {env.resources != null ? (
-            <List
-              component="nav"
-              aria-labelledby="nested-list-subheader"
-              className={classes.resources}
-            >
-              <ListItem button>
-                <ListItemIcon>
-                  <VpcLogo />
-                </ListItemIcon>
-                <ListItemText primary={"vpc=" + env.resources.vpcName} />
-                <ListItemText primary={"add=" + env.resources.add} />
-                <ListItemText primary={"attached=" + env.resources.attached} />
-                {env.resources.tags.map((tag,ti) => (
-                  <ListItemText primary={"t:" + tag.name + "=" + tag.value} key={ti}/>
-                ))}
-              </ListItem>
-              {env.resources.ec2.map( (instance,ei)  => (
-                <List component="div" disablePadding key={ei}>
-                  <ListItem button className={classes.nested}>
-                    <ListItemIcon>
-                      <EC2Logo />
-                    </ListItemIcon>
-                    <ListItemText primary={"type=" + instance.instanceType} />
-                    <ListItemText primary={"add=" + instance.add} />
-                    <ListItemText primary={"attached=" + instance.attached} />
-                    {instance.tags.map( (tag,ti) => (
-                      <ListItemText
-                          key={ti}
-                          primary={"t:" + tag.name + "=" + tag.value}
-                      />
-                    ))}
-                  </ListItem>
-                  {instance.components.map( (component , ci) => (
-                    <List component="div" disablePadding key={ci}>
-                      <ListItem button className={classes.doubleNested}>
-                        <ListItemIcon>
-                          <CodeIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={"name=" + component.name} />
-                      </ListItem>
-                    </List>
-                  ))}
-                </List>
-              ))}
-            </List>
-          ) : (
-            ""
-          )}
-
-          {attachAwsCompleted === TenantAppModule.loadSuccess
-            ? attachedAwsInfo.vpcs.map( (vpc , vi) => (
-                <React.Fragment key={vi}>
-                  <Divider />
-                  <div>
-                    <VpcLogo />
-                    {getName(vpc.Tags)} {vpc.VpcId}
-                  </div>
-                </React.Fragment>
-              ))
-            : ""}
-          {attachAwsCompleted === TenantAppModule.loadSuccess
-            ? attachedAwsInfo.ec2.map( (ec2,ei ) => (
-                <React.Fragment key={ei}>
-                  {ec2.Instances.map(instance => (
-                    <>
-                      <div>
-                        <EC2Logo />
-                        {getName(instance.Tags)} {instance.InstanceId}{" "}
-                        {instance.InstanceType}
-                      </div>
-                    </>
-                  ))}
-                </React.Fragment>
-              ))
-            : ""}
+          <AWSPanel env={env} tenant={tenant} index={index} />
         </TabPanel>
         <TabPanel
           value={innerTabValue}

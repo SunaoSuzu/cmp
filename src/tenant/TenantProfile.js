@@ -29,14 +29,6 @@ function TenantProfile(props) {
               requestUpdate={props.requestUpdate}
               backToList="/tenant/list"
               requestNewEnv={props.requestNewEnv}
-              attachAws={props.attachAws}
-              attachedAwsInfo={props.attachedAwsInfo}
-              attachAwsCompleted={props.attachAwsCompleted}
-              requestGetOperation={props.requestGetOperation}
-              requestInvokeOperation={props.requestInvokeOperation}
-              getOperationCompleted={props.getOperationCompleted}
-              requestResetOperation={props.requestResetOperation}
-              operations={props.operations}
             />
           </React.Fragment>
         );
@@ -51,10 +43,6 @@ const mapStateToProps = (state) => {
     getDetailComplete: state.getDetailComplete,
     updateComplete: state.updateComplete,
     data: state.data,
-    getOperationCompleted: state.getOperationCompleted,
-    operations: state.operations,
-    attachedAwsInfo: state.attachedAwsInfo,
-    attachAwsCompleted: state.attachAwsCompleted,
   };
 };
 
@@ -68,14 +56,6 @@ const mapDispatchToProps = (dispatch) => {
     delFromArray: (path, index) =>
       dispatch(tenantAppModule.delFromArray(path, index)),
     requestNewEnv: (data) => dispatch(tenantAppModule.requestNewEnv(data)),
-    requestGetOperation: (tenant, env, envIndex) =>
-      dispatch(tenantAppModule.requestGetOperation(tenant, env, envIndex)),
-    requestInvokeOperation: (tenant, env, envIndex) =>
-      dispatch(tenantAppModule.requestInvokeOperation(tenant, env, envIndex)),
-    requestResetOperation: (tenant, env, envIndex) =>
-      dispatch(tenantAppModule.requestResetOperation(tenant, env, envIndex)),
-    attachAws: (tenantTag, envTag, envIndex) =>
-      dispatch(tenantAppModule.requestAttachAws(tenantTag, envTag, envIndex)),
   };
 };
 

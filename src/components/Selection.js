@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
 
 const Selection      = props => {
     const input      = props.input;  //show or input
+    const id         = props.id;
     const name       = props.name;
     const value      = props.value;
     const options    = props.options;  //[{id : id , caption : caption}]
@@ -47,20 +48,20 @@ const Selection      = props => {
     } else {
         return (
             <FormControl className={classes.formControl}>
-                <InputLabel shrink id={name + "-label"}>
+                <InputLabel shrink id={(id!=null?id:name) + "-label"}>
                     {label}
                 </InputLabel>
                 <Select
                     name={name}
                     onChange={handleChange.bind()}
-                    id={name}
+                    id={(id!=null?id:name)}
                     value={value}
                     inputProps={{
                         readOnly: readOnly,
                         required: required,
                     }}
                     margin={margin}
-                    labelId={name + "-label"}
+                    labelId={(id!=null?id:name) + "-label"}
                 >
                     {options.map(option => (
                         <MenuItem value={option.id} key={option.id}>

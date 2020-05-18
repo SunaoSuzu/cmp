@@ -237,13 +237,6 @@ export default function TenantProfilePage(props) {
                 key={index}
                 attachAws={attachAws}
                 tenant={targetData}
-                attachedAwsInfo={props.attachedAwsInfo}
-                attachAwsCompleted={props.attachAwsCompleted}
-                requestGetOperation={props.requestGetOperation}
-                requestInvokeOperation={props.requestInvokeOperation}
-                requestResetOperation={props.requestResetOperation}
-                getOperationCompleted={props.getOperationCompleted}
-                operations={props.operations}
               />
             </TabPanel>
           ))}
