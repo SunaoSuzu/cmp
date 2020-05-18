@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Routes from "./Routes";
 import { withRouter } from "react-router-dom";
 import { isIOS, isMobile } from "react-device-detect";
+import SignIn from "./signin/SignIn";
 
 //自作
 import SiteHeader from "./components/SiteHeader";
@@ -32,8 +33,10 @@ const Navigation = (props) => {
     selectAccount,
     selectNotice,
     selectSearch,
-    selectLogout,
+    selectLogout
   } = props;
+
+  console.log(props);
 
   const { functionType, selectedMenuId, selectedReportId } = props;
   const { selectMenu, selectReport } = props;
@@ -45,32 +48,43 @@ const Navigation = (props) => {
   }
 
   const classes = useStyles();
-  return (
-    <React.StrictMode>
-      <div className={classes.root}>
-        <SiteHeader
-          selectHome={selectHome}
-          selectSearch={selectSearch}
-          selectNotice={selectNotice}
-          selectProfile={selectProfile}
-          selectAccount={selectAccount}
-          selectLogout={selectLogout}
-          functionType={functionType}
-          selectedMenuId={selectedMenuId}
-          selectedReportId={selectedReportId}
-          selectMenu={selectMenu}
-          selectReport={selectReport}
-        />
-        <main className={classes.content}>
-          <div className={classes.appBarSpacer} />
-          <Container maxWidth="lg" className={classes.container}>
-            <Routes />
-          </Container>
-        </main>
-        {/* <SiteFooter/> */}
-      </div>
-    </React.StrictMode>
-  );
+
+  const authSuccess = function(uid){
+    props.authSuccess(uid);
+  }
+
+  if(!props.authorized){
+    return <SignIn authSuccess={authSuccess.bind()}/>;
+  }else{
+    return (
+        <React.StrictMode>
+          <div className={classes.root}>
+            <SiteHeader
+                selectHome={selectHome}
+                selectSearch={selectSearch}
+                selectNotice={selectNotice}
+                selectProfile={selectProfile}
+                selectAccount={selectAccount}
+                selectLogout={selectLogout}
+                functionType={functionType}
+                selectedMenuId={selectedMenuId}
+                selectedReportId={selectedReportId}
+                selectMenu={selectMenu}
+                selectReport={selectReport}
+            />
+            <main className={classes.content}>
+              <div className={classes.appBarSpacer} />
+              <Container maxWidth="lg" className={classes.container}>
+                <Routes />
+              </Container>
+            </main>
+            {/* <SiteFooter/> */}
+          </div>
+        </React.StrictMode>
+    );
+
+  }
+
 };
 
 export default withRouter(Navigation);

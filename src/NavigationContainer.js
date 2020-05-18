@@ -4,10 +4,13 @@ import * as navigationModule from "./NavigationModule";
 import Navigation from "./Navigation";
 
 const mapStateToProps = (state) => {
+  console.log(JSON.stringify(state));
   return {
-    functionType: state.functionType,
-    selectedMenuId: state.selectedMenuId,
-    selectedReportId: state.selectedReportId,
+    functionType: state.navigationReducer.functionType,
+    selectedMenuId: state.navigationReducer.selectedMenuId,
+    selectedReportId: state.navigationReducer.selectedReportId,
+    authorized : state.navigationReducer.authorized,
+    userInfo : state.navigationReducer.userInfo,
   };
 };
 
@@ -21,6 +24,7 @@ const mapDispatchToProps = (dispatch) => {
     selectNotice: () => dispatch(navigationModule.selectNotice()),
     selectSearch: () => dispatch(navigationModule.selectSearch()),
     selectLogout: () => dispatch(navigationModule.selectLogout()),
+    authSuccess: (uid) => dispatch(navigationModule.authSuccess(uid)),
   };
 };
 

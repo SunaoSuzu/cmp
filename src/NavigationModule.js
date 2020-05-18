@@ -7,7 +7,11 @@ const ACCOUNT = "ACCOUNT";
 const SEARCH = "SEARCH";
 const LOGOUT = "LOGOUT";
 
+const SUCCESS_AUTH = "SUCCESS_AUTH";
+
 const initialState = {
+  authorized : false,         //ここも変わるはず
+  userInfo   : null,          //　とりあえず平文でUsreId持っておくけどあとで変える
   functionType: HOME,
   selectedMenuId: null,
   targetReportId: null,
@@ -15,14 +19,25 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
+    case SUCCESS_AUTH:
+      return {
+        ...state,
+        authorized: true,
+        userInfo: action.uid,
+        functionType: SUCCESS_AUTH,
+        selectedMenuId: null,
+        selectedReportId: null,
+      };
     case MENU:
       return {
+        ...state,
         functionType: MENU,
         selectedMenuId: action.menu.menuId,
         selectedReportId: null,
       };
     case REPORT:
       return {
+        ...state,
         functionType: REPORT,
         selectedMenuId: null,
         selectedReportId: action.report.reportId,
@@ -32,8 +47,17 @@ export default function reducer(state = initialState, action) {
     case PROFILE:
     case ACCOUNT:
     case SEARCH:
+      return {
+        ...state,
+        functionType: action.type,
+        selectedMenuId: null,
+        selectedReportId: null,
+      };
     case LOGOUT:
       return {
+        ...state,
+        authorized: false,
+        userInfo: null,
         functionType: action.type,
         selectedMenuId: null,
         selectedReportId: null,
@@ -92,5 +116,12 @@ export const selectSearch = () => {
 export const selectLogout = () => {
   return {
     type: LOGOUT,
+  };
+};
+
+export const authSuccess = (uid) => {
+  return {
+    type: SUCCESS_AUTH,
+    uid : uid,
   };
 };

@@ -63,8 +63,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function SignInSide() {
+export default function SignInSide(props) {
   const classes = useStyles();
+
+  const challengeAuthentication = function challengeAuthentication() {
+    //とりあえず常に認証は成功する
+    props.authSuccess("sunao");
+  };
+
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -101,11 +107,12 @@ export default function SignInSide() {
               label="Remember me"
             />
             <Button
-              type="submit"
+              type="button"
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
+              onClick={challengeAuthentication.bind()}
             >
               Sign In
             </Button>
