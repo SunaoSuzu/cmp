@@ -1,9 +1,4 @@
 import TextField from "@material-ui/core/TextField";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -28,6 +23,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import CodeIcon from "@material-ui/icons/Code";
 import Divider from "@material-ui/core/Divider";
+import Selection from "../components/Selection";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -163,52 +159,28 @@ const EnvironmentDetail = props => {
             }}
             value={env.awsTag}
           />
-          <FormControl className={classes.formControl}>
-            <InputLabel shrink id="environment-status-label">
-              ステータス
-            </InputLabel>
-            <Select
-              name={"environments." + index + ".status"}
-              onChange={uiToJson}
-              id="standard-env-status"
-              value={env.status}
-              inputProps={{
-                readOnly: true
-              }}
-              margin="dense"
-              labelId="environment-status-label"
-            >
-              {environmentStatusMst.map(status => (
-                <MenuItem value={status.id} key={status.id}>
-                  {status.caption}
-                </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>ステータス</FormHelperText>
-          </FormControl>
-          <FormControl className={classes.formControl}>
-            <InputLabel shrink id="standard-env-vpc-type-label">
-              VPC方針
-            </InputLabel>
-            <Select
-              name={"environments." + index + ".vpcType"}
-              onChange={uiToJson}
-              id="standard-env-vpc-type"
-              value={env.vpcType}
-              inputProps={{
-                readOnly: true
-              }}
-              margin="dense"
-              labelId="standard-env-vpc-type-label"
-            >
-              {environmentVpcTypeMst.map(vpc => (
-                <MenuItem value={vpc.id} key={vpc.id}>
-                  {vpc.caption}
-                </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>VPC作成方針</FormHelperText>
-          </FormControl>
+          <Selection input={true}
+                     label="環境状態"
+                     name={"environments." + index + ".status"}
+                     onChange={uiToJson}
+                     id="standard-basic-status"
+                     value={env.status}
+                     readOnly={true}
+                     helperText="環境状態"
+                     margin="dense"
+                     options={environmentStatusMst}
+          />
+          <Selection input={true}
+                     label="VPC方針"
+                     name={"environments." + index + ".vpcType"}
+                     onChange={uiToJson}
+                     id="standard-basic-status"
+                     value={env.vpcType}
+                     readOnly={true}
+                     helperText="VPC方針"
+                     margin="dense"
+                     options={environmentVpcTypeMst}
+          />
           <TextField
             name={"environments." + index + ".specLevel"}
             onChange={uiToJson}

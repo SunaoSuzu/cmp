@@ -11,22 +11,13 @@ import StorageIcon from "@material-ui/icons/StorageOutlined";
 import ContractDetails from "./ContractDetails";
 import Badge from "@material-ui/core/Badge";
 import getConfiguration from "../Configuration";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import EnvironmentDetail from "./EnvironmentDetail";
 import TabPanel from "./TabPanel";
 import Box from "@material-ui/core/Box";
+import Selection from "../components/Selection";
 
 //将来的にItemDetaiPageと統合したいけど、難しそう
 const useStyles = makeStyles(theme => ({
-  formControl: {
-    margin: theme.spacing(1),
-    // alignItems: "center",
-    minWidth: 120
-  },
   basicInformationPanel: {
     margin: theme.spacing(0),
     alignItems: "center"
@@ -155,28 +146,16 @@ export default function TenantProfilePage(props) {
               required: true
             }}
           />
-          <FormControl className={classes.formControl}>
-            <InputLabel shrink id="standard-basic-status-label">
-              ステータス
-            </InputLabel>
-            <Select
-              name="status"
-              onChange={uiToJson}
-              id="standard-basic-status"
-              value={targetData.status}
-              inputProps={{
-                readOnly: true
-              }}
-              labelId="standard-basic-status-label"
-            >
-              {tenantStatusMst.map(statusMst => (
-                <MenuItem value={statusMst.id} key={statusMst.id}>
-                  {statusMst.caption}
-                </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>ステータス</FormHelperText>
-          </FormControl>
+          <Selection input={true}
+            label="ステータス"
+            name="status"
+            onChange={uiToJson}
+            id="standard-basic-status"
+            value={targetData.status}
+            readOnly={true}
+            helperText="ステータス"
+            options={tenantStatusMst}
+          />
         </div>
         <Divider />
         <div className={classes.tabRoot}>
@@ -233,29 +212,16 @@ export default function TenantProfilePage(props) {
             />
           </TabPanel>
           <TabPanel className={classes.tabPanel} value={tabValue} index={1}>
-            <FormControl className={classes.formControl}>
-              <InputLabel shrink id="environment-setting-vpc-label">
-                VPC方針
-              </InputLabel>
-              <Select
-                name="status"
-                onChange={uiToJson}
-                id="environment-setting-vpc"
-                value={targetData.environmentSetting.vpcType}
-                inputProps={{
-                  readOnly: true
-                }}
-                margin="dense"
-                labelId="environment-setting-vpc-label"
-              >
-                {tenantVpcTypeMst.map(vpc => (
-                  <MenuItem value={vpc.id} key={vpc.id}>
-                    {vpc.caption}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>VPC作成方針</FormHelperText>
-            </FormControl>
+            <Selection input={true}
+                       label="VPC方針"
+                       name="environmentSetting.vpcType"
+                       onChange={uiToJson}
+                       id="environment-setting-vpc"
+                       value={targetData.environmentSetting.vpcType}
+                       helperText="VPC作成方針"
+                       margin="dense"
+                       options={tenantVpcTypeMst}
+            />
           </TabPanel>
           {targetData.environments.map((env, index) => (
             <TabPanel
