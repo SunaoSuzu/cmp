@@ -2,10 +2,8 @@ import React from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import { NavLink } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
@@ -63,6 +61,22 @@ function DataRow(props) {
 export default function SuTechGrid(props) {
   const classes = useStyles();
   const selectToBase = props.selectToBase;
+
+  //とりあえずの互換
+  const elasticSearch = props.selectToBase;
+  let datas           = props.datas;
+
+  if(elasticSearch){
+
+    //とりあえずの互換
+    const ret = datas.hits.hits.map(function (hit) {
+          hit._source.highlight=hit.highlight;
+          return hit._source.data;
+        }
+    )
+    datas=ret;
+  }
+
   return (
     <React.Fragment>
       {/* <TableContainer component={Paper}> */}
@@ -79,7 +93,7 @@ export default function SuTechGrid(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.datas.map((data) => (
+          {datas.map((data) => (
             <DataRow
               className={classes.dataRow}
               button

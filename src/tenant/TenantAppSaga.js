@@ -8,25 +8,48 @@ import makeOperation from "./OperationTemplateMaker";
 const searchSource = process.env.REACT_APP_DEV_SEARCH_SOURCE_URL;
 const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
 
-function* handleRequestList() {
+function* handleRequestList(action) {
   try {
-    const query = {
-      "query": {
-        "match_all": {}
-      },
-      "_source" : ["data"]
-    };
+    let executeQuery = {};
+    let way = "";
+    if(action.keyword!=null&&action.keyword!=""){
+      //キーワード検索
+      executeQuery = {
+        "query": {
+          "multi_match": {
+            "fields": [ "tenantName", "alias"],
+            "query": "鈴木",
+          }
+        },
+        "_source" : ["data"],
+        "from" : action.from,
+        "size" : action.size,
+        "highlight": { "fields": {"tenantName": {}}}
+      };
+      way="keyword";
+    }else{
+      //全件取得
+      executeQuery = {
+        "query": {
+          "match_all": {}
+        },
+        "_source" : ["data"],
+        "from" :action.from,
+        "size" : action.size,
+      };
+      way="simple";
+    }
+
+    console.log(executeQuery);
     const res = yield axios.post(searchSource + '/cmp/tenant/_search',
-        JSON.stringify(query) ,
+        JSON.stringify(executeQuery) ,
         {headers: {'Content-Type': 'application/json'}}
         );
-    const ret = res.data.hits.hits.map(function (hit) {
-          return hit._source.data;
-        }
-    )
+    res.data["way"]=way;
+    console.log(res.data);
     yield put({
       type: TenantAppModule.GET_LIST_SUCCESS,
-      datas: ret,
+      datas: res.data,
       receivedAt: Date.now(),
     });
   } catch (e) {

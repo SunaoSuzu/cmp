@@ -280,6 +280,17 @@ export default function reducer(state = initialState, action) {
 export const requestList = () => {
   return {
     type: GET_LIST_REQUEST,
+    from : 0,
+    size : 1,
+  };
+};
+
+export const requestSearchList = (keyword,from,size) => {
+  return {
+    type: GET_LIST_REQUEST,
+    keyword : keyword,
+    from : from,
+    size : size,
   };
 };
 
