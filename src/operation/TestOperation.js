@@ -190,7 +190,7 @@ if (vpc.add === true) {
 
     async function createVPC() {
         try {
-            const ec2 = new AWS.EC2({apiVersion: API_VERSION});
+            const ec2 = new AWS.EC2({apiVersion: API_VERSION , region: "ap-northeast-1",});
             console.log("Created VPC");
             let vpcDataRet = await ec2.createVpc(VPC_PARAMS).promise();
             console.log(vpcDataRet);
@@ -198,8 +198,18 @@ if (vpc.add === true) {
             const subNetParams = {
                 VpcId: vpcDataRet.Vpc.VpcId,
                 CidrBlock: CIDR_BLOCK_SUBNET,
+                AvailabilityZone : "ap-northeast-1d"
             };
             const subNetDataRet = await ec2.createSubnet(subNetParams).promise();
+            console.log("Modify Subnet Attribute");
+            const modifyParams = {
+                SubnetId: subNetDataRet.Subnet.SubnetId,
+                MapPublicIpOnLaunch: {Value: true},
+            };
+            const modifySubnetAttributeRet = await ec2.modifySubnetAttribute(modifyParams).promise();
+            console.log(modifySubnetAttributeRet);
+
+
             console.log(subNetDataRet);
             console.log("Created Internet Gateway");
             const internetGatewayRet = await ec2.createInternetGateway().promise();
@@ -232,17 +242,10 @@ if (vpc.add === true) {
             };
             const associateRouteTableRet = await ec2.associateRouteTable(associateParams).promise();
             console.log(associateRouteTableRet);
-            console.log("Modify Subnet Attribute");
-            const modifyParams = {
-                SubnetId: subNetDataRet.Subnet.SubnetId,
-                MapPublicIpOnLaunch: {Value: true},
-            };
-            const modifySubnetAttributeRet = await ec2.modifySubnetAttribute(modifyParams).promise();
-            console.log(modifySubnetAttributeRet);
             console.log("Create SecurityGroup");
             const securityParams = {
-                GroupName: vpcDataRet.Vpc.VpcId,
-                Description: vpcDataRet.Vpc.VpcId,
+                GroupName: "sunao",
+                Description: "sunao",
                 VpcId: vpcDataRet.Vpc.VpcId,
             };
             const securityDataRet = await ec2.createSecurityGroup(securityParams).promise();
@@ -253,7 +256,7 @@ if (vpc.add === true) {
                 IpProtocol: "TCP",
                 FromPort: 22,
                 ToPort: 22,
-                CidrIp: "126.99.207.13/21",
+                CidrIp: "118.240.151.69/21",
             }
             const authorizeSecurityGroupIngressRet = await ec2.authorizeSecurityGroupIngress(authorizedParams).promise();
             console.log(authorizeSecurityGroupIngressRet);
@@ -261,7 +264,7 @@ if (vpc.add === true) {
             const INSTANCE_PARAMS = {
                 ImageId: "ami-0db8ca4897909ac37",
                 InstanceType: 't2.micro',
-                KeyName: "for-api-servlet",
+                KeyName: "sunao",
                 MinCount: 1,
                 MaxCount: 1,
                 SecurityGroupIds: [securityDataRet.GroupId],
@@ -270,12 +273,20 @@ if (vpc.add === true) {
             const instanceRet = await ec2.runInstances(INSTANCE_PARAMS).promise();
             console.log(instanceRet);
             console.log("Create Tags");
+            const ids = [];
+            instanceRet.Instances.forEach(function (instance , index) {
+                ids.push(instance.InstanceId);
+
+            })
+            ids.push(vpcDataRet.Vpc.VpcId);
+            ids.push(subNetDataRet.Subnet.SubnetId);
+            ids.push(securityDataRet.GroupId);
             const tagParams = {
-                Resources: [vpcDataRet.Vpc.VpcId],
+                Resources: ids,
                 Tags: [
-                    {Key: "Name", Value: "This name is attached from js"},
-                    {Key: "tenant", Value: "from test"},
-                    {Key: "local", Value: "from local"}
+                    {Key: "Name", Value: "sunao"},
+                    {Key: "tenant", Value: "suzuki"},
+                    {Key: "local", Value: "suzuki"}
                 ]
             };
             const createTagRet = await ec2.createTags(tagParams).promise();

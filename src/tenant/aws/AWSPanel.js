@@ -172,13 +172,13 @@ const AWSPanel = props => {
                             <ListItemText primary={"t:" + tag.name + "=" + tag.value} key={ti}/>
                         ))}
                     </ListItem>
-                    {env.resources.ec2.map( (instance,ei)  => (
+                    {env.resources.ec2s.map( (instance,ei)  => (
                         <List component="div" disablePadding key={ei}>
                             <ListItem button className={classes.nested}>
                                 <ListItemIcon>
                                     <EC2Logo />
                                 </ListItemIcon>
-                                <ListItemText primary={"type=" + instance.instanceType} />
+                                <ListItemText primary={"type=" + instance.InstanceType} />
                                 <ListItemText primary={"add=" + instance.add} />
                                 <ListItemText primary={"attached=" + instance.attached} />
                                 {instance.tags.map( (tag,ti) => (
