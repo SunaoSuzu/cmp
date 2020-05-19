@@ -187,139 +187,100 @@ if (vpc.add === true) {
         DryRun: false,
         InstanceTenancy: "default"
     };
-    const ec2 = new AWS.EC2({apiVersion: API_VERSION});
-    console.log("Created VPC");
-    ec2.createVpc(VPC_PARAMS, function (err, vpcData) {
-        if (err) console.log(err, err.stack);
-        else console.log(vpcData); 
 
+    async function createVPC() {
+        const ec2 = new AWS.EC2({apiVersion: API_VERSION});
+        console.log("Created VPC");
+        let vpcDataRet = await ec2.createVpc(VPC_PARAMS).promise();
+        console.log(vpcDataRet);
         console.log("Created SUBNET");
         const subNetParams = {
-            VpcId: vpcData.Vpc.VpcId,
+            VpcId: vpcDataRet.Vpc.VpcId,
             CidrBlock: CIDR_BLOCK_SUBNET,
         };
-        const subNetPromise = ec2.createSubnet(subNetParams, function (err, subNetData) {
-            if (err) console.log(err, err.stack);
-            else console.log(subNetData); 
-            /*
-          Subnet: {
-            AvailabilityZone: 'ap-northeast-1a',
-            AvailabilityZoneId: 'apne1-az4',
-            AvailableIpAddressCount: 11,
-            CidrBlock: '172.20.1.0/28',
-            DefaultForAz: false,
-            MapPublicIpOnLaunch: false,
-            State: 'pending',
-            SubnetId: 'subnet-0fc2f108cc82c4b7f',
-            VpcId: 'vpc-0887595c7f9b158d1',
-            OwnerId: '510229950882',
-            AssignIpv6AddressOnCreation: false,
-            Ipv6CidrBlockAssociationSet: [],
-            Tags: [],
-            SubnetArn: 'arn:aws:ec2:ap-northeast-1:510229950882:subnet/subnet-0fc2f108cc82c4b7f'
-          }
-             */
-            console.log("Created Internet Gateway");
-            const internetGatewayPromise = ec2.createInternetGateway(function (err, igwData) {
-                if (err) console.log(err, err.stack);
-                else console.log(igwData); 
-                const attachParams = {
-                    VpcId: vpcData.Vpc.VpcId,
-                    InternetGatewayId: igwData.InternetGateway.InternetGatewayId,
-                };
-                console.log("Attach Internet Gateway");
-                ec2.attachInternetGateway(attachParams, function (err, attachData) {
-                    if (err) console.log(err, err.stack);
-                    else console.log(attachData); 
-                });
-                console.log("Create Routetable");
-                const routeParams = {
-                    VpcId: vpcData.Vpc.VpcId,
-                };
-                ec2.createRouteTable(routeParams, function (err, routeData) {
-                    if (err) console.log(err, err.stack);
-                    else console.log(routeData); 
-                    const routeTableParams = {
-                        RouteTableId: routeData.RouteTable.RouteTableId,
-                        DestinationCidrBlock: "0.0.0.0/0",
-                        GatewayId: igwData.InternetGateway.InternetGatewayId,
-                    };
-                    console.log("Create Route");
-                    ec2.createRoute(routeTableParams, function (err, routeData) {
-                        if (err) console.log(err, err.stack);
-                        else console.log(routeData);
-                    });
-                    console.log("Associate Routetable");
-                    const associateParams = {
-                        SubnetId: subNetData.Subnet.SubnetId,
-                        RouteTableId: routeData.RouteTable.RouteTableId,
-                    };
-                    ec2.associateRouteTable(associateParams, function (err, associateData) {
-                        if (err) console.log(err, err.stack);
-                        else console.log(associateData);
-                    });
-                    console.log("Modify Subnet Attribute");
-                    const modifyParams = {
-                        SubnetId: subNetData.Subnet.SubnetId,
-                        MapPublicIpOnLaunch: {Value: true},
-                    };
-                    ec2.modifySubnetAttribute(modifyParams, function (err, modifyData) {
-                        if (err) console.log(err, err.stack);
-                        else console.log(modifyData);
-                    });
-                    console.log("Create SecurityGroup");
-                    const securityParams = {
-                        GroupName: vpcData.Vpc.VpcId,
-                        Description: vpcData.Vpc.VpcId,
-                        VpcId: vpcData.Vpc.VpcId,
-                    };
-                    ec2.createSecurityGroup(securityParams, function (err, securityData) {
-                        if (err) console.log(err, err.stack);
-                        else console.log(securityData);
-                        const authorizedParams = {
-                            GroupId: securityData.GroupId,
-                            protocols: "TCP",
-                            port: 22,
-                            cidr: "126.99.207.13/21",
-                        }
-                        ec2.authorizeSecurityGroupIngress(authorizedParams, function (err, authorizedData) {
-                            if (err) console.log(err, err.stack);
-                            else console.log(authorizedData);
-                            console.log("Run Instance");
-                            const INSTANCE_PARAMS = {
-                                ImageId: "ami-0db8ca4897909ac37",
-                                InstanceType: 't2.micro',
-                                KeyName: "for-api-servlet",
-                                MinCount: 1,
-                                MaxCount: 1,
-                                SecurityGroupIds: [securityData.GroupId],
-                                SubnetId: subNetData.Subnet.SubnetId,
-                            };
-                            ec2.runInstances(INSTANCE_PARAMS, function (err, instanceData) {
-                                if (err) console.log(err, err.stack);
-                                else console.log(instanceData);
-                                console.log("Create Tags");
-                                const tagParams = {
-                                    Resources: [vpcData.Vpc.VpcId],
-                                    Tags: [
-                                        {Key: "Name", Value: "This name is attached from js"},
-                                        {Key: "tenant", Value: "from test"},
-                                        {Key: "local", Value: "from local"}
-                                    ]
-                                };
-                                const tagPromise = ec2.createTags(tagParams, function (err, tagData) {
-                                    if (err) console.log(err, err.stack);
-                                    else console.log(tagData);
-                                });
-                            });
-                        });
-                    });
-                });
+        const subNetDataRet = await ec2.createSubnet(subNetParams).promise();
+        console.log(subNetDataRet);
+        console.log("Created Internet Gateway");
+        const internetGatewayRet = await ec2.createInternetGateway().promise();
+        console.log(internetGatewayRet);
+        console.log("Attach Internet Gateway");
+        const attachParams = {
+            VpcId: vpcDataRet.Vpc.VpcId,
+            InternetGatewayId: internetGatewayRet.InternetGateway.InternetGatewayId,
+        };
+        const attachDataRet = await ec2.attachInternetGateway(attachParams).promise();
+        console.log(attachDataRet);
+        console.log("Create Routetable");
+        const routeParams = {
+            VpcId: vpcDataRet.Vpc.VpcId,
+        };
+        const routeDataRet = await ec2.createRouteTable(routeParams).promise();
+        console.log(routeDataRet);
+        console.log("Create Route");
+        const routeTableParams = {
+            RouteTableId: routeDataRet.RouteTable.RouteTableId,
+            DestinationCidrBlock: "0.0.0.0/0",
+            GatewayId: internetGatewayRet.InternetGateway.InternetGatewayId,
+        };
+        const createRouteRet = await ec2.createRoute(routeTableParams).promise();
+        console.log(createRouteRet);
+        console.log("Associate Routetable");
+        const associateParams = {
+            SubnetId: subNetDataRet.Subnet.SubnetId,
+            RouteTableId: routeDataRet.RouteTable.RouteTableId,
+        };
+        const associateRouteTableRet = await ec2.associateRouteTable(associateParams).promise();
+        console.log(associateRouteTableRet);
+        console.log("Modify Subnet Attribute");
+        const modifyParams = {
+            SubnetId: subNetDataRet.Subnet.SubnetId,
+            MapPublicIpOnLaunch: {Value: true},
+        };
+        const modifySubnetAttributeRet = await ec2.modifySubnetAttribute(modifyParams).promise();
+        console.log(modifySubnetAttributeRet);
+        console.log("Create SecurityGroup");
+        const securityParams = {
+            GroupName: vpcDataRet.Vpc.VpcId,
+            Description: vpcDataRet.Vpc.VpcId,
+            VpcId: vpcDataRet.Vpc.VpcId,
+        };
+        const securityDataRet = await ec2.createSecurityGroup(securityParams).promise();
+        console.log(securityDataRet);
+        console.log("Authorize SecurityGroupIngress");
+        const authorizedParams = {
+            GroupId: securityDataRet.GroupId,
+            protocols: "TCP",
+            port: 22,
+            cidr: "126.99.207.13/21",
+        }
+        const authorizeSecurityGroupIngressRet = await ec2.authorizeSecurityGroupIngress(authorizedParams).promise();
+        console.log(authorizeSecurityGroupIngressRet);
+        console.log("Run Instance");
+        const INSTANCE_PARAMS = {
+            ImageId: "ami-0db8ca4897909ac37",
+            InstanceType: 't2.micro',
+            KeyName: "for-api-servlet",
+            MinCount: 1,
+            MaxCount: 1,
+            SecurityGroupIds: [securityDataRet.GroupId],
+            SubnetId: subNetDataRet.Subnet.SubnetId,
+        };
+        const instanceRet = await ec2.runInstances(INSTANCE_PARAMS).promise();
+        console.log(instanceRet);
+        console.log("Create Tags");
+        const tagParams = {
+            Resources: [vpcDataRet.Vpc.VpcId],
+            Tags: [
+                {Key: "Name", Value: "This name is attached from js"},
+                {Key: "tenant", Value: "from test"},
+                {Key: "local", Value: "from local"}
+            ]
+        };
+        const createTagRet = await ec2.createTags(tagParams).promise();
+        console.log(createTagRet);
+    }
 
-            });
-
-        });
-    });
+    createVPC();
 }
 
 vpc.ec2.map(function (instance) {
