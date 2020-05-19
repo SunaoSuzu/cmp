@@ -19,12 +19,14 @@ function getEc2ByTag(action) {
   const tagUsage = conf.tagUsage;
   const tenantTag = action.tenantTag;
   const envTag = action.envTag;
+  const apiKey = action.apiKey;
+  const apiPwd = action.apiPwd;
 
   aws.config.logger = console; // 通信のデバッグ用。不要であれば削除可。
 
   const ec2 = new EC2({
-    accessKeyId: accessKeyId,
-    secretAccessKey: secretAccessKey,
+    accessKeyId: apiKey,
+    secretAccessKey: apiPwd,
     region: "ap-northeast-1",
   });
 
@@ -57,12 +59,14 @@ function getVpcByTag(action) {
   const tagUsage = conf.tagUsage;
   const tenantTag = action.tenantTag;
   const envTag = action.envTag;
+  const apiKey = action.apiKey;
+  const apiPwd = action.apiPwd;
 
   aws.config.logger = console; // 通信のデバッグ用。不要であれば削除可。
 
   const ec2 = new EC2({
-    accessKeyId: accessKeyId,
-    secretAccessKey: secretAccessKey,
+    accessKeyId: apiKey,
+    secretAccessKey: apiPwd,
     region: "ap-northeast-1",
   });
 

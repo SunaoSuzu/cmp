@@ -391,12 +391,14 @@ export const requestNewEnv = (data) => {
   };
 };
 
-export const requestAttachAws = (tenantTag, envTag, envIndex) => {
+export const requestAttachAws = (tenantTag, envTag, envIndex,akey , apwd) => {
   return {
     type: ATTACH_AWS_REQUEST,
     tenantTag: tenantTag,
     envTag: envTag,
     envIndex: envIndex,
+    apiKey : akey,
+    apiPwd : apwd,
   };
 };
 

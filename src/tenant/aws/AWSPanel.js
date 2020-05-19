@@ -14,6 +14,13 @@ import {makeStyles} from "@material-ui/core/styles";
 import {connect} from "react-redux";
 import * as tenantAppModule from "../TenantAppModule";
 import {getName} from "../../util/AWSUtils";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import TextField from '@material-ui/core/TextField';
+import Select from "@material-ui/core/Select";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -53,6 +60,8 @@ const useStyles = makeStyles(theme => ({
 
 const AWSPanel = props => {
     const classes = useStyles();
+    const [diagOpen, setDiagOpen] = React.useState(false);
+
     const tenant = props.tenant;
     const env = props.env;
     const index = props.index;
@@ -85,6 +94,29 @@ const AWSPanel = props => {
         console.log("AWSから取り込み成功");
     }
 
+    //DiagOpen
+    const handleClickOpen = () => {
+        setDiagOpen(true);
+    };
+
+    //DiagClose
+    const handleClose = () => {
+        setDiagOpen(false);
+    };
+
+    //DiagClose
+    const handleAttachStart = (t, e, i) => {
+        const key = document.getElementById("apiKey").value;
+        const pwd = document.getElementById("apiPwd").value;
+        console.log("key=" + key);
+        console.log("pwd=" + pwd);
+        console.log("t.awsTag=" + t.awsTag);
+        console.log("t.awsTag=" + t.awsTag);
+        props.attachAws(t.awsTag, e.awsTag,index,key,pwd);
+        setDiagOpen(false);
+    };
+
+
     return (
         <>
             <Button
@@ -101,7 +133,7 @@ const AWSPanel = props => {
                 color="primary"
                 className={classes.button}
                 startIcon={<StorageIcon />}
-                onClick={() => attach(tenant, env, index)}
+                onClick={handleClickOpen}
             >
                 アタッチ
             </Button>
@@ -198,7 +230,56 @@ const AWSPanel = props => {
                         ))}
                     </React.Fragment>
                 ))
-                : ""}
+                : ""
+            }
+            <Dialog open={diagOpen} onClose={handleClose} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">アタッチ</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        AWSから情報取得を実行します。API_KEYとパスワードを入力して下さい
+                        入力された値の保持は行いません
+                    </DialogContentText>
+                    <TextField
+                        margin="dense"
+                        id="region"
+                        label="Region"
+                        defaultValue="ap-northeast-1"
+                        inputProps={{
+                            readOnly: true,
+                            required: true,
+                        }}
+                        fullWidth
+                    />
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="apiKey"
+                        label="API KEY"
+                        inputProps={{
+                            required: true,
+                        }}
+                        fullWidth
+                    />
+                    <TextField
+                        margin="dense"
+                        id="apiPwd"
+                        label="API_PASSWORD"
+                        type="password"
+                        inputProps={{
+                            required: true,
+                        }}
+                        fullWidth
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={() => handleAttachStart(tenant, env, index)} color="primary">
+                        Attach
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 }
@@ -221,8 +302,8 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(tenantAppModule.requestInvokeOperation(tenant, env, envIndex)),
         requestResetOperation: (tenant, env, envIndex) =>
             dispatch(tenantAppModule.requestResetOperation(tenant, env, envIndex)),
-        attachAws: (tenantTag, envTag, envIndex) =>
-            dispatch(tenantAppModule.requestAttachAws(tenantTag, envTag, envIndex)),
+        attachAws: (tenantTag, envTag, envIndex , key , pwd) =>
+            dispatch(tenantAppModule.requestAttachAws(tenantTag, envTag, envIndex , key , pwd)),
     };
 };
 
