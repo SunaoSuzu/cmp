@@ -3,6 +3,7 @@ import {
   pushEmptyToArray,
   spliceObjOfArray,
 } from "../util/JsonUtils";
+import {getNowYMD} from "../util/DateUtils";
 
 export const GET_LIST_REQUEST = "GET_LIST_REQUEST";
 export const GET_LIST_SUCCESS = "GET_LIST_SUCCESS";
@@ -207,7 +208,6 @@ export default function reducer(state = initialState, action) {
         addComplete: necessary,
       };
     case DEL_FROM_ARRAY:
-      console.log(DEL_FROM_ARRAY);
       return {
         ...state,
         operationType: DEL_FROM_ARRAY,
@@ -225,12 +225,20 @@ export default function reducer(state = initialState, action) {
     case ATTACH_AWS_REQUEST:
       return { ...state, attachAwsCompleted: requested, attachedAwsInfo: null };
     case ATTACH_AWS_SUCCESS:
-      return {
-        ...state,
-        attachAwsCompleted: loadSuccess,
-        attachedAwsInfo: action.data,
-      };
+      {
+        let tenantObj = { ...state.data };
+        let env = tenantObj.environments[action.envIndex];
+        env["attached"] = { result: action.data , status : loadSuccess , execDate : getNowYMD()};
+        return {
+          ...state,
+          attachAwsCompleted: loadSuccess,
+          data: tenantObj,
+          attachedAwsInfo: action.data,
+        };
+
+      }
     case ATTACH_AWS_FAIL:
+
       return {
         ...state,
         attachAwsCompleted: loadFailed,

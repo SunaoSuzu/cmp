@@ -103,6 +103,7 @@ export function* handleAttachByTag(action) {
 
     yield put({
       type: TenantAppModule.ATTACH_AWS_SUCCESS,
+      envIndex:action.envIndex,
       data: { ec2, vpcs },
     });
   } catch (e) {
