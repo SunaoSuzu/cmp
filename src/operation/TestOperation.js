@@ -250,9 +250,10 @@ if (vpc.add === true) {
             console.log("Authorize SecurityGroupIngress");
             const authorizedParams = {
                 GroupId: securityDataRet.GroupId,
-                protocols: "TCP",
-                port: 22,
-                cidr: "126.99.207.13/21",
+                IpProtocol: "TCP",
+                FromPort: 22,
+                ToPort: 22,
+                CidrIp: "126.99.207.13/21",
             }
             const authorizeSecurityGroupIngressRet = await ec2.authorizeSecurityGroupIngress(authorizedParams).promise();
             console.log(authorizeSecurityGroupIngressRet);
