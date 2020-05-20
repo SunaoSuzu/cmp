@@ -13,6 +13,7 @@ import Tab from "@material-ui/core/Tab";
 import TabPanel from "./TabPanel";
 import Selection from "../components/Selection";
 import AWSPanel from "./aws/AWSPanel";
+import { productMeta } from "../conf/ProductPattern";
 
 const useStyles = makeStyles(theme => ({
   root: {
