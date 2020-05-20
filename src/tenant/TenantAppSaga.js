@@ -4,6 +4,7 @@ import axios from "axios";
 import makeTemplateMaker from "./EnvironmentTemplateMaker";
 import * as AwsAppSaga from "../aws/AwsAppSaga";
 import makeOperation from "./OperationTemplateMaker";
+import {createVPC} from "../operation/CreateEC2InfraCommand";
 
 const searchSource = process.env.REACT_APP_DEV_SEARCH_SOURCE_URL;
 const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
@@ -156,6 +157,13 @@ function* handleRequestGetOperation(action) {
 
 function* handleInvokeOperation(action) {
   const envIndex = action.envIndex;
+  const env    = action.env;
+  const resource = env.resources;
+  const apiKey = action.apiKey;
+  const apiPwd = action.apiPwd;
+  const que = { vpc : resource };
+  createVPC(que , apiKey , apiPwd);
+
   yield put({
     type: TenantAppModule.INVOKE_OPERATION_SUCCESS,
     envIndex: envIndex,

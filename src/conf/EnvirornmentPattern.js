@@ -15,30 +15,44 @@ export const pattern = {
                 {
                     GroupName:"sunao",
                     Description : "sunao",
-                    ingress : [{
-                        IpProtocol: "TCP",
-                        FromPort: 22,
-                        ToPort: 22,
-                        CidrIp: "118.240.151.69/21",
-                    }]
+                    ingress : [
+                        {
+                            IpProtocol: "TCP",
+                            FromPort: 22,
+                            ToPort: 22,
+                            CidrIp: "118.240.151.69/32",
+                        },
+                        {
+                            IpProtocol: "TCP",
+                            FromPort: 22,
+                            ToPort: 22,
+                            CidrIp: "153.246.130.192/32",
+                        },
+                        {
+                            toMyGroup : true,
+                            IpProtocol: "TCP",
+                            FromPort: 22,
+                            ToPort: 22,
+                        },
+                    ]
                 },
             ],
             ec2s :[
                 {
-                    name : "sunao1",
+                    name : "sunao-public",
                     ImageId: "ami-0db8ca4897909ac37",
                     InstanceType: 't2.micro',
                     KeyName: "sunao",
                     SecurityGroupNames: ["sunao"],
-                    SubnetName: "sunao-1",
+                    SubnetName: "sunao-public",
                 },
                 {
-                    name : "sunao2",
+                    name : "sunao-private",
                     ImageId: "ami-0db8ca4897909ac37",
                     InstanceType: 't2.micro',
                     KeyName: "sunao",
                     SecurityGroupNames: ["sunao"],
-                    SubnetName: "sunao-2",
+                    SubnetName: "sunao-private",
                 },
             ]
         },

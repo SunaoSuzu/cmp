@@ -419,12 +419,14 @@ export const requestGetOperation = (tenant, env, envIndex) => {
   };
 };
 
-export const requestInvokeOperation = (tenant, env, envIndex) => {
+export const requestInvokeOperation = (tenant, env, envIndex , apiKey , apiPwd) => {
   return {
     type: INVOKE_OPERATION_REQUEST,
     tenant: tenant,
     env: env,
     envIndex: envIndex,
+    apiKey : apiKey,
+    apiPwd : apiPwd,
   };
 };
 
