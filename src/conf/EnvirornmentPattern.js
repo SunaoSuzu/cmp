@@ -39,6 +39,12 @@ export const pattern = {
                             CidrIp: "153.246.130.192/32",
                         },
                         {
+                            IpProtocol: "HTTP",
+                            FromPort: 80,
+                            ToPort: 80,
+                            CidrIp: "0.0.0.0/0",
+                        },
+                        {
                             toMyGroup : true,
                             IpProtocol: "TCP",
                             FromPort: 22,
@@ -50,7 +56,7 @@ export const pattern = {
             ec2s :[
                 {
                     name : "sunao-public",
-                    ImageId: "ami-0db8ca4897909ac37",
+                    ImageId: "ami-03e4521d84f084007",
                     InstanceType: 't2.micro',
                     KeyName: "sunao",
                     SecurityGroupNames: ["sunao"],
@@ -58,7 +64,7 @@ export const pattern = {
                 },
                 {
                     name : "sunao-private",
-                    ImageId: "ami-0db8ca4897909ac37",
+                    ImageId: "ami-03e4521d84f084007",
                     InstanceType: 't2.micro',
                     KeyName: "sunao",
                     SecurityGroupNames: ["sunao"],

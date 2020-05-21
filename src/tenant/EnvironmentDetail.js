@@ -13,7 +13,7 @@ import Tab from "@material-ui/core/Tab";
 import TabPanel from "./TabPanel";
 import Selection from "../components/Selection";
 import AWSPanel from "./aws/AWSPanel";
-import { productMeta } from "../conf/ProductPattern";
+import ComponentPanel from "./aws/ComponentPanel";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -79,9 +79,11 @@ const EnvironmentDetail = props => {
             scrollButtons="auto"
           >
             <Tab label="基礎情報" {...a11yProps(0)} />
-            <Tab label="AWS" {...a11yProps(1)} />
-            <Tab label="パラメータ" {...a11yProps(2)} />
-            <Tab label="作業" {...a11yProps(3)} />
+            {env.mainComponents.map((component, c) => (
+                <Tab label={component.name} {...a11yProps((c + 1))} key={c} />
+            ))}
+            <Tab label="AWS" {...a11yProps((1 + env.mainComponents.length))} />
+            <Tab label="パラメータ" {...a11yProps((2 + env.mainComponents.length))} />
           </Tabs>
         </AppBar>
         <TabPanel
@@ -145,9 +147,20 @@ const EnvironmentDetail = props => {
             helperText="SPECレベル"
           />
         </TabPanel>
+        {env.mainComponents.map((component, c) => (
+            <TabPanel value={innerTabValue}
+                      index={c + 1}
+                      boxShadow={1}
+                      className={classes.tabPanel}
+            >
+              <ComponentPanel targetComponent={component}
+                              cindex={c} index={index}
+                              env={env} tenant={tenant}/>
+            </TabPanel>
+        ))}
         <TabPanel
           value={innerTabValue}
-          index={1}
+          index={(1 + env.mainComponents.length)}
           boxShadow={1}
           className={classes.tabPanel}
         >
@@ -155,7 +168,7 @@ const EnvironmentDetail = props => {
         </TabPanel>
         <TabPanel
           value={innerTabValue}
-          index={2}
+          index={(2 + env.mainComponents.length)}
           boxShadow={1}
           className={classes.tabPanel}
         >

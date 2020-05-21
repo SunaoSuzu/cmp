@@ -1,15 +1,19 @@
 //1VPC M SubNet 1IGW構成
 const EC2 = require("aws-sdk/clients/ec2");
+const ELB = require("aws-sdk/clients/elb")
 const AWS = require('aws-sdk');
 
 
+//PromiseChainなので各処理は外だししてコマンド化（Promiseを返してくれれば良い）し、
+//コマンドをどうアセンブルするかって作りに変えれる（はず）
 
 exports.createVPC = function (que,apiKey,apiPwd) {
     try {
         let ec2 = null;
-
+        let elb = null;
         if(apiKey==null&&apiPwd==null){
             ec2 = new AWS.EC2({apiVersion: que.vpc.apiVersion , region: que.vpc.region});
+            elb = new AWS.ELB({region: que.vpc.region});
         }else{
             ec2 = new AWS.EC2({
                 apiVersion: que.vpc.apiVersion , region: que.vpc.region,
@@ -17,16 +21,27 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                 secretAccessKey: apiPwd,
 
             });
+            elb = new AWS.ELB({
+                region: que.vpc.region,
+                accessKeyId: apiKey,
+                secretAccessKey: apiPwd,
+
+            });
         }
 
-        ec2.createVpc({
-            CidrBlock: que.vpc.cidr,
-            AmazonProvidedIpv6CidrBlock: false,
-            DryRun: false,
-            InstanceTenancy: "default"
-        }).promise().then(function (vpcDataRet) {
+        return Promise.resolve(function () {
             console.log("1.VPC作成");
+        }).then(function () {
+            return ec2.createVpc({
+                CidrBlock: que.vpc.cidr,
+                AmazonProvidedIpv6CidrBlock: false,
+                DryRun: false,
+                InstanceTenancy: "default"
+            }).promise();
+        }).then(function (vpcDataRet) {
+            console.log("1.VPC.TAG");
             que.vpc.VpcId=vpcDataRet.Vpc.VpcId;
+            que.vpc.attached=true;
             return ec2.createTags({
                 Resources: [que.vpc.VpcId],
                 Tags: [
@@ -41,6 +56,7 @@ exports.createVPC = function (que,apiKey,apiPwd) {
         }).then(function (internetGatewayRet) {
             console.log("3.InternetGateWay.Tags");
             que.vpc.igw.InternetGatewayId=internetGatewayRet.InternetGateway.InternetGatewayId;
+            que.vpc.igw.attached=true;
             return ec2.createTags({
                 Resources: [que.vpc.igw.InternetGatewayId],
                 Tags: [
@@ -63,6 +79,7 @@ exports.createVPC = function (que,apiKey,apiPwd) {
         }).then(function (routeDataRet) {
             console.log("6.RouteTable.Tags");
             que.vpc.RouteTableId=routeDataRet.RouteTable.RouteTableId;
+            que.vpc.RouteTableAttached=true;
             return ec2.createTags({
                 Resources: [que.vpc.RouteTableId],
                 Tags: [
@@ -89,10 +106,11 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                     }).promise().then(function (subNetDataRet) {
                         console.log("11-" + index + ".Subnet.MapPublicIpOnLaunch(if necessary)");
                         subnet.SubnetId=subNetDataRet.Subnet.SubnetId;
+                        subnet.attached=true;
                         if(subnet.attachIgw) {
                             return ec2.modifySubnetAttribute({
                                 SubnetId: subnet.SubnetId,
-                                MapPublicIpOnLaunch: {Value: subnet.MapPublicIpOnLaunch},
+                                MapPublicIpOnLaunch: {Value: true},
                             }).promise();
                         }
                     }).then(function () {
@@ -117,6 +135,32 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                 }
             ))
         }).then(function () {
+            console.log("30.LoadBalancer");
+            let subnetIds = [];
+            que.vpc.subnets.forEach(function (subnet) {
+                if(subnet.attachIgw){   //InternetFacingなので
+                    subnetIds.push(subnet.SubnetId);
+                }
+            })
+            return elb.createLoadBalancer({
+                Listeners: [
+                    {
+                        InstancePort: 80,
+                        InstanceProtocol: "HTTP",
+                        LoadBalancerPort: 80,
+                        Protocol: "HTTP"
+                    }
+                ],
+                LoadBalancerName: "sunao-balancer",
+                Subnets: subnetIds,
+                Tags: [
+                    {Key: "Name", Value: "sunao-balancer"},
+                    {Key: "tenant", Value: "suzuki"},
+                    {Key: "landscape", Value: "suzuki"}
+                ]
+
+            }).promise()
+        }).then(function () {
             return Promise.all(
                 que.vpc.securityGroups.map(function (group,index) {
                     console.log("51-" + index + ".SecurityGroup");
@@ -126,7 +170,9 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                         VpcId: que.vpc.VpcId,
                     }).promise().then(function (securityDataRet) {
                         console.log("52-" + index + ".SecurityGroup.Tags");
+                        console.log("securityDataRet.GroupId=" + securityDataRet.GroupId);
                         group.GroupId=securityDataRet.GroupId;
+                        group.attached=true;
                         return ec2.createTags({
                             Resources: [group.GroupId],
                             Tags: [
@@ -137,7 +183,7 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                         }).promise();
                     }).then(function () {
                         console.log("53-" + index + ".SecurityGroup.Ingresses");
-                        Promise.all(
+                        return Promise.all(
                             group.ingress.map(function (ing, t) {
                                 console.log("54-" + index + "-" + t + ".SecurityGroup.Ingress");
                                 if(ing.toMyGroup===true){
@@ -174,7 +220,6 @@ exports.createVPC = function (que,apiKey,apiPwd) {
         }).then(function () {
             return Promise.all(
                 que.vpc.ec2s.map(function (ec,index) {
-                    console.log("80-" + index + ".EC2");
                     let subnetId = "";
                     que.vpc.subnets.forEach(function (subnet) {
                         if(subnet.subnetName==ec.SubnetName){
@@ -189,15 +234,25 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                             }
                         })
                     })
-                    return ec2.runInstances({
-                        ImageId: ec.ImageId,
-                        InstanceType: ec.InstanceType,
-                        KeyName: ec.KeyName,
-                        MinCount: 1,
-                        MaxCount: 1,
-                        SecurityGroupIds: sgids,
-                        SubnetId: subnetId,
-                    }).promise().then(function (instanceRet) {
+                    let userDataEncoded = null;
+                    if(ec.UserData!=null){
+                        userDataEncoded = Buffer.from(ec.UserData, 'base64').toString();
+                    }
+
+                    return Promise.resolve(function () {
+                        console.log("80-" + index + ".EC2");
+                    }).then(function () {
+                        return ec2.runInstances({
+                            ImageId: ec.ImageId,
+                            InstanceType: ec.InstanceType,
+                            KeyName: ec.KeyName,
+                            MinCount: 1,
+                            MaxCount: 1,
+                            SecurityGroupIds: sgids,
+                            SubnetId: subnetId,
+                            UserData: ec.userDataEncoded,
+                        }).promise();
+                    }).then(function (instanceRet) {
                         console.log("81-" + index + ".EC2.Tags");
                         const ids = [];
                         ec.InstanceIds=[];
@@ -209,6 +264,7 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                             ec.SubnetId=instance.SubnetId;
                             ec.VpcId=instance.VpcId;
                             ec.VpcId=instance.Placement.AvailabilityZone;
+                            ec.attached=true;
                             ids.push(ec.InstanceId);
                         })
                         return ec2.createTags({
@@ -216,7 +272,7 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                             Tags: [
                                 {Key: "Name", Value: ec.name},
                                 {Key: "tenant", Value: "suzuki"},
-                                {Key: "local", Value: "suzuki"}
+                                {Key: "landscape", Value: "suzuki"}
                             ]
                         }).promise();
 
@@ -224,6 +280,9 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                 })
             )
 
+        }).catch(function(err){
+            // 上のいずれかでエラーが発生した。
+            console.log(err);
         });
     } catch (err) {
         console.error(err);
