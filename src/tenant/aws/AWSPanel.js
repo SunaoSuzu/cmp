@@ -176,9 +176,8 @@ const AWSPanel = props => {
                         <ListItemIcon>
                             <VpcLogo />
                         </ListItemIcon>
-                        <ListItemText primary={"vpc=" + env.resources.vpcName} />
-                        <ListItemText primary={"add=" + env.resources.add} />
-                        <ListItemText primary={"attached=" + env.resources.attached} />
+                        <ListItemText primary={"vpc=" + env.resources.cidrs} />
+                        <ListItemText primary={"id=" + env.resources.VpcId} />
                         {env.resources.tags.map((tag,ti) => (
                             <ListItemText primary={"t:" + tag.name + "=" + tag.value} key={ti}/>
                         ))}
@@ -189,9 +188,8 @@ const AWSPanel = props => {
                                 <ListItemIcon>
                                     <EC2Logo />
                                 </ListItemIcon>
+                                <ListItemText primary={"id=" + instance.InstanceId} />
                                 <ListItemText primary={"type=" + instance.InstanceType} />
-                                <ListItemText primary={"add=" + instance.add} />
-                                <ListItemText primary={"attached=" + instance.attached} />
                                 {instance.tags.map( (tag,ti) => (
                                     <ListItemText
                                         key={ti}

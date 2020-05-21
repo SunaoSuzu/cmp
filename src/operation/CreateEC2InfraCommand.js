@@ -8,6 +8,7 @@ const AWS = require('aws-sdk');
 //コマンドをどうアセンブルするかって作りに変えれる（はず）
 
 exports.createVPC = function (que,apiKey,apiPwd) {
+    AWS.config.setPromisesDependency(Promise);
     try {
         let ec2 = null;
         let elb = null;
@@ -28,6 +29,12 @@ exports.createVPC = function (que,apiKey,apiPwd) {
 
             });
         }
+
+        const managementTag = {};
+        que.vpc.tags.map(function(tag){
+                managementTag[tag.name]=tag.value;
+            }
+        )
 
         return Promise.resolve(function () {
             console.log("1.VPC作成");
@@ -135,58 +142,54 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                 }
             ))
         }).then(function () {
-            console.log("30.LoadBalancer");
-            let subnetIds = [];
-            que.vpc.subnets.forEach(function (subnet) {
-                if(subnet.attachIgw){   //InternetFacingなので
-                    subnetIds.push(subnet.SubnetId);
-                }
-            })
-            return elb.createLoadBalancer({
-                Listeners: [
-                    {
-                        InstancePort: 80,
-                        InstanceProtocol: "HTTP",
-                        LoadBalancerPort: 80,
-                        Protocol: "HTTP"
-                    }
-                ],
-                LoadBalancerName: "sunao-balancer",
-                Subnets: subnetIds,
-                Tags: [
-                    {Key: "Name", Value: "sunao-balancer"},
-                    {Key: "tenant", Value: "suzuki"},
-                    {Key: "landscape", Value: "suzuki"}
-                ]
-
-            }).promise()
-        }).then(function () {
-            return Promise.all(
-                que.vpc.securityGroups.map(function (group,index) {
-                    console.log("51-" + index + ".SecurityGroup");
-                    return ec2.createSecurityGroup({
-                        GroupName: group.GroupName,
-                        Description: group.Description,
-                        VpcId: que.vpc.VpcId,
-                    }).promise().then(function (securityDataRet) {
-                        console.log("52-" + index + ".SecurityGroup.Tags");
-                        console.log("securityDataRet.GroupId=" + securityDataRet.GroupId);
-                        group.GroupId=securityDataRet.GroupId;
-                        group.attached=true;
-                        return ec2.createTags({
-                            Resources: [group.GroupId],
-                            Tags: [
-                                {Key: "Name", Value: group.GroupName},
-                                {Key: "tenant", Value: "suzuki"},
-                                {Key: "landscape", Value: "suzuki"}
-                            ]
-                        }).promise();
-                    }).then(function () {
+            return Promise.resolve(function () {
+                console.log("51.SecurityGroup");
+            }).then(function () {
+                return Promise.all(
+                    que.vpc.securityGroups.map(function (group, index) {
+                        console.log("51-" + index + ".SecurityGroup");
+                        return ec2.createSecurityGroup({
+                            GroupName: group.GroupName,
+                            Description: group.Description,
+                            VpcId: que.vpc.VpcId,
+                        }).promise().then(function (securityDataRet) {
+                            console.log("52-" + index + ".SecurityGroup.Tags");
+                            group.GroupId = securityDataRet.GroupId;
+                            group.attached = true;
+                            return ec2.createTags({
+                                Resources: [group.GroupId],
+                                Tags: [
+                                    {Key: "Name", Value: group.GroupName},
+                                    {Key: "tenant", Value: "suzuki"},
+                                    {Key: "landscape", Value: "suzuki"}
+                                ]
+                            }).promise();
+                        });
+                    })
+                )
+            }).then(function () {
+                return Promise.all(
+                    que.vpc.securityGroups.map(function (group, index) {
                         console.log("53-" + index + ".SecurityGroup.Ingresses");
                         return Promise.all(
                             group.ingress.map(function (ing, t) {
                                 console.log("54-" + index + "-" + t + ".SecurityGroup.Ingress");
-                                if(ing.toMyGroup===true){
+
+                                if (ing.toMyGroup === true||ing.toOtherGroup!=null) {
+                                    console.log("toMyGroup=" + ing.toMyGroup);
+                                    console.log("ing.toOtherGroup=" + ing.toOtherGroup);
+                                    let targetGroupId = null;
+                                    if(ing.toMyGroup){
+                                        targetGroupId=group.GroupId;
+                                    }else{
+                                        que.vpc.securityGroups.map(function (g){
+                                            console.log("g.GroupId=" + g.GroupId);
+                                            if (ing.toOtherGroup===g.GroupName){
+                                                targetGroupId=g.GroupId;
+                                            }
+                                        })
+                                    }
+                                    console.log("targetGroupId=" + targetGroupId);
                                     return ec2.authorizeSecurityGroupIngress({
                                         GroupId: group.GroupId,
                                         IpPermissions: [
@@ -197,13 +200,13 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                                                 UserIdGroupPairs: [
                                                     {
                                                         Description: "to m group",
-                                                        GroupId: group.GroupId
+                                                        GroupId: targetGroupId,
                                                     }
                                                 ]
                                             }
                                         ]
                                     }).promise();
-                                }else{
+                                } else {
                                     return ec2.authorizeSecurityGroupIngress({
                                         GroupId: group.GroupId,
                                         IpProtocol: ing.IpProtocol,
@@ -212,11 +215,13 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                                         CidrIp: ing.CidrIp,
                                     }).promise();
                                 }
+
+
                             })
-                        )
-                    });
-                })
-            )
+                        )}
+                    )
+                )
+            })
         }).then(function () {
             return Promise.all(
                 que.vpc.ec2s.map(function (ec,index) {
@@ -242,6 +247,7 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                     return Promise.resolve(function () {
                         console.log("80-" + index + ".EC2");
                     }).then(function () {
+                        console.log("81-" + index + ".EC2");
                         return ec2.runInstances({
                             ImageId: ec.ImageId,
                             InstanceType: ec.InstanceType,
@@ -253,7 +259,7 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                             UserData: ec.userDataEncoded,
                         }).promise();
                     }).then(function (instanceRet) {
-                        console.log("81-" + index + ".EC2.Tags");
+                        console.log("82-" + index + ".EC2.Tags");
                         const ids = [];
                         ec.InstanceIds=[];
                         instanceRet.Instances.forEach(function (instance , index) {
@@ -279,7 +285,48 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                     });
                 })
             )
+        }).then(function () {
+            if(que.vpc.lb.need){
+                console.log("100.LoadBalancer");
+                let subnetIds = [];
+                que.vpc.lb.subnets.forEach(function (sub) {
+                    que.vpc.subnets.forEach(function (subnet) {
+                        if(sub===subnet.subnetName){
+                            subnetIds.push(subnet.SubnetId);
+                        }
+                    })
+                })
+                let sgId =[];
+                que.vpc.lb.securityGroup.forEach(function (sg) {
+                    que.vpc.securityGroups.forEach(function (group) {
+                        if(sg===group.GroupName){
+                            sgId.push(group.GroupId);
+                        }
+                    })
+                })
 
+                return elb.createLoadBalancer({
+                    Listeners: [
+                        {
+                            InstancePort: 80,
+                            InstanceProtocol: "HTTP",
+                            LoadBalancerPort: 80,
+                            Protocol: "HTTP"
+                        }
+                    ],
+                    SecurityGroups: sgId ,
+                    LoadBalancerName: que.vpc.lb.name,
+                    Subnets: subnetIds,
+                    Tags: [
+                        {Key: "Name", Value: que.vpc.lb.name},
+                        {Key: "tenant", Value: "suzuki"},
+                        {Key: "landscape", Value: "suzuki"}
+                    ]
+
+                }).promise().then(function (){
+                    
+                })
+            }
         }).catch(function(err){
             // 上のいずれかでエラーが発生した。
             console.log(err);

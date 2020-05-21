@@ -61,10 +61,15 @@ function OperationTemplateMaker(tenant, environment) {
 
         //aboutAp
         const minimumAz = strategy.web.minimumAz; //maximum までAZ作るのが正しい予感・・
-        const apSubnets = [];
+        const publicSubnets = [];
+        const publicSubnetNames = [];
+        const privateSubnets = [];
         const apSecurityGroups = [];
         const apEc2s = [];
+        const apEc2Names = [];
+        const lb = {};
 
+        //lbだろうが、httpdだろうが、web用のsgを作る
         const webSecurityGroupName  = namePrefix + "-sg-web-publish";
         const webSecurityIngressPtn = SecurityGroup.ApIngressPattern.http;
         const webSecurityGroup      = {
@@ -74,55 +79,90 @@ function OperationTemplateMaker(tenant, environment) {
         };
         apSecurityGroups.push(webSecurityGroup);
 
-        switch (strategy.web.publishing) {
-            case Strategy.WEB_PUB_DIRECT:
-                for (let i = 0; i < minimumAz; i++) {
-                    const subnetName = namePrefix + "-public-subnet-" + availabilityZones[i];
-                    const subnet = {
-                        subnetName : subnetName,
-                        AvailabilityZone : availabilityZones[i] ,
-                        cidr : "172.20." + ( ++counter ) + ".0/28" ,
-                        attachIgw : true,
-                        role : "ap",
-                        tags : managmgentTag,
-                    }
-                    apSubnets.push(subnet);
-                    const ec2Name = namePrefix + "-ec2-ap-" + availabilityZones[i];
-                    const ec2 = {
-                        name         : ec2Name,
-                        ImageId      : amiForAP,
-                        InstanceType : 't2.micro',
-                        KeyName      : ec2KeyName,
-                        SecurityGroupNames: [webSecurityGroupName],
-                        SubnetName: subnetName,
-                        tags:managmgentTag,
-                        components:environment.mainComponents,
-                        add:true,
-                        attached:false,
-                    }
-                    apEc2s.push(ec2);
-                    operations.push({
-                        command: CREATE_EC2,
-                        target: ec2,
-                    });
-                }
-                break;
-            case Strategy.WEB_PUB_ALB:
-                break;
-            case Strategy.WEB_PUB_ELB:
-                break;
-            default:
-                throw new Error("strategy.web.publishingの設定がない")
+        //lbだろうが、httpdだろうが、public subnetを作る
+        for (let i = 0; i < minimumAz; i++) {
+            const subnetName = namePrefix + "-public-subnet-" + availabilityZones[i];
+            const subnet = {
+                subnetName : subnetName,
+                AvailabilityZone : availabilityZones[i] ,
+                cidr : "172.20." + ( ++counter ) + ".0/28" ,
+                attachIgw : true,
+                role : "app",
+                tags : managmgentTag,
+            }
+            publicSubnets.push(subnet);
+            publicSubnetNames.push(subnetName);
         }
+
+        //lbの場合にはprivate Subnetを作る
+        if(strategy.web.publishing===Strategy.WEB_PUB_ALB
+            ||strategy.web.publishing===Strategy.WEB_PUB_ELB){
+            for (let i = 0; i < minimumAz; i++) {
+                const subnetName = namePrefix + "-private-subnet-" + availabilityZones[i];
+                const subnet = {
+                    subnetName: subnetName,
+                    AvailabilityZone: availabilityZones[i],
+                    cidr: "172.20." + (++counter) + ".0/28",
+                    attachIgw: false,
+                    role: "app",
+                    tags: managmgentTag,
+                }
+                privateSubnets.push(subnet);
+            }
+        }
+
+        //ECを作ってサブネットに置く
+        const targetSubnests = strategy.web.publishing===Strategy.WEB_PUB_DIRECT ?
+            publicSubnets : privateSubnets;
+        targetSubnests.forEach(function(subnet){
+            const ec2Name = namePrefix + "-ec2-ap-" + subnet.AvailabilityZone;
+            const ec2 = {
+                name         : ec2Name,
+                ImageId      : amiForAP,
+                InstanceType : 't2.micro',
+                KeyName      : ec2KeyName,
+                SecurityGroupNames: [webSecurityGroupName],
+                SubnetName: subnet.subnetName,
+                tags:managmgentTag,
+                components:environment.mainComponents,
+                add:true,
+                attached:false,
+            }
+            apEc2s.push(ec2);
+            apEc2Names.push(ec2Name);
+            operations.push({
+                command: CREATE_EC2,
+                target: ec2,
+            });
+        })
+
+        //LBがいる場合にはlb作って、publicSubnetに置いて、privateSubnetにあるEC2とアタッチする様にする
+        if(strategy.web.publishing===Strategy.WEB_PUB_ALB
+            ||strategy.web.publishing===Strategy.WEB_PUB_ELB) {
+            lb = {
+                need : true,
+                name : namePrefix + "-vpc",
+                type : strategy.web.publishing,
+                subnets : publicSubnetNames,
+                ec2s : apEc2Names,
+                securityGroup : [webSecurityGroupName],
+            }
+        } else {
+            //Lb不要を宣言
+            lb.need = false;
+        }
+
 
         //DBなど
 
-        resources.subnets=resources.subnets.concat(apSubnets);
-        resources.ec2s=resources.subnets.concat(apEc2s);
-        resources.securityGroups=resources.subnets.concat(apSecurityGroups);
+        //組み立て
+        resources.subnets=resources.subnets.concat(publicSubnets).concat(privateSubnets);
+        resources.ec2s=resources.ec2s.concat(apEc2s);
+        resources.securityGroups=resources.securityGroups.concat(apSecurityGroups);
+        resources.lb = lb;
 
         //about bastion（最後に処理すべき）
-        if(strategy.bastion.create){
+        if(strategy.bastion.create===1){
             //Bastion用の外からSSHできるSG（複数bastion同士を考慮してグループ内のSSHも可能）
             //各EC2はBastionのSGからSSHできるSGを足す
 
@@ -157,7 +197,7 @@ function OperationTemplateMaker(tenant, environment) {
                 Description : "for ssh from bastion",
                 ingress : [
                     {
-                        toOtherGroup : bastionSecurityGroup,
+                        toOtherGroup : bastionSecurityGroupName,
                         IpProtocol: "TCP",
                         FromPort: 22,
                         ToPort: 22,
@@ -166,7 +206,9 @@ function OperationTemplateMaker(tenant, environment) {
             }
             resources.securityGroups.push(ec2SecurityGroup);
             resources.ec2s.forEach(function (ins){
-                ins.securityGroups.push(ec2SecurityGroupName);
+                console.log(JSON.stringify(ins));
+
+                ins.SecurityGroupNames.push(ec2SecurityGroupName);
             })
 
 
@@ -188,10 +230,10 @@ function OperationTemplateMaker(tenant, environment) {
                 ImageId      : amiForBatison,
                 InstanceType : 't2.micro',
                 KeyName      : ec2KeyName,
-                SecurityGroupNames: [webSecurityGroupName],
+                SecurityGroupNames: [bastionSecurityGroupName],
                 SubnetName: subnetName,
                 tags:managmgentTag,
-                components:environment.mainComponents,
+                components:[],
                 add:true,
                 attached:false,
             }

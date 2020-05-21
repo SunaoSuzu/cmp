@@ -63,7 +63,7 @@ const ComponentPanel = props => {
                            value={env.strategy.bastion.create}
                            helperText="SSH Bastion"
                            margin="dense"
-                           options={[{id:1, caption: "作らない"},{id:2 , caption : "作る" ,}]}
+                           options={[{id:0, caption: "作らない"},{id:1 , caption : "作る" ,}]}
                 />
                 <TextField
                     name={"environments." + index + ".strategy.bastion.accessFroms"}

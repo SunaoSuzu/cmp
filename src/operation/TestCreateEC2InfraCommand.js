@@ -9,6 +9,7 @@ const requestQue = {
             {subnetName : "sunao-public",  AvailabilityZone : "ap-northeast-1d" , cidr : "172.20.1.0/28" , attachIgw : true},
             {subnetName : "sunao-private", AvailabilityZone : "ap-northeast-1d" , cidr : "172.20.2.0/28", attachIgw : false},
         ],
+        lb  : { need :false },
         igw : { need : true , defaultGateWay : "0.0.0.0/0", name : "sunao-igw" },
         securityGroups : [
             {
