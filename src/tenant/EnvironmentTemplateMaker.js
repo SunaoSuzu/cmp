@@ -9,6 +9,7 @@ function EnvironmentTemplateMaker(tenant) {
     landScape: 1,
     status: 1,
     statusCaption: "下書き",
+    strategy : {web:{} , bastion:{}},
     specLevel: null,
     vpcType: null,
     vpcTypeCaption: "独自VPC",
