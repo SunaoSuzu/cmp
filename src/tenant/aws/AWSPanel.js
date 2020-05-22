@@ -176,11 +176,8 @@ const AWSPanel = props => {
                         <ListItemIcon>
                             <VpcLogo />
                         </ListItemIcon>
-                        <ListItemText primary={"vpc=" + env.resources.cidrs} />
+                        <ListItemText primary={"vpc=" + env.resources.cidr} />
                         <ListItemText primary={"id=" + env.resources.VpcId} />
-                        {env.resources.tags.map((tag,ti) => (
-                            <ListItemText primary={"t:" + tag.name + "=" + tag.value} key={ti}/>
-                        ))}
                     </ListItem>
                     {env.resources.ec2s.map( (instance,ei)  => (
                         <List component="div" disablePadding key={ei}>
@@ -188,14 +185,9 @@ const AWSPanel = props => {
                                 <ListItemIcon>
                                     <EC2Logo />
                                 </ListItemIcon>
+                                <ListItemText primary={"name=" + instance.name} />
                                 <ListItemText primary={"id=" + instance.InstanceId} />
                                 <ListItemText primary={"type=" + instance.InstanceType} />
-                                {instance.tags.map( (tag,ti) => (
-                                    <ListItemText
-                                        key={ti}
-                                        primary={"t:" + tag.name + "=" + tag.value}
-                                    />
-                                ))}
                             </ListItem>
                             {instance.components.map( (component , ci) => (
                                 <List component="div" disablePadding key={ci}>

@@ -67,7 +67,7 @@ function OperationTemplateMaker(tenant, environment) {
         const apSecurityGroups = [];
         const apEc2s = [];
         const apEc2Names = [];
-        const lb = {};
+        let lb = {};
 
         //lbだろうが、httpdだろうが、web用のsgを作る
         const webSecurityGroupName  = namePrefix + "-sg-web-publish";

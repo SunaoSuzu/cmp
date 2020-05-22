@@ -5,6 +5,7 @@ const requestQue = {
         apiVersion : '2016-11-15',
         region : "ap-northeast-1",
         cidr : "172.20.0.0/16",  //
+        tags : [{ name : "tenant" , value : "suzuki"}],
         subnets : [
             {subnetName : "sunao-public",  AvailabilityZone : "ap-northeast-1d" , cidr : "172.20.1.0/28" , attachIgw : true},
             {subnetName : "sunao-private", AvailabilityZone : "ap-northeast-1d" , cidr : "172.20.2.0/28", attachIgw : false},

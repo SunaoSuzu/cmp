@@ -2,7 +2,9 @@
 const EC2 = require("aws-sdk/clients/ec2");
 const ELB = require("aws-sdk/clients/elb")
 const AWS = require('aws-sdk');
-
+const ec2Command = require('./ec2/EC2Command');
+const lbCommand = require('./lb/LbCommand');
+const vpc = require('./network/VpcCommand');
 
 //PromiseChainなので各処理は外だししてコマンド化（Promiseを返してくれれば良い）し、
 //コマンドをどうアセンブルするかって作りに変えれる（はず）
@@ -36,79 +38,14 @@ exports.createVPC = function (que,apiKey,apiPwd) {
             }
         )
 
-        return Promise.resolve(function () {
-            console.log("1.VPC作成");
-        }).then(function () {
-            return ec2.createVpc({
-                CidrBlock: que.vpc.cidr,
-                AmazonProvidedIpv6CidrBlock: false,
-                DryRun: false,
-                InstanceTenancy: "default"
-            }).promise();
-        }).then(function (vpcDataRet) {
-            console.log("1.VPC.TAG");
-            que.vpc.VpcId=vpcDataRet.Vpc.VpcId;
-            que.vpc.attached=true;
-            return ec2.createTags({
-                Resources: [que.vpc.VpcId],
-                Tags: [
-                    {Key: "Name", Value: que.vpc.name},
-                    {Key: "tenant", Value: "suzuki"},
-                    {Key: "landscape", Value: "suzuki"}
-                ]
-            }).promise();
-        }).then(function (result) {
-            console.log("2.InternetGateWay");
-            return ec2.createInternetGateway().promise();
-        }).then(function (internetGatewayRet) {
-            console.log("3.InternetGateWay.Tags");
-            que.vpc.igw.InternetGatewayId=internetGatewayRet.InternetGateway.InternetGatewayId;
-            que.vpc.igw.attached=true;
-            return ec2.createTags({
-                Resources: [que.vpc.igw.InternetGatewayId],
-                Tags: [
-                    {Key: "Name", Value: que.vpc.igw.name},
-                    {Key: "tenant", Value: "suzuki"},
-                    {Key: "landscape", Value: "suzuki"}
-                ]
-            }).promise();
-        }).then(function () {
-            console.log("4.VPC <-> InternetGateWay");
-            return ec2.attachInternetGateway({
-                VpcId: que.vpc.VpcId,
-                InternetGatewayId: que.vpc.igw.InternetGatewayId,
-            }).promise();
-        }).then(function (result) {
-            console.log("5.RouteTable");
-            return ec2.createRouteTable({
-                VpcId: que.vpc.VpcId,
-            }).promise();
-        }).then(function (routeDataRet) {
-            console.log("6.RouteTable.Tags");
-            que.vpc.RouteTableId=routeDataRet.RouteTable.RouteTableId;
-            que.vpc.RouteTableAttached=true;
-            return ec2.createTags({
-                Resources: [que.vpc.RouteTableId],
-                Tags: [
-                    {Key: "Name", Value: que.vpc.name},
-                    {Key: "tenant", Value: "suzuki"},
-                    {Key: "landscape", Value: "suzuki"}
-                ]
-            }).promise();
-        }).then(function () {
-            console.log("7.Route:DefaultGateway");
-            return ec2.createRoute({
-                RouteTableId: que.vpc.RouteTableId,
-                DestinationCidrBlock: que.vpc.igw.defaultGateWay,
-                GatewayId: que.vpc.igw.InternetGatewayId,
-            }).promise();
-        }).then(function(){
+        return vpc.prepare(ec2 , que.vpc).then(function(){
             console.log("9.Parallel.Start");
             return Promise.all(
                 que.vpc.subnets.map(function (subnet,index) {
                     console.log("10-" + index + ".Subnet");
                     return ec2.createSubnet({
                         VpcId: que.vpc.VpcId,
+                        AvailabilityZone :subnet.AvailabilityZone,
                         CidrBlock: subnet.cidr,
                     }).promise().then(function (subNetDataRet) {
                         console.log("11-" + index + ".Subnet.MapPublicIpOnLaunch(if necessary)");
@@ -176,20 +113,8 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                                 console.log("54-" + index + "-" + t + ".SecurityGroup.Ingress");
 
                                 if (ing.toMyGroup === true||ing.toOtherGroup!=null) {
-                                    console.log("toMyGroup=" + ing.toMyGroup);
-                                    console.log("ing.toOtherGroup=" + ing.toOtherGroup);
-                                    let targetGroupId = null;
-                                    if(ing.toMyGroup){
-                                        targetGroupId=group.GroupId;
-                                    }else{
-                                        que.vpc.securityGroups.map(function (g){
-                                            console.log("g.GroupId=" + g.GroupId);
-                                            if (ing.toOtherGroup===g.GroupName){
-                                                targetGroupId=g.GroupId;
-                                            }
-                                        })
-                                    }
-                                    console.log("targetGroupId=" + targetGroupId);
+                                    let targetGroupId = ing.toMyGroup ? group.GroupId
+                                                        : getSgId(que , ing.toOtherGroup);
                                     return ec2.authorizeSecurityGroupIngress({
                                         GroupId: group.GroupId,
                                         IpPermissions: [
@@ -215,8 +140,6 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                                         CidrIp: ing.CidrIp,
                                     }).promise();
                                 }
-
-
                             })
                         )}
                     )
@@ -224,108 +147,19 @@ exports.createVPC = function (que,apiKey,apiPwd) {
             })
         }).then(function () {
             return Promise.all(
-                que.vpc.ec2s.map(function (ec,index) {
-                    let subnetId = "";
-                    que.vpc.subnets.forEach(function (subnet) {
-                        if(subnet.subnetName==ec.SubnetName){
-                            subnetId=subnet.SubnetId;
-                        }
-                    })
-                    let sgids = [];
-                    ec.SecurityGroupNames.forEach(function (name) {
-                        que.vpc.securityGroups.forEach(function (sg) {
-                            if(name==sg.GroupName){
-                                sgids.push(sg.GroupId)
-                            }
-                        })
-                    })
-                    let userDataEncoded = null;
-                    if(ec.UserData!=null){
-                        userDataEncoded = Buffer.from(ec.UserData, 'base64').toString();
-                    }
-
-                    return Promise.resolve(function () {
-                        console.log("80-" + index + ".EC2");
-                    }).then(function () {
-                        console.log("81-" + index + ".EC2");
-                        return ec2.runInstances({
-                            ImageId: ec.ImageId,
-                            InstanceType: ec.InstanceType,
-                            KeyName: ec.KeyName,
-                            MinCount: 1,
-                            MaxCount: 1,
-                            SecurityGroupIds: sgids,
-                            SubnetId: subnetId,
-                            UserData: ec.userDataEncoded,
-                        }).promise();
-                    }).then(function (instanceRet) {
-                        console.log("82-" + index + ".EC2.Tags");
-                        const ids = [];
-                        ec.InstanceIds=[];
-                        instanceRet.Instances.forEach(function (instance , index) {
-                            ec.InstanceId=instance.InstanceId;
-                            ec.InstanceIds[index]=instance.InstanceId;
-                            ec.PrivateIpAddress=instance.PrivateIpAddress;
-                            ec.PublicIpAddress=instance.PublicIpAddress;
-                            ec.SubnetId=instance.SubnetId;
-                            ec.VpcId=instance.VpcId;
-                            ec.VpcId=instance.Placement.AvailabilityZone;
-                            ec.attached=true;
-                            ids.push(ec.InstanceId);
-                        })
-                        return ec2.createTags({
-                            Resources: ids,
-                            Tags: [
-                                {Key: "Name", Value: ec.name},
-                                {Key: "tenant", Value: "suzuki"},
-                                {Key: "landscape", Value: "suzuki"}
-                            ]
-                        }).promise();
-
-                    });
+                que.vpc.ec2s.map(function (ec) {
+                    const subnetId = getSubnetId(que , ec.SubnetName);
+                    const sgids = getSgIds(que,ec.SecurityGroupNames);
+                    return ec2Command.createEC2Command(ec2,ec,subnetId,sgids);
                 })
             )
         }).then(function () {
             if(que.vpc.lb.need){
                 console.log("100.LoadBalancer");
-                let subnetIds = [];
-                que.vpc.lb.subnets.forEach(function (sub) {
-                    que.vpc.subnets.forEach(function (subnet) {
-                        if(sub===subnet.subnetName){
-                            subnetIds.push(subnet.SubnetId);
-                        }
-                    })
-                })
-                let sgId =[];
-                que.vpc.lb.securityGroup.forEach(function (sg) {
-                    que.vpc.securityGroups.forEach(function (group) {
-                        if(sg===group.GroupName){
-                            sgId.push(group.GroupId);
-                        }
-                    })
-                })
-
-                return elb.createLoadBalancer({
-                    Listeners: [
-                        {
-                            InstancePort: 80,
-                            InstanceProtocol: "HTTP",
-                            LoadBalancerPort: 80,
-                            Protocol: "HTTP"
-                        }
-                    ],
-                    SecurityGroups: sgId ,
-                    LoadBalancerName: que.vpc.lb.name,
-                    Subnets: subnetIds,
-                    Tags: [
-                        {Key: "Name", Value: que.vpc.lb.name},
-                        {Key: "tenant", Value: "suzuki"},
-                        {Key: "landscape", Value: "suzuki"}
-                    ]
-
-                }).promise().then(function (){
-                    
-                })
+                const subnetIds = getSubnetIds(que,que.vpc.lb.subnets);
+                const sgIds =getSgIds(que,que.vpc.lb.securityGroup);
+                const ecsIds=getEC2Ids(que,que.vpc.lb.ec2s);
+                lbCommand.lbPrepare(elb,que.vpc.lb ,subnetIds,sgIds, ecsIds );
             }
         }).catch(function(err){
             // 上のいずれかでエラーが発生した。
@@ -334,4 +168,44 @@ exports.createVPC = function (que,apiKey,apiPwd) {
     } catch (err) {
         console.error(err);
     }
+}
+
+function getEC2Ids(que , names){
+    let ec2Ids = [];
+    names.forEach(function (name) {
+        ec2Ids.push(getEC2Id(que,name));
+    })
+    return ec2Ids;
+}
+
+function getEC2Id(que , name){
+    const ec = que.vpc.ec2s.find( ec => ec.name==name );
+    return ec.InstanceId;
+}
+
+function getSubnetIds(que , names){
+    console.log(JSON.stringify(names));
+    let subnetIds = [];
+    names.forEach(function (name) {
+        subnetIds.push(getSubnetId(que,name));
+    })
+    return subnetIds;
+}
+
+function getSubnetId(que , name){
+    const subnet = que.vpc.subnets.find( subnet => subnet.subnetName==name );
+    return subnet.SubnetId;
+}
+
+function getSgIds(que , names){
+    let sgids = [];
+    names.forEach(function (name) {
+        sgids.push(getSgId(que , name));
+    })
+    return sgids;
+}
+
+function getSgId(que , name){
+    const sg = que.vpc.securityGroups.find( sg => name==sg.GroupName );
+    return sg.GroupId;
 }
