@@ -11,9 +11,9 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import TabPanel from "./TabPanel";
-import Selection from "../components/Selection";
 import AWSPanel from "./aws/AWSPanel";
 import ComponentPanel from "./aws/ComponentPanel";
+import BasicInfoPanel from "./env/BasicInfoPanel";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -51,9 +51,6 @@ const useStyles = makeStyles(theme => ({
 
 const EnvironmentDetail = props => {
   const classes = useStyles();
-  const conf = getConfiguration();
-  const environmentVpcTypeMst = conf.environmentVpcTypeMst;
-  const environmentStatusMst = conf.environmentStatusMst;
 
   const index = props.index;
   const env = props.env;
@@ -92,59 +89,11 @@ const EnvironmentDetail = props => {
           boxShadow={1}
           className={classes.tabPanel}
         >
-          <TextField
-            name={"environments." + index + ".name"}
-            onChange={uiToJson}
-            id="standard-env-name"
-            label="環境名"
-            value={env.name}
-            margin="dense"
-            helperText="環境名を入れてください"
-          />
-          <TextField
-            name={"environments." + index + ".awsTag"}
-            onChange={uiToJson}
-            id="standard-env-awsTag"
-            label="tag(aws)"
-            helperText="tag(aws)を入れてください"
-            inputProps={{
-              required: true
-            }}
-            value={env.awsTag}
-          />
-          <Selection input={true}
-                     label="環境状態"
-                     name={"environments." + index + ".status"}
-                     onChange={uiToJson}
-                     id="standard-basic-status"
-                     value={env.status}
-                     readOnly={true}
-                     helperText="環境状態"
-                     margin="dense"
-                     options={environmentStatusMst}
-          />
-          <Selection input={true}
-                     label="VPC方針"
-                     name={"environments." + index + ".vpcType"}
-                     onChange={uiToJson}
-                     id="standard-basic-vpc-type"
-                     value={env.vpcType}
-                     readOnly={true}
-                     helperText="VPC方針"
-                     margin="dense"
-                     options={environmentVpcTypeMst}
-          />
-          <TextField
-            name={"environments." + index + ".specLevel"}
-            onChange={uiToJson}
-            id="standard-env-spec-level"
-            label="SPECレベル"
-            value={env.specLevel}
-            inputProps={{
-              readOnly: true
-            }}
-            margin="dense"
-            helperText="SPECレベル"
+          <BasicInfoPanel
+              index = {index}
+              env = {env}
+              uiToJson = {uiToJson}
+              tenant = {tenant}
           />
         </TabPanel>
         {env.mainComponents.map((component, c) => (
