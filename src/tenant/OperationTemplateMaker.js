@@ -21,10 +21,10 @@ function OperationTemplateMaker(tenant, environment) {
     let managmgentTag = [];
     if (tagUsage) {
         if (tenantTag !== "") {
-            managmgentTag.push({ name: tenantTag, value: tenant.awsTag });
+            managmgentTag.push({ Key: tenantTag, Value: tenant.awsTag });
         }
         if (envTag !== "") {
-            managmgentTag.push({ name: envTag, value: environment.awsTag });
+            managmgentTag.push({ Key: envTag, Value: environment.awsTag });
         }
     }
 
@@ -59,7 +59,7 @@ function OperationTemplateMaker(tenant, environment) {
     let counter = 0;
 
     //aboutAp
-    const minimumAz = strategy.web.minimumAz; //maximum までAZ作るのが正しい予感・・
+    const aznum = strategy.network.az; //maximum までAZ作るのが正しい予感・・
     const publicSubnets = [];
     const publicSubnetNames = [];
     const privateSubnets = [];
@@ -70,7 +70,7 @@ function OperationTemplateMaker(tenant, environment) {
 
     //lbだろうが、httpdだろうが、web用のsgを作る
     const webSecurityGroupName  = namePrefix + "-sg-web-publish";
-    const webSecurityIngressPtn = SecurityGroup.ApIngressPattern.http;
+    const webSecurityIngressPtn = SecurityGroup.ApIngressPattern.both;
     const webSecurityGroup      = {
         GroupName   : webSecurityGroupName,
         Description : "for web-publish of ap",
@@ -78,8 +78,8 @@ function OperationTemplateMaker(tenant, environment) {
     };
     apSecurityGroups.push(webSecurityGroup);
 
-    //lbだろうが、httpdだろうが、3public subnetを作る
-    for (let i = 0; i < 3 ; i++) {
+    //public subnetを作る
+    for (let i = 0; i < aznum ; i++) {
         const subnetName = namePrefix + "-public-subnet-" + availabilityZones[i];
         const subnet = {
             subnetName : subnetName,
@@ -93,20 +93,22 @@ function OperationTemplateMaker(tenant, environment) {
         publicSubnets.push(subnet);
         publicSubnetNames.push(subnetName);
     }
-    //同じくprivateも３個作る
-    for (let i = 0; i < 3; i++) {
+    //ペアになるprivate subnetを作る
+    publicSubnets.forEach(function (psub , i) {
         const subnetName = namePrefix + "-private-subnet-" + availabilityZones[i];
         const subnet = {
             subnetName: subnetName,
+            publicSubnetName : psub.subnetName,
             AvailabilityZone: availabilityZones[i],
             cidr: "172.20." + (++counter) + ".0/28",
             attachIgw: false,
+            natGateWay : strategy.network.natgateway,
             type : "private",
             role: "app",
             tags: managmgentTag,
         }
         privateSubnets.push(subnet);
-    }
+    })
 
     //APをpublicに置くのか、privateに置くのか決めて、AutoScalingGroupを作る
     //AWS::AutoScaling::LaunchConfiguration
@@ -117,45 +119,43 @@ function OperationTemplateMaker(tenant, environment) {
     const targetSubnests = strategy.web.publishing===Strategy.WEB_PUB_DIRECT ?
         publicSubnets : privateSubnets;
 
-    targetSubnests.forEach(function(subnet){
-        const ec2Name = namePrefix + "-ec2-ap-" + subnet.AvailabilityZone;
-        const ec2 = {
-            min          : 1,
-            max          : 1,
-            name         : ec2Name,
-            ImageId      : amiForAP,
-            InstanceType : 't2.micro',
-            KeyName      : ec2KeyName,
-            SecurityGroupNames: [webSecurityGroupName],
-            SubnetName: subnet.subnetName,
-            tags:managmgentTag,
-            components:environment.mainComponents,
-            add:true,
-            attached:false,
-        }
-        apEc2s.push(ec2);
-        apEc2Names.push(ec2Name);
-        operations.push({
-            command: CREATE_EC2,
-            target: ec2,
-        });
-    })
+    const targetSubnetNames = targetSubnests.map( subnet => subnet.subnetName);
 
-    //LBがいる場合にはlb作って、publicSubnetに置いて、privateSubnetにあるEC2とアタッチする様にする
-    if(strategy.web.publishing===Strategy.WEB_PUB_ALB
-        ||strategy.web.publishing===Strategy.WEB_PUB_ELB) {
-        lb = {
-            need : true,
-            name : namePrefix + "-vpc",
-            type : strategy.web.publishing,
-            subnets : publicSubnetNames,
-            ec2s : apEc2Names,
-            securityGroup : [webSecurityGroupName],
-        }
-    } else {
-        //Lb不要を宣言
-        lb.need = false;
+    //mainComponent毎にAPを作る
+    const ec2Name = namePrefix + "-ec2-ap";
+    const ec2 = {
+        min          : 1,
+        max          : 1,
+        autoScale    : true,
+        name         : ec2Name,
+        ImageId      : amiForAP,
+        InstanceType : 't2.micro',
+        KeyName      : ec2KeyName,
+        SecurityGroupNames: [webSecurityGroupName],
+        SubnetNames: targetSubnetNames,
+        tags:managmgentTag,
+        components:environment.mainComponents,
+        add:true,
+        attached:false,
     }
+
+    lb = {
+        need : true,
+        name : namePrefix + "-lb",
+        type : strategy.web.publishing,
+        subnets : publicSubnetNames,
+        autoScalingGroup : ec2Name,
+        ec2s : [],
+        securityGroup : [webSecurityGroupName],
+        tags : managmgentTag,
+    }
+    apEc2s.push(ec2);
+    apEc2Names.push(ec2Name);
+    operations.push({
+        command: CREATE_EC2,
+        target: ec2,
+    });
+
 
 
     //DBなど
@@ -248,6 +248,15 @@ function OperationTemplateMaker(tenant, environment) {
             target: ec2,
         });
     }
+
+    //TODO あとで消す
+    console.log(JSON.stringify(resources));
+    console.log(JSON.stringify(resources.ec2s));
+
+    resources.ec2s=[];
+    resources.lb.need=false;
+
+
     return { resources, operations };
 }
 export default OperationTemplateMaker;

@@ -6,7 +6,6 @@ import TextField from "@material-ui/core/TextField";
 import Selection from "../../components/Selection";
 import getConfiguration from "../../Configuration";
 import Divider from "@material-ui/core/Divider";
-import {Box} from "@material-ui/core";
 
 const BasicInfoPanel = props => {
     const conf = getConfiguration();
@@ -108,7 +107,7 @@ const BasicInfoPanel = props => {
                        value={env.strategy.network.natgateway}
                        helperText="外部への通信用"
                        margin="dense"
-                       options={[{id:9, caption: "不要"},{id:1 , caption : "必要（EIP）" ,}]}
+                       options={[{id:false , caption: "不要"},{id:true , caption : "必要（EIP）" ,}]}
             />
             <Divider/>
             <Selection input={true}

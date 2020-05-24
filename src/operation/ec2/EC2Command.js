@@ -27,7 +27,7 @@ exports.createEC2Command = function (client,ec,subnetId,sgids) {
             MaxCount: 1,
             SecurityGroupIds: sgids,
             SubnetId: subnetId,
-            UserData: ec.userDataEncoded,
+            UserData: userDataEncoded,
         }).promise();
     }).then(function (instanceRet) {
         console.log("82-" + ec.name + ".EC2.instanceExists");

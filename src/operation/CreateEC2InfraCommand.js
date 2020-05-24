@@ -12,25 +12,21 @@ const vpc = require('./network/VpcCommand');
 exports.createVPC = function (que,apiKey,apiPwd) {
     AWS.config.setPromisesDependency(Promise);
     try {
-        let ec2 = null;
-        let elb = null;
+        let config = null;
         if(apiKey==null&&apiPwd==null){
-            ec2 = new AWS.EC2({apiVersion: que.vpc.apiVersion , region: que.vpc.region});
-            elb = new AWS.ELB({region: que.vpc.region});
+            config={region: que.vpc.region};
         }else{
-            ec2 = new AWS.EC2({
-                apiVersion: que.vpc.apiVersion , region: que.vpc.region,
-                accessKeyId: apiKey,
-                secretAccessKey: apiPwd,
-
-            });
-            elb = new AWS.ELB({
+            config = {
                 region: que.vpc.region,
                 accessKeyId: apiKey,
                 secretAccessKey: apiPwd,
 
-            });
+            };
         }
+
+        const ec2 = new AWS.EC2(config);
+        const elb = new AWS.ELB({region: que.vpc.region});
+
 
         const managementTag = {};
         que.vpc.tags.map(function(tag){
@@ -146,21 +142,11 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                 )
             })
         }).then(function () {
-            return Promise.all(
-                que.vpc.ec2s.map(function (ec) {
-                    const subnetId = getSubnetId(que , ec.SubnetName);
-                    const sgids = getSgIds(que,ec.SecurityGroupNames);
-                    return ec2Command.createEC2Command(ec2,ec,subnetId,sgids);
-                })
-            )
-        }).then(function () {
-            if(que.vpc.lb.need){
                 console.log("100.LoadBalancer");
                 const subnetIds = getSubnetIds(que,que.vpc.lb.subnets);
                 const sgIds =getSgIds(que,que.vpc.lb.securityGroup);
-                const ecsIds=getEC2Ids(que,que.vpc.lb.ec2s);
-                lbCommand.lbPrepare(elb,que.vpc.lb ,subnetIds,sgIds, ecsIds );
-            }
+//                const ecsIds=getEC2Ids(que,que.vpc.lb.ec2s);
+//                lbCommand.lbPrepare(elb,que.vpc.lb ,subnetIds,sgIds, ecsIds );
         }).catch(function(err){
             // 上のいずれかでエラーが発生した。
             console.log(err);
