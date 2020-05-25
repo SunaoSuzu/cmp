@@ -168,7 +168,7 @@ const AWSPanel = props => {
                 破棄
             </Button>
             <DownloadLink
-                label="Save(開発用)"
+                label="JSON(開発用)"
                 filename="env.json"
                 exportFile={() => JSON.stringify(env.resources) }
             />
@@ -183,7 +183,7 @@ const AWSPanel = props => {
                         <ListItemIcon>
                             <VpcLogo />
                         </ListItemIcon>
-                        <ListItemText primary={"domain=" + env.resources.domain} />
+                        <ListItemText primary={"hostedZone=" + env.resources.hostedZone} />
                         <ListItemText primary={"vpc=" + env.resources.cidr} />
                     </ListItem>
                     {env.resources.apps.map( (app , aindex) => (
@@ -194,8 +194,7 @@ const AWSPanel = props => {
                                 </ListItemIcon>
                                 <ListItemText primary={"name=" + app.ap.domain} />
                                 <ListItemText primary={"type=" + app.ap.launch.InstanceType} />
-                                <ListItemText primary={"min=" + app.ap.min} />
-                                <ListItemText primary={"max=" + app.ap.max} />
+                                <ListItemText primary={"ImageId=" + app.ap.launch.ImageId} />
                             </ListItem>
                         </List>
                     ))}
