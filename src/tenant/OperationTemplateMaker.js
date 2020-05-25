@@ -31,14 +31,9 @@ function OperationTemplateMaker(tenant, environment) {
     const region     = Region.name;
     const availabilityZones = Region.az;
 
-    //Productから動的に取る様にいずれ直す
-    const amiForAP      = "ami-03e4521d84f084007";
-    const amiForBatison = "ami-0db8ca4897909ac37";
-    const ec2KeyName    = "sunao";
-
     const subDomain  = environment.subDomain;
     const rootDomain = DomainSetting.default.url;
-    const domain     = subDomain + "." + rootDomain;
+    const internalDomainRoot =DomainSetting.default.internal;
     const namePrefix = subDomain;
 
     const strategy = environment.strategy;
@@ -46,7 +41,7 @@ function OperationTemplateMaker(tenant, environment) {
     //
     resources = {
         name : namePrefix + "-vpc",
-        domain : domain,
+        hostedZone : subDomain + "." + internalDomainRoot,
         subDomain : subDomain,
         cidr:"172.20.0.0/16" ,
         apiVersion:apiVersion,
@@ -123,6 +118,9 @@ function OperationTemplateMaker(tenant, environment) {
     if(strategy.bastion.create===1){
         //Bastion用の外からSSHできるSG（複数bastion同士を考慮してグループ内のSSHも可能）
         //各EC2はBastionのSGからSSHできるSGを足す
+        const amiForBastion = "ami-0db8ca4897909ac37";
+        const keyForBastion = "sunao";
+        const typeForBastion = 't2.micro';
 
         const bastionSecurityGroupName  = namePrefix + "-sg-bastion";
         const bastionSecurityGroup      = {
@@ -179,9 +177,9 @@ function OperationTemplateMaker(tenant, environment) {
         const ec2Name = namePrefix + "-ec2-ap-bastion";
         const ec2 = {
             name         : ec2Name,
-            ImageId      : amiForBatison,
-            InstanceType : 't2.micro',
-            KeyName      : ec2KeyName,
+            ImageId      : amiForBastion,
+            InstanceType : typeForBastion,
+            KeyName      : keyForBastion,
             SecurityGroupNames: [bastionSecurityGroupName],
             SubnetName: subnetName,
             tags:managmgentTag,
@@ -195,17 +193,24 @@ function OperationTemplateMaker(tenant, environment) {
     //mainComponent毎にAPを作る
     const apps = [];
     environment.mainComponents.forEach(function (product,i) {
+        //Productから動的に取る様にいずれ直す
+        const amiForAP      = "ami-03e4521d84f084007";
+        const ec2KeyName    = "sunao";
+        const healthCheckUrl ="/index.html";
+        const ec2Type    = "t2.micro";
         const ap = {
-            domain       : subDomain + "_app." + rootDomain,
-            min          : 1,
-            max          : 1,
-            autoScale    : true,
-            alb          : true,
-            name         : namePrefix + "_app",
+            domain            : subDomain + "-app" + i + "." + rootDomain,
+            internalDomain    : subDomain + "-app" + i + "-ap." + internalDomainRoot,
+            healthCheckUrl    : healthCheckUrl,
+            min               : 1,
+            max               : 1,
+            autoScale         : true,
+            alb               : true,
+            name              : namePrefix + "-app" + i,
             SecurityGroupNames: [webSecurityGroupName],
             launch : {
                 ImageId      : amiForAP,
-                InstanceType : 't2.micro',
+                InstanceType : ec2Type,
                 KeyName      : ec2KeyName,
                 InstanceMonitoring: {Enabled:false}
             },

@@ -31,9 +31,10 @@ exports.prepare = function (config , client,vpc) {
             Tags: vpc.tags.concat({Key: "Name", Value: vpc.name}),
         }).promise();
     }).then(function (result) {
+        console.log("1.VPC.HostedZone");
         return dns.createHostedZone({
             CallerReference: "a" + Math.round( Math.random()*1000000000000 ) + "z", /* TODO */
-            Name: vpc.domain,
+            Name: vpc.hostedZone,
             HostedZoneConfig: {
                 Comment: 'for ' + vpc.domain,
             },

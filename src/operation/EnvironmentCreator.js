@@ -8,11 +8,11 @@
  **/
 
 const AWS = require('aws-sdk');
-const ec2Command = require('./ec2/EC2Command');
-const lbCommand = require('./lb/LbCommand');
-const vpcCommand = require('./network/VpcCommand');
-const command = require("./ec2/AutoScalingCommand");
-const albCommand = require("./lb/AlbCommand");
+const ec2 = require('./ec2/EC2Command');
+const vpc = require('./network/VpcCommand');
+const autoScale = require("./ec2/AutoScalingCommand");
+const alb = require("./lb/AlbCommand");
+const linkAlb = require("./lb/LinkAlbCommand");
 
 //PromiseChainなので各処理は外だししてコマンド化（Promiseを返してくれれば良い）し、
 //コマンドをどうアセンブルするかって作りに変えれる（はず）
@@ -43,7 +43,7 @@ exports.createVPC = function (que,apiKey,apiPwd) {
 
         const vpc = que.vpc;
 
-        return vpcCommand.prepare(config , client , vpc).then(function(){
+        return vpc.prepare(config , client , vpc).then(function(){
             console.log("9.Parallel.Start");
             return Promise.all(
                 que.vpc.subnets.map(function (subnet,index) {
@@ -143,16 +143,23 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                 )
             })
         }).then(function () {
-                console.log("100.LoadBalancer+AutoScaleAp");
-                const subnetIds = getSubnetIds(que,que.vpc.lb.subnets);
-                const psubnetIds = getSubnetIds(que,que.vpc.ap.subnets);
-                const sgIds =getSgIds(que,que.vpc.lb.securityGroup);
+            console.log("100.LoadBalancer+AutoScaleAp");
+            const subnetIds = getSubnetIds(que,que.vpc.lb.subnets);
+            const psubnetIds = getSubnetIds(que,que.vpc.ap.subnets);
+            const sgIds =getSgIds(que,que.vpc.lb.securityGroup);
 
-                return albCommand.prepare(config , que.vpc.lb , subnetIds, sgIds,que.vpc.VpcId).then(function () {
-                    command.prepare(config,que.vpc.ap, psubnetIds, sgIds , que.vpc.lb["targetGroupArn"]);
-                });
-//                const ecsIds=getEC2Ids(que,que.vpc.lb.ec2s);
-//                lbCommand.lbPrepare(elb,que.vpc.lb ,subnetIds,sgIds, ecsIds );
+            return alb.prepare(config , que.vpc.lb , subnetIds, sgIds,que.vpc.VpcId)
+            .then(function () {
+                return Promise.all(vpc.apps.map(
+                    function(app,aindex){
+                        console.log("200." + aindex + ".APP.AP.LINK");
+                        return linkAlb.link(config,que.app.ap, psubnetIds, sgIds)
+                    .then(function(){
+                        console.log("200." + aindex + ".APP.AP.AP.AS");
+                        return autoScale.prepare(config,que.app.ap, psubnetIds, sgIds);
+                    })}
+                )
+            )});
         }).catch(function(err){
             // 上のいずれかでエラーが発生した。
             console.log(err);

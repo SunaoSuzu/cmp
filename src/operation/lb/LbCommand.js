@@ -1,11 +1,5 @@
 
 exports.lbPrepare = function (client,lb,subnetIds,sgIds,ec2Ids) {
-    console.log(JSON.stringify(lb));
-    console.log(JSON.stringify(subnetIds));
-    console.log(JSON.stringify(sgIds));
-    console.log(JSON.stringify(ec2Ids));
-
-
     const instances = [];
     ec2Ids.map(function(id){
         instances.push({InstanceId : id})
@@ -52,5 +46,4 @@ exports.lbPrepare = function (client,lb,subnetIds,sgIds,ec2Ids) {
             LoadBalancerName: lb.name
         }).promise();
     })
-
 }

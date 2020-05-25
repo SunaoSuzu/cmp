@@ -6,7 +6,7 @@
 const AWS = require('aws-sdk');
 
 
-exports.prepare = function (config ,ap , subnets , sgids , lbGroupArn) {
+exports.prepare = function (config ,ap , subnets , sgids) {
 
     const autoscaling = new AWS.AutoScaling(config);
     let userDataEncoded = null;
@@ -42,7 +42,7 @@ console.log(ap.launch.UserData);
         return autoscaling.createAutoScalingGroup({
             AutoScalingGroupName: groupName,
             LaunchConfigurationName: launchName,
-            TargetGroupARNs : [lbGroupArn],
+            TargetGroupARNs : [ap["targetGroupArn"]],
             MinSize: ap.min,
             MaxSize: ap.max,
             VPCZoneIdentifier:vpcZoneIdentifier,

@@ -57,47 +57,5 @@ exports.prepare = function (config,lb,subnetIds,sgIds,vpcId) {
                 },
             ],
         }).promise();
-    }).then(function (result) {
-        const arn = result.Listeners[0].ListenerArn;
-        lb["listenerArn"]=arn;
-        console.log("alb.createTarget");
-        return client.createTargetGroup({
-            HealthCheckIntervalSeconds: "30",
-            HealthCheckTimeoutSeconds: "29",
-            UnhealthyThresholdCount: "2",
-            HealthyThresholdCount: "2",
-            HealthCheckPath: "/index.html",
-            HealthCheckProtocol: "HTTP",
-            HealthCheckPort: '80',
-            Matcher:{HttpCode: '200'},
-            Name: name + "-target-group",
-            Port: "80",
-            Protocol: "HTTP",
-            TargetType: "instance",
-            VpcId : vpcId,
-        }).promise();
-    }).then(function (result) {
-        const arn = result.TargetGroups[0].TargetGroupArn;
-        lb["targetGroupArn"]=arn;
-        console.log("alb.modifyTargetGroupAttributes");
-        return client.modifyTargetGroupAttributes({
-            Attributes : [
-                {Key : "stickiness.enabled", Value:"true"},
-                {Key : "stickiness.lb_cookie.duration_seconds", Value:"1800"},
-            ],
-            TargetGroupArn : arn,
-        }).promise();
-    }).then(function (result) {
-        console.log("alb.createRule");
-        return client.createRule({
-            Actions : [
-                {Type : "forward", TargetGroupArn:lb["targetGroupArn"]},
-            ],
-            Conditions : [
-                {Field : "host-header", Values: [lb["dns"]]},
-            ],
-            ListenerArn : lb["listenerArn"],
-            Priority : 10,
-        }).promise();
     })
 }
