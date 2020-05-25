@@ -6,6 +6,7 @@ import TextField from "@material-ui/core/TextField";
 import Selection from "../../components/Selection";
 import getConfiguration from "../../Configuration";
 import Divider from "@material-ui/core/Divider";
+import DomainSetting from "../../conf/Domain";
 
 const BasicInfoPanel = props => {
     const conf = getConfiguration();
@@ -22,6 +23,7 @@ const BasicInfoPanel = props => {
     if(env.strategy.bastion==undefined)env.strategy.bastion={};
 
     const paramPrefix = "environments." + index;
+    const domain = DomainSetting.default;
 
     return (
         <>
@@ -35,13 +37,13 @@ const BasicInfoPanel = props => {
                 helperText="環境名を入れてください"
             />
             <TextField
-                name={paramPrefix + ".domain"}
+                name={paramPrefix + ".subDomain"}
                 onChange={uiToJson}
                 id="standard-env-name"
-                label="ドメイン"
-                value={env.domain}
+                label="サブドメイン"
+                value={env.subDomain}
                 margin="dense"
-                helperText="ドメイン名を入れてください"
+                helperText={"https://" + env.subDomain + "." + domain.url}
             />
             <TextField
                 name={paramPrefix + ".awsTag"}

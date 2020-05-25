@@ -6,41 +6,45 @@
 const AWS = require('aws-sdk');
 
 
-exports.prepare = function (config ,ec , subnets , sgids , lbGroupArn) {
+exports.prepare = function (config ,ap , subnets , sgids , lbGroupArn) {
 
     const autoscaling = new AWS.AutoScaling(config);
     let userDataEncoded = null;
-    if(ec.UserData!=null){
-        userDataEncoded = Buffer.from(ec.UserData, 'base64').toString();
+    if(ap.launch.UserData!=null){
+        userDataEncoded = Buffer.from(ap.launch.UserData, 'base64').toString();
     }
+console.log(ap.launch.UserData);
 
     const suffix = Math.round( Math.random()*1000 );    //TODO 消す
-    const launchName = ec.name + "_auto_launch" + suffix;
-    const groupName  = ec.name + "_auto_group" + suffix;
+    const launchName = ap.name + "_auto_launch" + suffix;
+    const groupName  = ap.name + "_auto_group" + suffix;
 
     const vpcZoneIdentifier = Object.values(subnets).join(',');
 
-    const launchTags = ec.tags.map( t =>  ({...t ,PropagateAtLaunch : true }) )
-        .concat({PropagateAtLaunch : true , Key : "name" , value : ec.name});
+    const launchTags = ap.tags.map( t =>  ({...t ,PropagateAtLaunch : true }) )
+        .concat({PropagateAtLaunch : true , Key : "Name" , Value : ap.name});
 
     console.log("AutoScaling.createLaunchConfiguration");
+    console.log(JSON.stringify({
+        ...ap.launch,
+        UserData:userDataEncoded,
+        SecurityGroups : sgids,
+        LaunchConfigurationName : launchName,
+    }));
 
     return autoscaling.createLaunchConfiguration({
+        ...ap.launch,
+        UserData:userDataEncoded,
+        SecurityGroups : sgids,
         LaunchConfigurationName : launchName,
-        ImageId: ec.ImageId,
-        InstanceType: ec.InstanceType,
-        KeyName: ec.KeyName,
-        SecurityGroups: sgids,
-        UserData: userDataEncoded,
-        InstanceMonitoring: {Enabled:false},
     }).promise().then(function (result) {
         console.log("AutoScaling.createAutoScalingGroup");
         return autoscaling.createAutoScalingGroup({
             AutoScalingGroupName: groupName,
             LaunchConfigurationName: launchName,
             TargetGroupARNs : [lbGroupArn],
-            MinSize: 1,
-            MaxSize: 1,
+            MinSize: ap.min,
+            MaxSize: ap.max,
             VPCZoneIdentifier:vpcZoneIdentifier,
             Tags : launchTags,
         }).promise();

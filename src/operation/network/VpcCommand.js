@@ -1,25 +1,47 @@
+const AWS = require('aws-sdk');
 
-exports.prepare = function (client,vpc) {
+
+exports.prepare = function (config , client,vpc) {
+    const dns = new AWS.Route53(config);
     console.log("1.VPC作成");
     return client.createVpc({
         CidrBlock: vpc.cidr,
         AmazonProvidedIpv6CidrBlock: false,
-        DryRun: false,
-        InstanceTenancy: "default"
     }).promise().then(function (vpcDataRet) {
         console.log("1.VPC.EXIST");
         vpc.VpcId=vpcDataRet.Vpc.VpcId;
         vpc.attached=true;
         return client.waitFor('vpcExists', {VpcIds:[vpc.VpcId]}).promise();
     }).then(function (vpcDataRet) {
+        console.log("1.VPC.MOD");
+        return client.modifyVpcAttribute({
+            VpcId: vpc.VpcId,
+            EnableDnsSupport: {Value: true},
+        }).promise();
+    }).then(function (vpcDataRet) {
+        console.log("1.VPC.MOD");
+        return client.modifyVpcAttribute({
+            VpcId: vpc.VpcId,
+            EnableDnsHostnames: {Value: true},
+        }).promise();
+    }).then(function (vpcDataRet) {
         console.log("1.VPC.TAG");
         return client.createTags({
             Resources: [vpc.VpcId],
-            Tags: [
-                {Key: "Name", Value: vpc.name},
-                {Key: "tenant", Value: "suzuki"},
-                {Key: "landscape", Value: "suzuki"}
-            ]
+            Tags: vpc.tags.concat({Key: "Name", Value: vpc.name}),
+        }).promise();
+    }).then(function (result) {
+        return dns.createHostedZone({
+            CallerReference: "a" + Math.round( Math.random()*1000000000000 ) + "z", /* TODO */
+            Name: vpc.domain,
+            HostedZoneConfig: {
+                Comment: 'for ' + vpc.domain,
+            },
+            VPC: {
+                VPCId: vpc.VpcId,
+                VPCRegion: 'ap-northeast-1'
+            }
+
         }).promise();
     }).then(function (result) {
         console.log("2.InternetGateWay");
@@ -30,11 +52,7 @@ exports.prepare = function (client,vpc) {
         vpc.igw.attached=true;
         return client.createTags({
             Resources: [vpc.igw.InternetGatewayId],
-            Tags: [
-                {Key: "Name", Value: vpc.igw.name},
-                {Key: "tenant", Value: "suzuki"},
-                {Key: "landscape", Value: "suzuki"}
-            ]
+            Tags: vpc.tags.concat({Key: "Name", Value: vpc.igw.name}),
         }).promise();
     }).then(function () {
         console.log("4.VPC <-> InternetGateWay");
@@ -53,11 +71,7 @@ exports.prepare = function (client,vpc) {
         vpc.RouteTableAttached=true;
         return client.createTags({
             Resources: [vpc.RouteTableId],
-            Tags: [
-                {Key: "Name", Value: vpc.name},
-                {Key: "tenant", Value: "suzuki"},
-                {Key: "landscape", Value: "suzuki"}
-            ]
+            Tags: vpc.tags.concat({Key: "Name", Value: vpc.name}),
         }).promise();
     }).then(function () {
         console.log("7.Route:DefaultGateway");
@@ -67,5 +81,4 @@ exports.prepare = function (client,vpc) {
             GatewayId: vpc.igw.InternetGatewayId,
         }).promise();
     })
-
 }

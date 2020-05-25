@@ -1,8 +1,9 @@
 //作業を割り出す
 import getConfiguration from "../Configuration";
-import {pattern} from "../conf/EnvirornmentPattern";
 import * as Strategy from  "../conf/Strategy";
 import * as SecurityGroup  from  "../conf/SecurityGroup";
+import {DomainSetting} from "../conf/Domain";
+import {Region} from "../conf/Region";
 
 //後でどこかに移すだろう
 const CREATE_VPC = "CREATE_VPC";
@@ -29,19 +30,27 @@ function OperationTemplateMaker(tenant, environment) {
     }
 
     //かなりハードコーディング
-    const namePrefix = "sunao";
     const apiVersion = '2016-11-15';
-    const region     = "ap-northeast-1";
-    const availabilityZones = ["ap-northeast-1a","ap-northeast-1c","ap-northeast-1d"];
+    const region     = Region.name;
+    const availabilityZones = Region.az;
+
+    //Productから動的に取る様にいずれ直す
     const amiForAP      = "ami-03e4521d84f084007";
     const amiForBatison = "ami-0db8ca4897909ac37";
     const ec2KeyName    = "sunao";
+
+    const subDomain  = environment.subDomain;
+    const rootDomain = DomainSetting.default.url;
+    const domain     = subDomain + "." + rootDomain;
+    const namePrefix = subDomain;
 
     const strategy = environment.strategy;
 
     //
     resources = {
         name : namePrefix + "-vpc",
+        domain : domain,
+        subDomain : subDomain,
         cidr:"172.20.0.0/16" ,
         apiVersion:apiVersion,
         region:region,
@@ -63,12 +72,13 @@ function OperationTemplateMaker(tenant, environment) {
     const publicSubnets = [];
     const publicSubnetNames = [];
     const privateSubnets = [];
+    const privateSubnetNames = [];
     const apSecurityGroups = [];
     const apEc2s = [];
     const apEc2Names = [];
     let lb = {};
 
-    //lbだろうが、httpdだろうが、web用のsgを作る
+    //web用のsgを作る(lbとapで分けるべきかも)
     const webSecurityGroupName  = namePrefix + "-sg-web-publish";
     const webSecurityIngressPtn = SecurityGroup.ApIngressPattern.both;
     const webSecurityGroup      = {
@@ -80,7 +90,7 @@ function OperationTemplateMaker(tenant, environment) {
 
     //public subnetを作る
     for (let i = 0; i < aznum ; i++) {
-        const subnetName = namePrefix + "-public-subnet-" + availabilityZones[i];
+        const subnetName = namePrefix + "-public-subnet-" + Region.azShortName[i];
         const subnet = {
             subnetName : subnetName,
             AvailabilityZone : availabilityZones[i] ,
@@ -95,7 +105,7 @@ function OperationTemplateMaker(tenant, environment) {
     }
     //ペアになるprivate subnetを作る
     publicSubnets.forEach(function (psub , i) {
-        const subnetName = namePrefix + "-private-subnet-" + availabilityZones[i];
+        const subnetName = namePrefix + "-private-subnet-" + Region.azShortName[i];
         const subnet = {
             subnetName: subnetName,
             publicSubnetName : psub.subnetName,
@@ -108,6 +118,7 @@ function OperationTemplateMaker(tenant, environment) {
             tags: managmgentTag,
         }
         privateSubnets.push(subnet);
+        privateSubnetNames.push(subnetName);
     })
 
     //APをpublicに置くのか、privateに置くのか決めて、AutoScalingGroupを作る
@@ -119,20 +130,22 @@ function OperationTemplateMaker(tenant, environment) {
     const targetSubnests = strategy.web.publishing===Strategy.WEB_PUB_DIRECT ?
         publicSubnets : privateSubnets;
 
-    const targetSubnetNames = targetSubnests.map( subnet => subnet.subnetName);
-
     //mainComponent毎にAPを作る
-    const ec2Name = namePrefix + "-ec2-ap";
-    const ec2 = {
+    const ap = {
+        domain       : subDomain + "_app." + rootDomain,
         min          : 1,
         max          : 1,
         autoScale    : true,
-        name         : ec2Name,
-        ImageId      : amiForAP,
-        InstanceType : 't2.micro',
-        KeyName      : ec2KeyName,
+        alb          : true,
+        name         : namePrefix + "_app",
         SecurityGroupNames: [webSecurityGroupName],
-        SubnetNames: targetSubnetNames,
+        launch : {
+            ImageId      : amiForAP,
+            InstanceType : 't2.micro',
+            KeyName      : ec2KeyName,
+            InstanceMonitoring: {Enabled:false}
+        },
+        subnets: privateSubnetNames,
         tags:managmgentTag,
         components:environment.mainComponents,
         add:true,
@@ -140,31 +153,19 @@ function OperationTemplateMaker(tenant, environment) {
     }
 
     lb = {
-        need : true,
         name : namePrefix + "-lb",
-        type : strategy.web.publishing,
+        alb : true,
         subnets : publicSubnetNames,
-        autoScalingGroup : ec2Name,
-        ec2s : [],
         securityGroup : [webSecurityGroupName],
         tags : managmgentTag,
     }
-    apEc2s.push(ec2);
-    apEc2Names.push(ec2Name);
-    operations.push({
-        command: CREATE_EC2,
-        target: ec2,
-    });
-
-
-
     //DBなど
 
     //組み立て
     resources.subnets=resources.subnets.concat(publicSubnets).concat(privateSubnets);
-    resources.ec2s=resources.ec2s.concat(apEc2s);
     resources.securityGroups=resources.securityGroups.concat(apSecurityGroups);
     resources.lb = lb;
+    resources.ap = ap;
 
     //about bastion（最後に処理すべき）
     if(strategy.bastion.create===1){
@@ -210,12 +211,7 @@ function OperationTemplateMaker(tenant, environment) {
             ],
         }
         resources.securityGroups.push(ec2SecurityGroup);
-        resources.ec2s.forEach(function (ins){
-            console.log(JSON.stringify(ins));
-
-            ins.SecurityGroupNames.push(ec2SecurityGroupName);
-        })
-
+        ap.SecurityGroupNames.push(ec2SecurityGroupName);
 
         //結構処理サボってる
         //とりあえずサブネット作る（もったいないから共有する設定を後から持つ）
@@ -248,14 +244,6 @@ function OperationTemplateMaker(tenant, environment) {
             target: ec2,
         });
     }
-
-    //TODO あとで消す
-    console.log(JSON.stringify(resources));
-    console.log(JSON.stringify(resources.ec2s));
-
-    resources.ec2s=[];
-    resources.lb.need=false;
-
 
     return { resources, operations };
 }

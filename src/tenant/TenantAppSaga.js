@@ -4,7 +4,7 @@ import axios from "axios";
 import makeTemplateMaker from "./EnvironmentTemplateMaker";
 import * as AwsAppSaga from "../aws/AwsAppSaga";
 import makeOperation from "./OperationTemplateMaker";
-import {createVPC} from "../operation/CreateEC2InfraCommand";
+import {createVPC} from "../operation/EnvironmentCreator";
 
 const searchSource = process.env.REACT_APP_DEV_SEARCH_SOURCE_URL;
 const baseEndPoint = process.env.REACT_APP_DEV_API_URL;

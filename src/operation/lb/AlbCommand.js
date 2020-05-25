@@ -2,6 +2,9 @@
  * AP向け　ALBの設定
  * */
 const AWS = require('aws-sdk');
+const domain = require("../../conf/Domain")
+
+const HTTPS_PORT = 443;
 
 exports.prepare = function (config,lb,subnetIds,sgIds,vpcId) {
     const client = new AWS.ELBv2(config);
@@ -37,8 +40,12 @@ exports.prepare = function (config,lb,subnetIds,sgIds,vpcId) {
         console.log("alb.createListener");
         return client.createListener({
             LoadBalancerArn : lb["arn"],
-            Port: 80,
-            Protocol: "HTTP",
+            Port: HTTPS_PORT,
+            Protocol: "HTTPS",
+            SslPolicy : "ELBSecurityPolicy-TLS-1-2-2017-01",
+            Certificates: [
+                {CertificateArn: domain.default.certificateArn}
+            ],
             DefaultActions: [
                 {
                     Type: "fixed-response",

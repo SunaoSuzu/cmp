@@ -20,6 +20,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
+import DownloadLink from "react-download-link";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -166,6 +167,12 @@ const AWSPanel = props => {
             >
                 破棄
             </Button>
+            <DownloadLink
+                label="Save(開発用)"
+                filename="env.json"
+                exportFile={() => JSON.stringify(env.resources) }
+            />
+
             {env.resources != null ? (
                 <List
                     component="nav"
@@ -176,31 +183,20 @@ const AWSPanel = props => {
                         <ListItemIcon>
                             <VpcLogo />
                         </ListItemIcon>
+                        <ListItemText primary={"domain=" + env.resources.domain} />
                         <ListItemText primary={"vpc=" + env.resources.cidr} />
-                        <ListItemText primary={"id=" + env.resources.VpcId} />
                     </ListItem>
-                    {env.resources.ec2s.map( (instance,ei)  => (
-                        <List component="div" disablePadding key={ei}>
-                            <ListItem button className={classes.nested}>
-                                <ListItemIcon>
-                                    <EC2Logo />
-                                </ListItemIcon>
-                                <ListItemText primary={"name=" + instance.name} />
-                                <ListItemText primary={"id=" + instance.InstanceId} />
-                                <ListItemText primary={"type=" + instance.InstanceType} />
-                            </ListItem>
-                            {instance.components.map( (component , ci) => (
-                                <List component="div" disablePadding key={ci}>
-                                    <ListItem button className={classes.doubleNested}>
-                                        <ListItemIcon>
-                                            <CodeIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary={"name=" + component.name} />
-                                    </ListItem>
-                                </List>
-                            ))}
-                        </List>
-                    ))}
+                    <List component="div" disablePadding >
+                        <ListItem button className={classes.nested}>
+                            <ListItemIcon>
+                                <EC2Logo />
+                            </ListItemIcon>
+                            <ListItemText primary={"name=" + env.resources.ap.domain} />
+                            <ListItemText primary={"type=" + env.resources.ap.launch.InstanceType} />
+                            <ListItemText primary={"min=" + env.resources.ap.min} />
+                            <ListItemText primary={"max=" + env.resources.ap.max} />
+                        </ListItem>
+                    </List>
                 </List>
             ) : (
                 ""

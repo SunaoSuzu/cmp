@@ -1,10 +1,18 @@
-//1VPC M SubNet 1IGW構成
-const EC2 = require("aws-sdk/clients/ec2");
-const ELB = require("aws-sdk/clients/elb")
+/**
+ * 大まかな処理の流れ
+ * ネットワーク系の構築（ALBまで）
+ * Bastionの構築（もしくはPeering）
+ * アプリ毎に、バックエンド系を構築（主にはEC2を立てるだけ）
+ * アプリ毎に、フロントを立ててLBとくっつける
+ * PublicDNSにルーティング
+ **/
+
 const AWS = require('aws-sdk');
 const ec2Command = require('./ec2/EC2Command');
 const lbCommand = require('./lb/LbCommand');
-const vpc = require('./network/VpcCommand');
+const vpcCommand = require('./network/VpcCommand');
+const command = require("./ec2/AutoScalingCommand");
+const albCommand = require("./lb/AlbCommand");
 
 //PromiseChainなので各処理は外だししてコマンド化（Promiseを返してくれれば良い）し、
 //コマンドをどうアセンブルするかって作りに変えれる（はず）
@@ -24,8 +32,7 @@ exports.createVPC = function (que,apiKey,apiPwd) {
             };
         }
 
-        const ec2 = new AWS.EC2(config);
-        const elb = new AWS.ELB({region: que.vpc.region});
+        const client = new AWS.EC2(config);
 
 
         const managementTag = {};
@@ -34,13 +41,15 @@ exports.createVPC = function (que,apiKey,apiPwd) {
             }
         )
 
-        return vpc.prepare(ec2 , que.vpc).then(function(){
+        const vpc = que.vpc;
+
+        return vpcCommand.prepare(config , client , vpc).then(function(){
             console.log("9.Parallel.Start");
             return Promise.all(
                 que.vpc.subnets.map(function (subnet,index) {
                     console.log("10-" + index + ".Subnet");
-                    return ec2.createSubnet({
-                        VpcId: que.vpc.VpcId,
+                    return client.createSubnet({
+                        VpcId: vpc.VpcId,
                         AvailabilityZone :subnet.AvailabilityZone,
                         CidrBlock: subnet.cidr,
                     }).promise().then(function (subNetDataRet) {
@@ -48,25 +57,21 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                         subnet.SubnetId=subNetDataRet.Subnet.SubnetId;
                         subnet.attached=true;
                         if(subnet.attachIgw) {
-                            return ec2.modifySubnetAttribute({
+                            return client.modifySubnetAttribute({
                                 SubnetId: subnet.SubnetId,
                                 MapPublicIpOnLaunch: {Value: true},
                             }).promise();
                         }
                     }).then(function () {
                         console.log("12-" + index + ".Subnet.Tags");
-                        return ec2.createTags({
+                        return client.createTags({
                             Resources: [subnet.SubnetId],
-                            Tags: [
-                                {Key: "Name", Value: subnet.subnetName},
-                                {Key: "tenant", Value: "suzuki"},
-                                {Key: "landscape", Value: "suzuki"}
-                            ]
+                            Tags: vpc.tags.concat({Key: "Name", Value: subnet.subnetName}),
                         }).promise();
                     }).then(function () {
                         console.log("13-" + index + ".Subnet <-> Route(if necessary)");
                         if(subnet.attachIgw){
-                            return ec2.associateRouteTable({
+                            return client.associateRouteTable({
                                 SubnetId: subnet.SubnetId,
                                 RouteTableId: que.vpc.RouteTableId,
                             }).promise();
@@ -81,7 +86,7 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                 return Promise.all(
                     que.vpc.securityGroups.map(function (group, index) {
                         console.log("51-" + index + ".SecurityGroup");
-                        return ec2.createSecurityGroup({
+                        return client.createSecurityGroup({
                             GroupName: group.GroupName,
                             Description: group.Description,
                             VpcId: que.vpc.VpcId,
@@ -89,13 +94,9 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                             console.log("52-" + index + ".SecurityGroup.Tags");
                             group.GroupId = securityDataRet.GroupId;
                             group.attached = true;
-                            return ec2.createTags({
+                            return client.createTags({
                                 Resources: [group.GroupId],
-                                Tags: [
-                                    {Key: "Name", Value: group.GroupName},
-                                    {Key: "tenant", Value: "suzuki"},
-                                    {Key: "landscape", Value: "suzuki"}
-                                ]
+                                Tags: vpc.tags.concat({Key: "Name", Value: group.GroupName}),
                             }).promise();
                         });
                     })
@@ -111,7 +112,7 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                                 if (ing.toMyGroup === true||ing.toOtherGroup!=null) {
                                     let targetGroupId = ing.toMyGroup ? group.GroupId
                                                         : getSgId(que , ing.toOtherGroup);
-                                    return ec2.authorizeSecurityGroupIngress({
+                                    return client.authorizeSecurityGroupIngress({
                                         GroupId: group.GroupId,
                                         IpPermissions: [
                                             {
@@ -128,7 +129,7 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                                         ]
                                     }).promise();
                                 } else {
-                                    return ec2.authorizeSecurityGroupIngress({
+                                    return client.authorizeSecurityGroupIngress({
                                         GroupId: group.GroupId,
                                         IpProtocol: ing.IpProtocol,
                                         FromPort: ing.FromPort,
@@ -142,9 +143,14 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                 )
             })
         }).then(function () {
-                console.log("100.LoadBalancer");
+                console.log("100.LoadBalancer+AutoScaleAp");
                 const subnetIds = getSubnetIds(que,que.vpc.lb.subnets);
+                const psubnetIds = getSubnetIds(que,que.vpc.ap.subnets);
                 const sgIds =getSgIds(que,que.vpc.lb.securityGroup);
+
+                return albCommand.prepare(config , que.vpc.lb , subnetIds, sgIds,que.vpc.VpcId).then(function () {
+                    command.prepare(config,que.vpc.ap, psubnetIds, sgIds , que.vpc.lb["targetGroupArn"]);
+                });
 //                const ecsIds=getEC2Ids(que,que.vpc.lb.ec2s);
 //                lbCommand.lbPrepare(elb,que.vpc.lb ,subnetIds,sgIds, ecsIds );
         }).catch(function(err){
