@@ -2,12 +2,9 @@
 import getConfiguration from "../Configuration";
 import * as Strategy from  "../conf/Strategy";
 import * as SecurityGroup  from  "../conf/SecurityGroup";
-import {DomainSetting} from "../conf/Domain";
-import {Region} from "../conf/Region";
+import DomainSetting from "../conf/Domain";
+import Region from "../conf/Region";
 
-//後でどこかに移すだろう
-const CREATE_VPC = "CREATE_VPC";
-const CREATE_EC2 = "CREATE_EC2";
 
 //Operationsは多分不要
 function OperationTemplateMaker(tenant, environment) {
@@ -59,24 +56,24 @@ function OperationTemplateMaker(tenant, environment) {
         subnets : [],
         securityGroups : [],
         ec2s : [],
-        tags: managmgentTag , add: true , attached: false};
-    operations.push({
-        command: CREATE_VPC,
-        target: resources,
-    });
+        apps : [],
+        tags: managmgentTag , add: true , attached: false
+    };
+
+
 
     let counter = 0;
 
     //aboutAp
-    const aznum = strategy.network.az; //maximum までAZ作るのが正しい予感・・
+    const aznum = strategy.network.az;
     const publicSubnets = [];
     const publicSubnetNames = [];
     const privateSubnets = [];
     const privateSubnetNames = [];
     const apSecurityGroups = [];
+    let lb = {};
     const apEc2s = [];
     const apEc2Names = [];
-    let lb = {};
 
     //web用のsgを作る(lbとapで分けるべきかも)
     const webSecurityGroupName  = namePrefix + "-sg-web-publish";
@@ -121,53 +118,8 @@ function OperationTemplateMaker(tenant, environment) {
         privateSubnetNames.push(subnetName);
     })
 
-    //APをpublicに置くのか、privateに置くのか決めて、AutoScalingGroupを作る
-    //AWS::AutoScaling::LaunchConfiguration
-    //AWS::AutoScaling::AutoScalingGroup
-    //AWS::ElasticLoadBalancingV2::TargetGroup
-
-
-    const targetSubnests = strategy.web.publishing===Strategy.WEB_PUB_DIRECT ?
-        publicSubnets : privateSubnets;
-
-    //mainComponent毎にAPを作る
-    const ap = {
-        domain       : subDomain + "_app." + rootDomain,
-        min          : 1,
-        max          : 1,
-        autoScale    : true,
-        alb          : true,
-        name         : namePrefix + "_app",
-        SecurityGroupNames: [webSecurityGroupName],
-        launch : {
-            ImageId      : amiForAP,
-            InstanceType : 't2.micro',
-            KeyName      : ec2KeyName,
-            InstanceMonitoring: {Enabled:false}
-        },
-        subnets: privateSubnetNames,
-        tags:managmgentTag,
-        components:environment.mainComponents,
-        add:true,
-        attached:false,
-    }
-
-    lb = {
-        name : namePrefix + "-lb",
-        alb : true,
-        subnets : publicSubnetNames,
-        securityGroup : [webSecurityGroupName],
-        tags : managmgentTag,
-    }
-    //DBなど
-
-    //組み立て
-    resources.subnets=resources.subnets.concat(publicSubnets).concat(privateSubnets);
-    resources.securityGroups=resources.securityGroups.concat(apSecurityGroups);
-    resources.lb = lb;
-    resources.ap = ap;
-
     //about bastion（最後に処理すべき）
+    let sshSgName = null;
     if(strategy.bastion.create===1){
         //Bastion用の外からSSHできるSG（複数bastion同士を考慮してグループ内のSSHも可能）
         //各EC2はBastionのSGからSSHできるSGを足す
@@ -197,9 +149,9 @@ function OperationTemplateMaker(tenant, environment) {
         );
         resources.securityGroups.push(bastionSecurityGroup);
 
-        const ec2SecurityGroupName  = namePrefix + "-sg-ssh-from-bastion";
-        const ec2SecurityGroup      = {
-            GroupName   : ec2SecurityGroupName,
+        sshSgName  = namePrefix + "-sg-ssh-from-bastion";
+        const sshSg      = {
+            GroupName   : sshSgName,
             Description : "for ssh from bastion",
             ingress : [
                 {
@@ -210,8 +162,7 @@ function OperationTemplateMaker(tenant, environment) {
                 },
             ],
         }
-        resources.securityGroups.push(ec2SecurityGroup);
-        ap.SecurityGroupNames.push(ec2SecurityGroupName);
+        resources.securityGroups.push(sshSg);
 
         //結構処理サボってる
         //とりあえずサブネット作る（もったいないから共有する設定を後から持つ）
@@ -239,11 +190,51 @@ function OperationTemplateMaker(tenant, environment) {
             attached:false,
         }
         resources.ec2s.push(ec2);
-        operations.push({
-            command: CREATE_EC2,
-            target: ec2,
-        });
     }
+
+    //mainComponent毎にAPを作る
+    const apps = [];
+    environment.mainComponents.forEach(function (product,i) {
+        const ap = {
+            domain       : subDomain + "_app." + rootDomain,
+            min          : 1,
+            max          : 1,
+            autoScale    : true,
+            alb          : true,
+            name         : namePrefix + "_app",
+            SecurityGroupNames: [webSecurityGroupName],
+            launch : {
+                ImageId      : amiForAP,
+                InstanceType : 't2.micro',
+                KeyName      : ec2KeyName,
+                InstanceMonitoring: {Enabled:false}
+            },
+            subnets: privateSubnetNames,
+            tags:managmgentTag,
+            components:environment.mainComponents,
+            add:true,
+            attached:false,
+        }
+        if(sshSgName!=null)ap.SecurityGroupNames.push(sshSgName);
+        apps.push({ ap : ap });
+    })
+
+
+    lb = {
+        name : namePrefix + "-lb",
+        alb : true,
+        subnets : publicSubnetNames,
+        securityGroup : [webSecurityGroupName],
+        tags : managmgentTag,
+    }
+    //DBなど
+
+    //組み立て
+    resources.subnets=resources.subnets.concat(publicSubnets).concat(privateSubnets);
+    resources.securityGroups=resources.securityGroups.concat(apSecurityGroups);
+    resources.lb = lb;
+    resources.apps = apps;
+
 
     return { resources, operations };
 }

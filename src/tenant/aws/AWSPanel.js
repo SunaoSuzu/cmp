@@ -186,17 +186,19 @@ const AWSPanel = props => {
                         <ListItemText primary={"domain=" + env.resources.domain} />
                         <ListItemText primary={"vpc=" + env.resources.cidr} />
                     </ListItem>
-                    <List component="div" disablePadding >
-                        <ListItem button className={classes.nested}>
-                            <ListItemIcon>
-                                <EC2Logo />
-                            </ListItemIcon>
-                            <ListItemText primary={"name=" + env.resources.ap.domain} />
-                            <ListItemText primary={"type=" + env.resources.ap.launch.InstanceType} />
-                            <ListItemText primary={"min=" + env.resources.ap.min} />
-                            <ListItemText primary={"max=" + env.resources.ap.max} />
-                        </ListItem>
-                    </List>
+                    {env.resources.apps.map( (app , aindex) => (
+                        <List component="div" disablePadding key={aindex} >
+                            <ListItem button className={classes.nested}>
+                                <ListItemIcon>
+                                    <EC2Logo />
+                                </ListItemIcon>
+                                <ListItemText primary={"name=" + app.ap.domain} />
+                                <ListItemText primary={"type=" + app.ap.launch.InstanceType} />
+                                <ListItemText primary={"min=" + app.ap.min} />
+                                <ListItemText primary={"max=" + app.ap.max} />
+                            </ListItem>
+                        </List>
+                    ))}
                 </List>
             ) : (
                 ""
