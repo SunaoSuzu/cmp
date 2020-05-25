@@ -10,6 +10,7 @@
 const AWS = require('aws-sdk');
 const ec2 = require('./ec2/EC2Command');
 const network = require('./network/VpcCommand');
+const dns = require('./network/Route53Command');
 const autoScale = require("./ec2/AutoScalingCommand");
 const alb = require("./lb/AlbCommand");
 const linkAlb = require("./lb/LinkAlbCommand");
@@ -160,6 +161,12 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                     })}
                 )
             )});
+        }).then(function () {
+            console.log("900.Public.DNS");
+            return Promise.all(vpc.apps.map( app => {
+                return dns.addPublic(config , vpc.lb , app.ap.domain);
+            }))
+
         }).catch(function(err){
             // 上のいずれかでエラーが発生した。
             console.log(err);
@@ -183,7 +190,6 @@ function getEC2Id(que , name){
 }
 
 function getSubnetIds(que , names){
-    console.log(JSON.stringify(names));
     let subnetIds = [];
     names.forEach(function (name) {
         subnetIds.push(getSubnetId(que,name));

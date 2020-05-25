@@ -20,8 +20,10 @@ exports.prepare = function (config,lb,subnetIds,sgIds,vpcId) {
     }).promise().then(function (result) {
         const arn = result.LoadBalancers[0].LoadBalancerArn;
         const dns = result.LoadBalancers[0].DNSName;
+
         lb["arn"]=arn;
         lb["dns"]=dns;
+        lb["CanonicalHostedZoneId"]=result.LoadBalancers[0].CanonicalHostedZoneId;
         return client.waitFor("loadBalancerExists",{Names : [name]}).promise();
     }).then(function (result) {
         console.log("alb.modifyLoadBalancerAttributes");
