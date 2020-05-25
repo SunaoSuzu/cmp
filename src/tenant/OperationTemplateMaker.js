@@ -1,6 +1,5 @@
 //作業を割り出す
 import getConfiguration from "../Configuration";
-import * as Strategy from  "../conf/Strategy";
 import * as SecurityGroup  from  "../conf/SecurityGroup";
 import DomainSetting from "../conf/Domain";
 import Region from "../conf/Region";
@@ -52,10 +51,9 @@ function OperationTemplateMaker(tenant, environment) {
         securityGroups : [],
         ec2s : [],
         apps : [],
+        bastions : [],
         tags: managmgentTag , add: true , attached: false
     };
-
-
 
     let counter = 0;
 
@@ -67,8 +65,6 @@ function OperationTemplateMaker(tenant, environment) {
     const privateSubnetNames = [];
     const apSecurityGroups = [];
     let lb = {};
-    const apEc2s = [];
-    const apEc2Names = [];
 
     //web用のsgを作る(lbとapで分けるべきかも)
     const webSecurityGroupName  = namePrefix + "-sg-web-publish";
@@ -177,9 +173,12 @@ function OperationTemplateMaker(tenant, environment) {
         const ec2Name = namePrefix + "-ec2-ap-bastion";
         const ec2 = {
             name         : ec2Name,
-            ImageId      : amiForBastion,
-            InstanceType : typeForBastion,
-            KeyName      : keyForBastion,
+            internalDomain    : "bastion." + subDomain  + "." + internalDomainRoot,
+            launch : {
+                ImageId      : amiForBastion,
+                InstanceType : typeForBastion,
+                KeyName      : keyForBastion,
+            },
             SecurityGroupNames: [bastionSecurityGroupName],
             SubnetName: subnetName,
             tags:managmgentTag,
@@ -187,7 +186,7 @@ function OperationTemplateMaker(tenant, environment) {
             add:true,
             attached:false,
         }
-        resources.ec2s.push(ec2);
+        resources.bastions.push(ec2);
     }
 
     //mainComponent毎にAPを作る
@@ -195,18 +194,20 @@ function OperationTemplateMaker(tenant, environment) {
     environment.mainComponents.forEach(function (product,i) {
         //Productから動的に取る様にいずれ直す
         const amiForAP      = "ami-03e4521d84f084007";
+        const amiForDB      = "ami-03e4521d84f084007";
         const ec2KeyName    = "sunao";
         const healthCheckUrl ="/index.html";
         const ec2Type    = "t2.micro";
+        const dbEc2Type    = "t2.micro";
         const ap = {
             domain            : subDomain + "-app" + i + "." + rootDomain,
-            internalDomain    : subDomain + "-app" + i + "-ap." + internalDomainRoot,
+            internalDomain    : "app" + i + "-ap." + subDomain  + "." + internalDomainRoot,
             healthCheckUrl    : healthCheckUrl,
             min               : 1,
             max               : 1,
             autoScale         : true,
             alb               : true,
-            name              : namePrefix + "-app" + i,
+            name              : namePrefix + "-app" + i + "-ap",
             SecurityGroupNames: [webSecurityGroupName],
             launch : {
                 ImageId      : amiForAP,
@@ -220,10 +221,55 @@ function OperationTemplateMaker(tenant, environment) {
             add:true,
             attached:false,
         }
-        if(sshSgName!=null)ap.SecurityGroupNames.push(sshSgName);
-        apps.push({ ap : ap });
-    })
 
+        const db = {
+            internalDomain    : "app" + i + "-db." + subDomain  + "." + internalDomainRoot,
+            name              : namePrefix + "-app" + i + "-db",
+            SecurityGroupNames: [webSecurityGroupName],
+            SubnetName : privateSubnetNames[0] ,
+            launch: {
+                ImageId      : amiForDB,
+                InstanceType : dbEc2Type,
+                KeyName      : ec2KeyName,
+                BlockDeviceMappings : [
+                    {DeviceName: "/dev/sdg" , Ebs:{VolumeSize:"1" , VolumeType: "gp2"}},
+                ],
+            },
+            efs : true,
+            tags:managmgentTag,
+        }
+
+        const bs = {
+            internalDomain    : "app" + i + "-bs." + subDomain  + "." + internalDomainRoot,
+            name              : namePrefix + "-app" + i + "-bs",
+            SecurityGroupNames: [webSecurityGroupName],
+            SubnetName : privateSubnetNames[0] ,
+            launch: {
+                ImageId      : amiForDB,
+                InstanceType : dbEc2Type,
+                KeyName      : ec2KeyName,
+            },
+            tags:managmgentTag,
+        }
+
+        const search = {
+            internalDomain    : "app" + i + "-search." + subDomain  + "." + internalDomainRoot,
+            name              : namePrefix + "-app" + i + "-search",
+            SecurityGroupNames: [webSecurityGroupName],
+            SubnetName : privateSubnetNames[0] ,
+            launch: {
+                ImageId      : amiForDB,
+                InstanceType : dbEc2Type,
+                KeyName      : ec2KeyName,
+            },
+            tags:managmgentTag,
+        }
+        if(sshSgName!=null)ap.SecurityGroupNames.push(sshSgName);
+        if(sshSgName!=null)db.SecurityGroupNames.push(sshSgName);
+        if(sshSgName!=null)bs.SecurityGroupNames.push(sshSgName);
+        if(sshSgName!=null)search.SecurityGroupNames.push(sshSgName);
+        apps.push({ ap : ap, db : db , bs : bs, search : search  });
+    })
 
     lb = {
         name : namePrefix + "-lb",
@@ -232,14 +278,12 @@ function OperationTemplateMaker(tenant, environment) {
         securityGroup : [webSecurityGroupName],
         tags : managmgentTag,
     }
-    //DBなど
 
     //組み立て
     resources.subnets=resources.subnets.concat(publicSubnets).concat(privateSubnets);
     resources.securityGroups=resources.securityGroups.concat(apSecurityGroups);
     resources.lb = lb;
     resources.apps = apps;
-
 
     return { resources, operations };
 }

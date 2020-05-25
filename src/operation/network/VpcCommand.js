@@ -45,6 +45,10 @@ exports.prepare = function (config , client,vpc) {
 
         }).promise();
     }).then(function (result) {
+        console.log("result=" + JSON.stringify(result));
+
+        const HostedZoneId = result.HostedZone.Id;
+        vpc.internalHostedZoneId = HostedZoneId;
         console.log("2.InternetGateWay");
         return client.createInternetGateway().promise();
     }).then(function (internetGatewayRet) {

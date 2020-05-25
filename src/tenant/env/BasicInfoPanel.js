@@ -39,7 +39,7 @@ const BasicInfoPanel = props => {
             <TextField
                 name={paramPrefix + ".subDomain"}
                 onChange={uiToJson}
-                id="standard-env-name"
+                id="standard-sub-domain"
                 label="サブドメイン"
                 value={env.subDomain}
                 margin="dense"

@@ -87,7 +87,7 @@ const ec2 = new AWS.EC2({region: que.vpc.region});
 const subnetId = getSubnetId(que , ec.SubnetName);
 const sgids = getSgIds(que,ec.SecurityGroupNames);
 
-const promise = command.createEC2Command(ec2,ec,subnetId,sgids);
+const promise = command.prepare(ec2,ec,subnetId,sgids);
 console.log("end");
 
 function getSubnetId(que , name){

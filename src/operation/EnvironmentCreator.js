@@ -144,18 +144,38 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                 )
             })
         }).then(function () {
-            console.log("100.LoadBalancer+AutoScaleAp");
+            console.log("100.Bastion");
+            return Promise.all(vpc.bastions.map(function (bastion) {
+                const subnetId = getSubnetId(que,bastion.SubnetName);
+                const gIds =getSgIds(que,bastion.SecurityGroupNames);
+                return ec2.prepare(client ,config, bastion , subnetId , gIds , vpc.internalHostedZoneId )
+            }))
+        }).then(function () {
+            console.log("200.app");
             const subnetIds = getSubnetIds(que,que.vpc.lb.subnets);
             const sgIds =getSgIds(que,que.vpc.lb.securityGroup);
 
             return alb.prepare(config , que.vpc.lb , subnetIds, sgIds,que.vpc.VpcId)
             .then(function () {
+                const ids = [];
                 return Promise.all(vpc.apps.map(
                     function(app,aindex){
-                        console.log("200." + aindex + ".APP.AP.LINK");
-                        return linkAlb.link(config,vpc.lb , app.ap, que.vpc.VpcId )
+                        console.log("200." + aindex + ".DB");
+                        const subnetId = getSubnetId(que,app.db.SubnetName);
+                        const gIds =getSgIds(que,app.db.SecurityGroupNames);
+                        return ec2.prepare(client ,config, app.db , subnetId , gIds , vpc.internalHostedZoneId )
                     .then(function(){
-                        console.log("200." + aindex + ".APP.AP.AP.AS");
+                        ids.push(app.db.InstanceId);
+                        console.log("200." + aindex + ".BS");
+                        const subnetId = getSubnetId(que,app.bs.SubnetName);
+                        const gIds =getSgIds(que,app.bs.SecurityGroupNames);
+                        return ec2.prepare(client ,config, app.bs , subnetId , gIds , vpc.internalHostedZoneId )
+                    }).then(function () {
+                        ids.push(app.bs.InstanceId);
+                        console.log("600." + aindex + ".APP.AP.LINK");
+                        return linkAlb.link(config,vpc.lb , app.ap, que.vpc.VpcId )
+                    }).then(function () {
+                        console.log("600." + aindex + ".APP.AP.AP.AS");
                         const psubnetIds = getSubnetIds(que,app.ap.subnets);
                         return autoScale.prepare(config,app.ap, psubnetIds, sgIds);
                     })}
