@@ -9,7 +9,7 @@
 
 const AWS = require('aws-sdk');
 const ec2 = require('./ec2/EC2Command');
-const vpc = require('./network/VpcCommand');
+const network = require('./network/VpcCommand');
 const autoScale = require("./ec2/AutoScalingCommand");
 const alb = require("./lb/AlbCommand");
 const linkAlb = require("./lb/LinkAlbCommand");
@@ -43,7 +43,7 @@ exports.createVPC = function (que,apiKey,apiPwd) {
 
         const vpc = que.vpc;
 
-        return vpc.prepare(config , client , vpc).then(function(){
+        return network.prepare(config , client , vpc).then(function(){
             console.log("9.Parallel.Start");
             return Promise.all(
                 que.vpc.subnets.map(function (subnet,index) {
@@ -145,7 +145,6 @@ exports.createVPC = function (que,apiKey,apiPwd) {
         }).then(function () {
             console.log("100.LoadBalancer+AutoScaleAp");
             const subnetIds = getSubnetIds(que,que.vpc.lb.subnets);
-            const psubnetIds = getSubnetIds(que,que.vpc.ap.subnets);
             const sgIds =getSgIds(que,que.vpc.lb.securityGroup);
 
             return alb.prepare(config , que.vpc.lb , subnetIds, sgIds,que.vpc.VpcId)
@@ -153,10 +152,11 @@ exports.createVPC = function (que,apiKey,apiPwd) {
                 return Promise.all(vpc.apps.map(
                     function(app,aindex){
                         console.log("200." + aindex + ".APP.AP.LINK");
-                        return linkAlb.link(config,que.app.ap, psubnetIds, sgIds)
+                        return linkAlb.link(config,vpc.lb , app.ap, que.vpc.VpcId )
                     .then(function(){
                         console.log("200." + aindex + ".APP.AP.AP.AS");
-                        return autoScale.prepare(config,que.app.ap, psubnetIds, sgIds);
+                        const psubnetIds = getSubnetIds(que,app.ap.subnets);
+                        return autoScale.prepare(config,app.ap, psubnetIds, sgIds);
                     })}
                 )
             )});

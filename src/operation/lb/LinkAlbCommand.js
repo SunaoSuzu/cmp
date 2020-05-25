@@ -9,7 +9,7 @@ exports.link = function (config,lb,ap , vpcId) {
     const name   = ap.name + suffix;
     const healthCheckUrl = "/index.html";
 
-    console.log("alb.start");
+    console.log("alb.createTargetGroup");
     return client.createTargetGroup({
         HealthCheckIntervalSeconds: "30",
         HealthCheckTimeoutSeconds: "29",

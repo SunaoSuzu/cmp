@@ -22,8 +22,6 @@ exports.prepare = function (config,lb,subnetIds,sgIds,vpcId) {
         const dns = result.LoadBalancers[0].DNSName;
         lb["arn"]=arn;
         lb["dns"]=dns;
-        console.log("alb.arn=" + arn);
-        console.log("alb.loadBalancerExists");
         return client.waitFor("loadBalancerExists",{Names : [name]}).promise();
     }).then(function (result) {
         console.log("alb.modifyLoadBalancerAttributes");
@@ -57,5 +55,9 @@ exports.prepare = function (config,lb,subnetIds,sgIds,vpcId) {
                 },
             ],
         }).promise();
+    }).then(function (result) {
+        const arn = result.Listeners[0].ListenerArn;
+        lb["listenerArn"]=arn;
+        return client.waitFor("loadBalancerExists",{Names : [name]}).promise();
     })
 }

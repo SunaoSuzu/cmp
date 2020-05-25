@@ -13,7 +13,6 @@ exports.prepare = function (config ,ap , subnets , sgids) {
     if(ap.launch.UserData!=null){
         userDataEncoded = Buffer.from(ap.launch.UserData, 'base64').toString();
     }
-console.log(ap.launch.UserData);
 
     const suffix = Math.round( Math.random()*1000 );    //TODO 消す
     const launchName = ap.name + "_auto_launch" + suffix;
@@ -25,12 +24,6 @@ console.log(ap.launch.UserData);
         .concat({PropagateAtLaunch : true , Key : "Name" , Value : ap.name});
 
     console.log("AutoScaling.createLaunchConfiguration");
-    console.log(JSON.stringify({
-        ...ap.launch,
-        UserData:userDataEncoded,
-        SecurityGroups : sgids,
-        LaunchConfigurationName : launchName,
-    }));
 
     return autoscaling.createLaunchConfiguration({
         ...ap.launch,
