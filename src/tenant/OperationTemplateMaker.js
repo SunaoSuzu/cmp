@@ -3,7 +3,7 @@ import getConfiguration from "../Configuration";
 import * as SecurityGroup  from  "../conf/SecurityGroup";
 import DomainSetting from "../conf/Domain";
 import Region from "../conf/Region";
-
+import Products from "../conf/Products";
 
 //Operationsは多分不要
 function OperationTemplateMaker(tenant, environment) {
@@ -15,13 +15,13 @@ function OperationTemplateMaker(tenant, environment) {
     const tagUsage = conf.tagUsage;
     const tenantTag = tagUsage.tenant;
     const envTag = tagUsage.environment;
-    let managmgentTag = [];
+    let managementTag = [];
     if (tagUsage) {
         if (tenantTag !== "") {
-            managmgentTag.push({ Key: tenantTag, Value: tenant.awsTag });
+            managementTag.push({ Key: tenantTag, Value: tenant.awsTag });
         }
         if (envTag !== "") {
-            managmgentTag.push({ Key: envTag, Value: environment.awsTag });
+            managementTag.push({ Key: envTag, Value: environment.awsTag });
         }
     }
 
@@ -52,7 +52,7 @@ function OperationTemplateMaker(tenant, environment) {
         ec2s : [],
         apps : [],
         bastions : [],
-        tags: managmgentTag , add: true , attached: false
+        tags: managementTag , add: true , attached: false
     };
 
     let counter = 0;
@@ -86,7 +86,7 @@ function OperationTemplateMaker(tenant, environment) {
             attachIgw : true,
             type : "public",
             role : "app",
-            tags : managmgentTag,
+            tags : managementTag,
         }
         publicSubnets.push(subnet);
         publicSubnetNames.push(subnetName);
@@ -103,7 +103,7 @@ function OperationTemplateMaker(tenant, environment) {
             natGateWay : strategy.network.natgateway,
             type : "private",
             role: "app",
-            tags: managmgentTag,
+            tags: managementTag,
         }
         privateSubnets.push(subnet);
         privateSubnetNames.push(subnetName);
@@ -167,7 +167,7 @@ function OperationTemplateMaker(tenant, environment) {
             cidr : "172.20." + ( ++counter ) + ".0/28" ,
             attachIgw : true,
             role : "bastion",
-            tags : managmgentTag,
+            tags : managementTag,
         }
         resources.subnets.push(subnet);
         const ec2Name = namePrefix + "-ec2-ap-bastion";
@@ -181,7 +181,7 @@ function OperationTemplateMaker(tenant, environment) {
             },
             SecurityGroupNames: [bastionSecurityGroupName],
             SubnetName: subnetName,
-            tags:managmgentTag,
+            tags:managementTag,
             components:[],
             add:true,
             attached:false,
@@ -193,82 +193,57 @@ function OperationTemplateMaker(tenant, environment) {
     const apps = [];
     environment.mainComponents.forEach(function (product,i) {
         //Productから動的に取る様にいずれ直す
-        const amiForAP      = "ami-03e4521d84f084007";
-        const amiForDB      = "ami-03e4521d84f084007";
-        const ec2KeyName    = "sunao";
-        const healthCheckUrl ="/index.html";
-        const ec2Type    = "t2.micro";
-        const dbEc2Type    = "t2.micro";
+        const config = Products(product.id);
+
         const ap = {
-            domain            : subDomain + "-app" + i + "." + rootDomain,
-            internalDomain    : "app" + i + "-ap." + subDomain  + "." + internalDomainRoot,
-            healthCheckUrl    : healthCheckUrl,
+            domain            : subDomain +  config.suffix + "." + rootDomain,
+            internalDomain    : subDomain +  config.ap.suffix + "." + internalDomainRoot,
+            healthCheckUrl    : config.ap.healthCheckUrl,
             min               : 1,
             max               : 1,
             autoScale         : true,
             alb               : true,
-            name              : namePrefix + "-app" + i + "-ap",
+            name              : namePrefix + config.ap.suffix,
             SecurityGroupNames: [webSecurityGroupName],
-            launch : {
-                ImageId      : amiForAP,
-                InstanceType : ec2Type,
-                KeyName      : ec2KeyName,
-                InstanceMonitoring: {Enabled:false}
-            },
+            launch : {...config.ap.launch },
             subnets: privateSubnetNames,
-            tags:managmgentTag,
-            components:environment.mainComponents,
+            tags:managementTag,
             add:true,
             attached:false,
         }
 
         const db = {
-            internalDomain    : "app" + i + "-db." + subDomain  + "." + internalDomainRoot,
-            name              : namePrefix + "-app" + i + "-db",
+            internalDomain    : subDomain +  config.db.suffix + "." + internalDomainRoot,
+            name              : namePrefix + config.db.suffix,
+            launch : {...config.db.launch },
             SecurityGroupNames: [webSecurityGroupName],
             SubnetName : privateSubnetNames[0] ,
-            launch: {
-                ImageId      : amiForDB,
-                InstanceType : dbEc2Type,
-                KeyName      : ec2KeyName,
-                BlockDeviceMappings : [
-                    {DeviceName: "/dev/sdg" , Ebs:{VolumeSize:"1" , VolumeType: "gp2"}},
-                ],
-            },
             efs : true,
-            tags:managmgentTag,
+            tags:managementTag,
         }
 
         const bs = {
-            internalDomain    : "app" + i + "-bs." + subDomain  + "." + internalDomainRoot,
-            name              : namePrefix + "-app" + i + "-bs",
+            internalDomain    : subDomain +  config.bs.suffix + "." + internalDomainRoot,
+            name              : namePrefix + config.bs.suffix,
+            launch : {...config.bs.launch },
             SecurityGroupNames: [webSecurityGroupName],
             SubnetName : privateSubnetNames[0] ,
-            launch: {
-                ImageId      : amiForDB,
-                InstanceType : dbEc2Type,
-                KeyName      : ec2KeyName,
-            },
-            tags:managmgentTag,
+            tags:managementTag,
         }
 
         const search = {
-            internalDomain    : "app" + i + "-search." + subDomain  + "." + internalDomainRoot,
-            name              : namePrefix + "-app" + i + "-search",
+            internalDomain    : subDomain +  config.ss.suffix + "." + internalDomainRoot,
+            name              : namePrefix + config.ss.suffix,
+            launch : {...config.ss.launch },
             SecurityGroupNames: [webSecurityGroupName],
             SubnetName : privateSubnetNames[0] ,
-            launch: {
-                ImageId      : amiForDB,
-                InstanceType : dbEc2Type,
-                KeyName      : ec2KeyName,
-            },
-            tags:managmgentTag,
+            tags:managementTag,
         }
         if(sshSgName!=null)ap.SecurityGroupNames.push(sshSgName);
         if(sshSgName!=null)db.SecurityGroupNames.push(sshSgName);
         if(sshSgName!=null)bs.SecurityGroupNames.push(sshSgName);
         if(sshSgName!=null)search.SecurityGroupNames.push(sshSgName);
-        apps.push({ ap : ap, db : db , bs : bs, search : search  });
+        apps.push({ product : product ,ap : ap, db : db , bs : bs, search : search  });
     })
 
     lb = {
@@ -276,7 +251,7 @@ function OperationTemplateMaker(tenant, environment) {
         alb : true,
         subnets : publicSubnetNames,
         securityGroup : [webSecurityGroupName],
-        tags : managmgentTag,
+        tags : managementTag,
     }
 
     //組み立て

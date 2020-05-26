@@ -101,6 +101,7 @@ const EnvironmentDetail = props => {
                       index={c + 1}
                       boxShadow={1}
                       className={classes.tabPanel}
+                      key={c}
             >
               <ComponentPanel targetComponent={component}
                               cindex={c} index={index}

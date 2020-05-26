@@ -5,7 +5,7 @@
 import React from "react";
 import {connect} from "react-redux";
 import * as tenantAppModule from "../TenantAppModule";
-import { productMeta } from "../../conf/ProductPattern";
+import { productMeta } from "../../conf/Products";
 import {makeStyles} from "@material-ui/core/styles";
 import {Box} from "@material-ui/core";
 import Selection from "../../components/Selection";
