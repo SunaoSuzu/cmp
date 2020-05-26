@@ -1,6 +1,12 @@
 
 /**
  * とりあえずRyoさん作のプログラムで色々やってみる
+ * APのURL
+ * {subDomain}{suffix}{rootDomain}
+ * ex.suzu001-app0.sutech.co.jp
+ * 各internalDomain
+ * {sn}.{subDomain}.{rootDomain}
+ * app0.suzu001.sutech.internal
  **/
 const products = {
     99 : {
@@ -10,16 +16,18 @@ const products = {
             isStateless       : false ,   //うーーん。冗長化方法みたいなのが良いかな
             canDocker         : true  ,   //
             healthCheckUrl    : "/index.html",
-            suffix            : "-app0-ap",
+            sn                : "app0-ap",
+            stack             : "RyoSpringAp",
             launch : {
                 ImageId      : "ami-03e4521d84f084007",
                 InstanceType : "t2.micro",
                 KeyName      : "sunao",
-                InstanceMonitoring: {Enabled:false}
             },
+            InstanceMonitoring: "false"
         },
         db : {
-            suffix            : "-app0-db",
+            sn            : "app0-db",
+            stack             : "RyoSpringDb",
             launch: {
                 ImageId      : "ami-03e4521d84f084007",
                 InstanceType : "t2.micro",
@@ -30,7 +38,8 @@ const products = {
             },
         },
         bs : {
-            suffix            : "-app0-bs",
+            sn            : "app0-bs",
+            stack             : "RyoSpringBs",
             launch: {
                 ImageId      : "ami-03e4521d84f084007",
                 InstanceType : "t2.micro",
@@ -38,11 +47,20 @@ const products = {
             },
         },
         ss : {
-            suffix            : "-app0-ss",
+            sn            : "app0-ss",
+            stack             : "RyoSpringSS",
             launch: {
                 ImageId      : "ami-03e4521d84f084007",
                 InstanceType : "t2.micro",
                 KeyName      : "sunao",
+            },
+        },
+        efs : {
+            stack             : "RyoSpringEFS",
+            sn            : "efs",
+            launch: {
+                PerformanceMode      : "generalPurpose",
+                Encrypted : "true",
             },
         },
     }

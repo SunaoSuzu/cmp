@@ -40,12 +40,13 @@ function OperationTemplateMaker(tenant, environment) {
     //
     resources = {
         name : namePrefix + "-vpc",
+        stack : "vpc",
         hostedZone : subDomain + "." + internalDomainRoot,
         subDomain : subDomain,
         cidr:"172.20.0.0/16" ,
         apiVersion:apiVersion,
         region:region,
-        igw : { need : true , defaultGateWay : "0.0.0.0/0", name : namePrefix + "-igw" },
+        igw : { need : true , defaultGateWay : "0.0.0.0/0", name : namePrefix + "-igw",stack : "igw", },
         lb : {},
         subnets : [],
         securityGroups : [],
@@ -61,8 +62,10 @@ function OperationTemplateMaker(tenant, environment) {
     const aznum = strategy.network.az;
     const publicSubnets = [];
     const publicSubnetNames = [];
+    const publicSubnetStacks = [];
     const privateSubnets = [];
     const privateSubnetNames = [];
+    const privateSubnetStacks = [];
     const apSecurityGroups = [];
     let lb = {};
 
@@ -70,6 +73,7 @@ function OperationTemplateMaker(tenant, environment) {
     const webSecurityGroupName  = namePrefix + "-sg-web-publish";
     const webSecurityIngressPtn = SecurityGroup.ApIngressPattern.both;
     const webSecurityGroup      = {
+        stack : "webSecurityGroupName",
         GroupName   : webSecurityGroupName,
         Description : "for web-publish of ap",
         ingress : webSecurityIngressPtn,
@@ -81,6 +85,7 @@ function OperationTemplateMaker(tenant, environment) {
         const subnetName = namePrefix + "-public-subnet-" + Region.azShortName[i];
         const subnet = {
             subnetName : subnetName,
+            stack : "publicSubnet" + i,
             AvailabilityZone : availabilityZones[i] ,
             cidr : "172.20." + ( ++counter ) + ".0/28" ,
             attachIgw : true,
@@ -90,12 +95,14 @@ function OperationTemplateMaker(tenant, environment) {
         }
         publicSubnets.push(subnet);
         publicSubnetNames.push(subnetName);
+        publicSubnetStacks.push(subnet.stack);
     }
     //ペアになるprivate subnetを作る
     publicSubnets.forEach(function (psub , i) {
         const subnetName = namePrefix + "-private-subnet-" + Region.azShortName[i];
         const subnet = {
             subnetName: subnetName,
+            stack : "privateSubnet" + i,
             publicSubnetName : psub.subnetName,
             AvailabilityZone: availabilityZones[i],
             cidr: "172.20." + (++counter) + ".0/28",
@@ -107,10 +114,12 @@ function OperationTemplateMaker(tenant, environment) {
         }
         privateSubnets.push(subnet);
         privateSubnetNames.push(subnetName);
+        privateSubnetStacks.push(subnet.stack);
     })
 
     //about bastion（最後に処理すべき）
     let sshSgName = null;
+    let sshSgStack = null;
     if(strategy.bastion.create===1){
         //Bastion用の外からSSHできるSG（複数bastion同士を考慮してグループ内のSSHも可能）
         //各EC2はBastionのSGからSSHできるSGを足す
@@ -120,6 +129,7 @@ function OperationTemplateMaker(tenant, environment) {
 
         const bastionSecurityGroupName  = namePrefix + "-sg-bastion";
         const bastionSecurityGroup      = {
+            stack : "bastionSecurityGroup",
             GroupName   : bastionSecurityGroupName,
             Description : "for bastion ec2",
             ingress : [
@@ -146,16 +156,19 @@ function OperationTemplateMaker(tenant, environment) {
         sshSgName  = namePrefix + "-sg-ssh-from-bastion";
         const sshSg      = {
             GroupName   : sshSgName,
+            stack : "sshFromBastion",
             Description : "for ssh from bastion",
             ingress : [
                 {
                     toOtherGroup : bastionSecurityGroupName,
+                    toOtherGroupStack : bastionSecurityGroup.stack,
                     IpProtocol: "TCP",
                     FromPort: 22,
                     ToPort: 22,
                 },
             ],
         }
+        sshSgStack=sshSg.stack;
         resources.securityGroups.push(sshSg);
 
         //結構処理サボってる
@@ -163,6 +176,7 @@ function OperationTemplateMaker(tenant, environment) {
         const subnetName = namePrefix + "-public-subnet-bastion";
         const subnet = {
             subnetName : subnetName,
+            stack : "BastionSubnet",
             AvailabilityZone : availabilityZones[0] ,
             cidr : "172.20." + ( ++counter ) + ".0/28" ,
             attachIgw : true,
@@ -173,6 +187,7 @@ function OperationTemplateMaker(tenant, environment) {
         const ec2Name = namePrefix + "-ec2-ap-bastion";
         const ec2 = {
             name         : ec2Name,
+            stack : "BastionEc2",
             internalDomain    : "bastion." + subDomain  + "." + internalDomainRoot,
             launch : {
                 ImageId      : amiForBastion,
@@ -181,8 +196,9 @@ function OperationTemplateMaker(tenant, environment) {
             },
             SecurityGroupNames: [bastionSecurityGroupName],
             SubnetName: subnetName,
+            securityGroupStack: [bastionSecurityGroup.stack],
+            subnetStack: subnet.stack,
             tags:managementTag,
-            components:[],
             add:true,
             attached:false,
         }
@@ -196,61 +212,93 @@ function OperationTemplateMaker(tenant, environment) {
         const config = Products(product.id);
 
         const ap = {
+            stack             : config.ap.stack,
             domain            : subDomain +  config.suffix + "." + rootDomain,
-            internalDomain    : subDomain +  config.ap.suffix + "." + internalDomainRoot,
+            internalDomain    : config.ap.sn + "." +  subDomain + "." + internalDomainRoot,
             healthCheckUrl    : config.ap.healthCheckUrl,
             min               : 1,
             max               : 1,
             autoScale         : true,
             alb               : true,
-            name              : namePrefix + config.ap.suffix,
+            name              : namePrefix + config.ap.sn,
             SecurityGroupNames: [webSecurityGroupName],
-            launch : {...config.ap.launch },
             subnets: privateSubnetNames,
+            securityGroupStack: [webSecurityGroup.stack],
+            subnetsStack: privateSubnetStacks,
+            launch : {...config.ap.launch },
             tags:managementTag,
             add:true,
             attached:false,
         }
 
         const db = {
-            internalDomain    : subDomain +  config.db.suffix + "." + internalDomainRoot,
-            name              : namePrefix + config.db.suffix,
+            stack             : config.db.stack,
+            internalDomain    : config.db.sn + "." +  subDomain + "." + internalDomainRoot,
+            name              : namePrefix + config.db.sn,
             launch : {...config.db.launch },
             SecurityGroupNames: [webSecurityGroupName],
             SubnetName : privateSubnetNames[0] ,
+            securityGroupStack: [webSecurityGroup.stack],
+            subnetStack: privateSubnets[0].stack,
             efs : true,
+            efsDomain: subDomain +  config.db.suffix + "." + internalDomainRoot,
             tags:managementTag,
         }
 
         const bs = {
-            internalDomain    : subDomain +  config.bs.suffix + "." + internalDomainRoot,
-            name              : namePrefix + config.bs.suffix,
+            stack             : config.bs.stack,
+            internalDomain    : config.bs.sn + "." +  subDomain + "." + internalDomainRoot,
+            name              : namePrefix + config.bs.sn,
             launch : {...config.bs.launch },
             SecurityGroupNames: [webSecurityGroupName],
             SubnetName : privateSubnetNames[0] ,
+            securityGroupStack: [webSecurityGroup.stack],
+            subnetStack: privateSubnets[0].stack,
             tags:managementTag,
         }
 
         const search = {
-            internalDomain    : subDomain +  config.ss.suffix + "." + internalDomainRoot,
-            name              : namePrefix + config.ss.suffix,
+            stack             : config.ss.stack,
+            internalDomain    : config.ss.sn + "." +  subDomain + "." + internalDomainRoot,
+            name              : namePrefix + config.ss.sn,
             launch : {...config.ss.launch },
             SecurityGroupNames: [webSecurityGroupName],
             SubnetName : privateSubnetNames[0] ,
+            securityGroupStack: [webSecurityGroup.stack],
+            subnetStack: privateSubnets[0].stack,
             tags:managementTag,
         }
+
+        const efs = {
+            stack             : config.efs.stack,
+            internalDomain    : config.efs.sn + "." +  subDomain + "." + internalDomainRoot,
+            name              : namePrefix + config.efs.sn,
+            launch : {...config.efs.launch },
+            SubnetNames : privateSubnetNames ,
+            subnetsStack: privateSubnetStacks,
+            tags:managementTag,
+        }
+
         if(sshSgName!=null)ap.SecurityGroupNames.push(sshSgName);
         if(sshSgName!=null)db.SecurityGroupNames.push(sshSgName);
         if(sshSgName!=null)bs.SecurityGroupNames.push(sshSgName);
         if(sshSgName!=null)search.SecurityGroupNames.push(sshSgName);
-        apps.push({ product : product ,ap : ap, db : db , bs : bs, search : search  });
+        if(sshSgStack!=null)ap.securityGroupStack.push(sshSgStack);
+        if(sshSgStack!=null)db.securityGroupStack.push(sshSgStack);
+        if(sshSgStack!=null)bs.securityGroupStack.push(sshSgStack);
+        if(sshSgStack!=null)search.securityGroupStack.push(sshSgStack);
+
+        apps.push({ product : product ,ap : ap, db : db , bs : bs, search : search , efs : efs });
     })
 
     lb = {
+        stack             : "ALB",
         name : namePrefix + "-lb",
         alb : true,
         subnets : publicSubnetNames,
+        subnetStacks : publicSubnetStacks,
         securityGroup : [webSecurityGroupName],
+        securityGroupStack : [webSecurityGroup.stack],
         tags : managementTag,
     }
 

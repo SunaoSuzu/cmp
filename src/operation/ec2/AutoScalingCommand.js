@@ -27,6 +27,7 @@ exports.prepare = function (config ,ap , subnets , sgids) {
 
     return autoscaling.createLaunchConfiguration({
         ...ap.launch,
+        InstanceMonitoring: {"Enabled":ap.InstanceMonitoring},
         UserData:userDataEncoded,
         SecurityGroups : sgids,
         LaunchConfigurationName : launchName,

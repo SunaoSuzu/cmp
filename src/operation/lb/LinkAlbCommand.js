@@ -7,7 +7,7 @@ exports.link = function (config,lb,ap , vpcId) {
     const client = new AWS.ELBv2(config);
     const suffix = Math.round( Math.random()*1000 );    //TODO 消す
     const name   = ap.name + suffix;
-    const healthCheckUrl = "/index.html";
+    const healthCheckUrl = ap.healthCheckUrl;
 
     console.log("alb.createTargetGroup");
     return client.createTargetGroup({
