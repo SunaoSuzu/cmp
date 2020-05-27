@@ -267,10 +267,7 @@ export default function reducer(state = initialState, action) {
     case INVOKE_OPERATION_STARTED:
       return { ...state, invokeOperation: started };
     case INVOKE_OPERATION_SUCCESS: {
-      let tenantObj = { ...state.data };
-      let env = tenantObj.environments[action.envIndex];
-      env.status = 10;
-      return { ...state, invokeOperation: loadSuccess, data: tenantObj };
+      return { ...state, invokeOperation: loadSuccess, data: action.data };
     }
     case INVOKE_OPERATION_FAIL:
       return { ...state, invokeOperation: loadFailed };

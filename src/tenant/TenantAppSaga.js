@@ -165,25 +165,28 @@ function* handleInvokeOperation(action) {
   const apiPwd = action.apiPwd;
   const data = action.tenant;
   const stackName = resource.name;
-  const ret = converter.convert(resource);
-  let currentRevision = data["revision"];
-  data["revision"] = currentRevision + 1;
-  env.template=ret;
-  env.stackName=stackName;
+  const template = converter.convert(resource);
   env.status = 10;
-  console.log("保村開始")
-  const res = yield axios.put(baseEndPoint + `/tenant/` + data.id, data);
-console.log("保村完了")
-  const create = yield axios.post(`https://9l7wsipahj.execute-api.ap-northeast-1.amazonaws.com/operate`, ret);
+  console.log("保存開始")
+  console.log("保存完了")
+
+  const res = yield axios.post(`https://9l7wsipahj.execute-api.ap-northeast-1.amazonaws.com/operate`,
+      {
+        tenant    : data,
+        envIndex  : envIndex,
+        stackName : stackName,
+        template  : template,
+      });
   console.log("開始完了")
 
-  data.lock = 0;
-  data["revision"] = currentRevision + 1;
-  const r = yield axios.put(baseEndPoint + `/tenant/` + data.id, data);
+  //監視のPromiseを投げて終わる
 
   yield put({
     type: TenantAppModule.INVOKE_OPERATION_SUCCESS,
-    envIndex: envIndex,
+    data      : res.data,
+    envIndex  : envIndex,
+    stackName : stackName,
+    template  : template,
   });
 }
 
