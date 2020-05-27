@@ -4,7 +4,9 @@ import axios from "axios";
 import makeTemplateMaker from "./EnvironmentTemplateMaker";
 import * as AwsAppSaga from "../aws/AwsAppSaga";
 import makeOperation from "./OperationTemplateMaker";
-import {createVPC} from "../operation/EnvironmentCreator";
+import converter from "../convert/ToCloudFormation";
+import command   from "../operation/cloudFormation/CreateStackCommand";
+import region from "../conf/Region"
 
 const searchSource = process.env.REACT_APP_DEV_SEARCH_SOURCE_URL;
 const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
@@ -161,8 +163,11 @@ function* handleInvokeOperation(action) {
   const resource = env.resources;
   const apiKey = action.apiKey;
   const apiPwd = action.apiPwd;
-  const que = { vpc : resource };
-  createVPC(que , apiKey , apiPwd);
+  const ret = converter.convert(resource);
+  const stackName = resource.name;
+  yield command.prepare(
+      {region: region.name,accessKeyId:apiKey,secretAccessKey:apiPwd},
+      stackName,JSON.stringify(ret),true);
 
   yield put({
     type: TenantAppModule.INVOKE_OPERATION_SUCCESS,

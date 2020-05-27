@@ -155,6 +155,7 @@ exports.convert = function (vpc) {
         }
         resources[app.db.stack + "PrivateDNS"]={
             "Type" : "AWS::Route53::RecordSet",
+            "DependsOn" : vpc.stack + "InternalDns",
             "Properties" : {
                 "HostedZoneName" : vpc.hostedZone + ".",
                 "Comment" : "DNS name for DB",
@@ -178,6 +179,7 @@ exports.convert = function (vpc) {
         }
         resources[app.bs.stack + "PrivateDNS"]={
             "Type" : "AWS::Route53::RecordSet",
+            "DependsOn" : vpc.stack + "InternalDns",
             "Properties" : {
                 "HostedZoneName" : vpc.hostedZone + ".",
                 "Comment" : "DNS name for DB",
@@ -194,6 +196,7 @@ exports.convert = function (vpc) {
 
         resources[app.ap.stack + "PublicDNS"]={
             "Type" : "AWS::Route53::RecordSet",
+            "DependsOn" : app.ap.stack + "ListerRule",
             "Properties" : {
                 "HostedZoneName" : domain.default.url + ".",
                 "Comment" : "DNS name for ALB",
