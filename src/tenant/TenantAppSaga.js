@@ -163,11 +163,26 @@ function* handleInvokeOperation(action) {
   const resource = env.resources;
   const apiKey = action.apiKey;
   const apiPwd = action.apiPwd;
+  const data = action.tenant;
   const ret = converter.convert(resource);
   const stackName = resource.name;
-  yield command.prepare(
+  env.template=ret;
+
+  env.stackName=stackName;
+  let currentRevision = data["revision"];
+  data["revision"] = currentRevision + 1;
+  env.status = 10;
+  data.lock = 1;
+  const res = yield axios.put(baseEndPoint + `/tenant/` + data.id, data);
+
+  const info = yield command.prepare(
       {region: region.name,accessKeyId:apiKey,secretAccessKey:apiPwd},
       stackName,JSON.stringify(ret),true);
+
+  data.lock = 0;
+  data["revision"] = currentRevision + 1;
+  env.stack  =info;
+  const r = yield axios.put(baseEndPoint + `/tenant/` + data.id, data);
 
   yield put({
     type: TenantAppModule.INVOKE_OPERATION_SUCCESS,

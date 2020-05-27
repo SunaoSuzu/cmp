@@ -33,9 +33,15 @@ exports.prepare = function (config,name,body,deleteIfExist) {
         console.log("wait for create");
         return cloudFormation.waitFor("stackCreateComplete" , {StackName: name}).promise()
     }).then(function (result) {
-        return Promise.resolve(function (result) {
-            console.log("complete");
-        });
+        console.log("describeStackResource");
+        return cloudFormation.describeStackResources({StackName: name}).promise()
+    }).then(function (result) {
+        console.log("finish describeStackResource ");
+        const ret = result.StackResources.reduce( (arg , resource) => {
+            arg[resource.LogicalResourceId]=resource;
+            return arg;
+        },{})
+        return ret;
     })
 
 
