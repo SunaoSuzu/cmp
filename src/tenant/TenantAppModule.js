@@ -47,6 +47,7 @@ export const GET_OPERATION_SUCCESS = "GET_OPERATION_SUCCESS";
 export const GET_OPERATION_FAIL = "GET_OPERATION_FAIL";
 
 export const INVOKE_OPERATION_REQUEST = "INVOKE_OPERATION_REQUEST";
+export const INVOKE_OPERATION_STARTED = "INVOKE_OPERATION_STARTED";
 export const INVOKE_OPERATION_SUCCESS = "INVOKE_OPERATION_SUCCESS";
 export const INVOKE_OPERATION_FAIL = "INVOKE_OPERATION_FAIL";
 
@@ -60,6 +61,7 @@ export const failed = 9;
 
 export const yet = 1;
 export const requested = 2;
+export const started   = 3;
 export const loadSuccess = 3;
 export const loadFailed = 9;
 
@@ -262,6 +264,8 @@ export default function reducer(state = initialState, action) {
       return { ...state, getOperationCompleted: loadFailed, operations: null };
     case INVOKE_OPERATION_REQUEST:
       return { ...state, invokeOperation: requested };
+    case INVOKE_OPERATION_STARTED:
+      return { ...state, invokeOperation: started };
     case INVOKE_OPERATION_SUCCESS: {
       let tenantObj = { ...state.data };
       let env = tenantObj.environments[action.envIndex];

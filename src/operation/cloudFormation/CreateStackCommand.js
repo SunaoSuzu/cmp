@@ -28,6 +28,8 @@ exports.prepare = function (config,name,body,deleteIfExist) {
         return cloudFormation.createStack({
             StackName: name,
             TemplateBody : body,
+            NotificationARNs : ["arn:aws:sns:ap-northeast-1:510229950882:cloudFormation"],
+            OnFailure: "DO_NOTHING",
         }).promise();
     }).then(function (result) {
         console.log("wait for create");

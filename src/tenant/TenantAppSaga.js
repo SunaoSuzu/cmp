@@ -164,24 +164,21 @@ function* handleInvokeOperation(action) {
   const apiKey = action.apiKey;
   const apiPwd = action.apiPwd;
   const data = action.tenant;
-  const ret = converter.convert(resource);
   const stackName = resource.name;
-  env.template=ret;
-
-  env.stackName=stackName;
+  const ret = converter.convert(resource);
   let currentRevision = data["revision"];
   data["revision"] = currentRevision + 1;
+  env.template=ret;
+  env.stackName=stackName;
   env.status = 10;
-  data.lock = 1;
+  console.log("保村開始")
   const res = yield axios.put(baseEndPoint + `/tenant/` + data.id, data);
-
-  const info = yield command.prepare(
-      {region: region.name,accessKeyId:apiKey,secretAccessKey:apiPwd},
-      stackName,JSON.stringify(ret),true);
+console.log("保村完了")
+  const create = yield axios.post(`https://9l7wsipahj.execute-api.ap-northeast-1.amazonaws.com/operate`, ret);
+  console.log("開始完了")
 
   data.lock = 0;
   data["revision"] = currentRevision + 1;
-  env.stack  =info;
   const r = yield axios.put(baseEndPoint + `/tenant/` + data.id, data);
 
   yield put({

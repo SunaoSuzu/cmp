@@ -15,6 +15,7 @@ import EnvironmentDetail from "./EnvironmentDetail";
 import TabPanel from "./TabPanel";
 import Box from "@material-ui/core/Box";
 import Selection from "../components/Selection";
+import ActionProgress from "../components/ActionProgress";
 
 //将来的にItemDetaiPageと統合したいけど、難しそう
 const useStyles = makeStyles(theme => ({
@@ -81,8 +82,13 @@ export default function TenantProfilePage(props) {
   const newEnv = function newEnv() {
     props.requestNewEnv(targetData);
   };
+  let Block = "";
+  if(targetData.lock===1){
+    console.log("ロックします.ロックします");
+  }
   return (
     <React.Fragment>
+      {Block}
       <form encType="multipart/form-data">
         <div style={{ width: "100%" }}>
           <Box display="flex" p={0} bgcolor="background.paper">
