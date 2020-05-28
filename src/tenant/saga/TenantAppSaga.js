@@ -1,11 +1,11 @@
 import { put, takeEvery, all } from "redux-saga/effects";
-import * as TenantAppModule from "./TenantAppModule";
-import makeEnvironment from "./EnvironmentTemplateMaker";
-import * as AwsAppSaga from "../aws/AwsAppSaga";
-import makeOperation from "./OperationTemplateMaker";
-import handleInvokeOperation from "./saga/InvokeOperation";
-import handleRequestList from "./saga/SearchOperation";
-import * as table from "./saga/TenantTableOperation"
+import * as TenantAppModule from "../TenantAppModule";
+import makeEnvironment from "../EnvironmentTemplateMaker";
+import * as AwsAppSaga from "../../aws/AwsAppSaga";
+import makeOperation from "../OperationTemplateMaker";
+import handleInvokeOperation from "./InvokeOperation";
+import handleRequestList from "./SearchOperation";
+import * as table from "./TenantTableOperation"
 
 
 function* handleRequestNewEnv(action) {

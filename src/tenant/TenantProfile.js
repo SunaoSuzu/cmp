@@ -15,24 +15,25 @@ function TenantProfile(props) {
     case tenantAppModule.requested:
       return <ActionProgress />;
     case tenantAppModule.loadSuccess:
+      let Block = null;
       if (updateComplete === tenantAppModule.syncing) {
-        return <ActionProgress />;
-      } else {
-        return (
-          <React.Fragment>
-            <TenantProfilePage
-              updateComplete={updateComplete}
-              changeProperty={props.changeProperty}
-              pushEmpty={props.pushEmpty}
-              delFromArray={props.delFromArray}
-              data={props.data}
-              requestUpdate={props.requestUpdate}
-              backToList="/tenant/list"
-              requestNewEnv={props.requestNewEnv}
-            />
-          </React.Fragment>
-        );
+        Block= <ActionProgress />;
       }
+      return (
+        <React.Fragment>
+          {Block}
+          <TenantProfilePage
+            updateComplete={updateComplete}
+            changeProperty={props.changeProperty}
+            pushEmpty={props.pushEmpty}
+            delFromArray={props.delFromArray}
+            data={props.data}
+            requestUpdate={props.requestUpdate}
+            backToList="/tenant/list"
+            requestNewEnv={props.requestNewEnv}
+          />
+        </React.Fragment>
+      );
     default:
   }
 }

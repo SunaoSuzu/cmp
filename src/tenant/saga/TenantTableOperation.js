@@ -22,13 +22,7 @@ export function* handleRequestData(action) {
 export function* handleRequestUpdate(action) {
     try {
         const data = action.data;
-        let currentRevision = data["revision"];
-        if (currentRevision === null) {
-            //for dirty data
-            currentRevision = 1;
-        }
-        data["revision"] = currentRevision + 1;
-        const res = yield axios.put(baseEndPoint + `/tenant/` + data.id, data);
+        const res = yield handleRequestUpdateImpl(data);
         yield put({
             type: TenantAppModule.UPDATE_SUCCESS,
             data: res.data,
@@ -41,6 +35,17 @@ export function* handleRequestUpdate(action) {
         });
     }
 }
+export function* handleRequestUpdateImpl(data) {
+    let currentRevision = data["revision"];
+    if (currentRevision === null) {
+        //for dirty data
+        currentRevision = 1;
+    }
+    data["revision"] = currentRevision + 1;
+    const res = yield axios.put(baseEndPoint + `/tenant/` + data.id, data);
+    return res;
+}
+
 export function* handleRequestAdd(action) {
     try {
         const data = action.data;

@@ -5,9 +5,7 @@
 import React from "react";
 import {connect} from "react-redux";
 import * as tenantAppModule from "../TenantAppModule";
-import { productMeta } from "../../conf/Products";
 import {makeStyles} from "@material-ui/core/styles";
-import {Box} from "@material-ui/core";
 import Selection from "../../components/Selection";
 import TextField from "@material-ui/core/TextField";
 import Divider from "@material-ui/core/Divider";
@@ -19,12 +17,12 @@ const useStyles = makeStyles(theme => ({
 
 
 const ComponentPanel = props => {
-    const classes = useStyles();
+//    const classes = useStyles();
+//    const env=props.env;
+//    const tenant=props.tenant;
     const targetComponent=props.targetComponent;
     const cindex=props.cindex;
     const index=props.index;
-    const env=props.env;
-    const tenant=props.tenant;
     const uiToJson = props.changeProperty;
 
     const paramPrefix = "environments." + index + ".mainComponents." + cindex;

@@ -5,7 +5,6 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Typography from "@material-ui/core/Typography";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import React from "react";
-import getConfiguration from "../Configuration";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
@@ -14,8 +13,6 @@ import TabPanel from "./TabPanel";
 import AWSPanel from "./env/AWSPanel";
 import ComponentPanel from "./env/ComponentPanel";
 import BasicInfoPanel from "./env/BasicInfoPanel";
-import LockIcon from '@material-ui/icons/Lock';
-import * as CommonCost from "../common/CommonConst"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -64,9 +61,6 @@ const EnvironmentDetail = props => {
   const handleChange = (event, newValue) => {
     setInnerTavLavlue(newValue);
   };
-
-  const Lock = env.status === CommonCost.STATUS_PLANED ? <LockIcon/> : "";
-
   return (
     <React.Fragment>
       <div className={classes.root}>

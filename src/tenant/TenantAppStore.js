@@ -2,7 +2,7 @@ import { createStore as reduxCreateStore, applyMiddleware } from "redux";
 import createSagaMiddleware from "redux-saga";
 import logger from "redux-logger";
 import tenantAppReducer from "./TenantAppModule";
-import rootSaga from "./TenantAppSaga";
+import rootSaga from "./saga/TenantAppSaga";
 
 export default function createStore() {
   console.log("TenantAppStore.createStore()");
