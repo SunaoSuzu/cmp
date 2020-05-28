@@ -265,7 +265,7 @@ export default function reducer(state = initialState, action) {
     case INVOKE_OPERATION_REQUEST:
       return { ...state, invokeOperation: requested };
     case INVOKE_OPERATION_STARTED:
-      return { ...state, invokeOperation: started };
+      return { ...state, invokeOperation: started , data: action.data};
     case INVOKE_OPERATION_SUCCESS: {
       return { ...state, invokeOperation: loadSuccess, data: action.data };
     }

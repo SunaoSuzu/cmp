@@ -1,9 +1,11 @@
 const AWS = require('aws-sdk');
 
 exports.prepare = function (config,name,body,deleteIfExist) {
+    console.log("commandStart2");
     const cloudFormation = new AWS.CloudFormation(config);
     let exist = false;
 
+    console.log("before describe");
     return cloudFormation.describeStacks({StackName: name}).promise().
     then(function (result) {
         console.log("describe");
@@ -28,23 +30,39 @@ exports.prepare = function (config,name,body,deleteIfExist) {
         return cloudFormation.createStack({
             StackName: name,
             TemplateBody : body,
-            NotificationARNs : ["arn:aws:sns:ap-northeast-1:510229950882:cloudFormation"],
             OnFailure: "DO_NOTHING",
         }).promise();
     }).then(function (result) {
-        console.log("wait for create");
-        return cloudFormation.waitFor("stackCreateComplete" , {StackName: name}).promise()
-    }).then(function (result) {
-        console.log("describeStackResource");
-        return cloudFormation.describeStackResources({StackName: name}).promise()
-    }).then(function (result) {
-        console.log("finish describeStackResource ");
-        const ret = result.StackResources.reduce( (arg , resource) => {
-            arg[resource.LogicalResourceId]=resource;
-            return arg;
-        },{})
-        return ret;
+        return result;
     })
+
+}
+
+exports.watch = function (config,name) {
+    console.log("config=" + JSON.stringify(config));
+    console.log("name=" + name);
+
+    const cloudFormation = new AWS.CloudFormation(config);
+    console.log("commandStartWatch");
+    try{
+
+        return cloudFormation.waitFor("stackCreateComplete" , {StackName: name}).promise()
+            .then(function (result) {
+                console.log("describeStackResource");
+                return cloudFormation.describeStackResources({StackName: name}).promise()
+            }).then(function (result) {
+                console.log("finish describeStackResource ");
+                const ret = result.StackResources.reduce( (arg , resource) => {
+                    arg[resource.LogicalResourceId]=resource;
+                    return arg;
+                },{})
+                return ret;
+            }).catch(function (e) {
+                console.log(e)
+            })
+    }catch (e) {
+        console.log(e);
+    }
 
 
 }

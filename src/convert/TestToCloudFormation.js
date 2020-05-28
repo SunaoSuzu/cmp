@@ -9,7 +9,10 @@ const command   = require("../operation/cloudFormation/CreateStackCommand")
 const ret = converter.convert(requestQue.vpc);
 console.log(JSON.stringify(ret));
 
-const stackName = "sunao-test";
-command.prepare({region: region.name},stackName,JSON.stringify(ret),true);
+const stackName = "suzu9-vpc";
+command.prepare({region: region.name},stackName,JSON.stringify(ret),true)
+    .then(function (result) {
+        command.watch({region: region.name},stackName);
+    });
 
 

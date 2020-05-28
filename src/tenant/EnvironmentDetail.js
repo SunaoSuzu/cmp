@@ -11,8 +11,8 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import TabPanel from "./TabPanel";
-import AWSPanel from "./aws/AWSPanel";
-import ComponentPanel from "./aws/ComponentPanel";
+import AWSPanel from "./env/AWSPanel";
+import ComponentPanel from "./env/ComponentPanel";
 import BasicInfoPanel from "./env/BasicInfoPanel";
 
 const useStyles = makeStyles(theme => ({

@@ -1,143 +1,16 @@
 import { put, takeEvery, all } from "redux-saga/effects";
 import * as TenantAppModule from "./TenantAppModule";
-import axios from "axios";
-import makeTemplateMaker from "./EnvironmentTemplateMaker";
+import makeEnvironment from "./EnvironmentTemplateMaker";
 import * as AwsAppSaga from "../aws/AwsAppSaga";
 import makeOperation from "./OperationTemplateMaker";
-import converter from "../convert/ToCloudFormation";
-import command   from "../operation/cloudFormation/CreateStackCommand";
-import region from "../conf/Region"
+import handleInvokeOperation from "./saga/InvokeOperation";
+import handleRequestList from "./saga/SearchOperation";
+import * as table from "./saga/TenantTableOperation"
 
-const searchSource = process.env.REACT_APP_DEV_SEARCH_SOURCE_URL;
-const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
-
-function* handleRequestList(action) {
-  try {
-    let executeQuery = {};
-    let way = "";
-    if(action.keyword!=null&&action.keyword!=""){
-      //キーワード検索
-      executeQuery = {
-        "query": {
-          "multi_match": {
-            "fields": [ "tenantName", "alias"],
-            "query": "鈴木",
-          }
-        },
-        "_source" : ["data"],
-        "from" : action.from,
-        "size" : action.size,
-        "highlight": { "fields": {"tenantName": {}}}
-      };
-      way="keyword";
-    }else{
-      //全件取得
-      executeQuery = {
-        "query": {
-          "match_all": {}
-        },
-        "_source" : ["data"],
-        "from" :action.from,
-        "size" : action.size,
-      };
-      way="simple";
-    }
-
-    console.log(executeQuery);
-    const res = yield axios.post(searchSource + '/cmp/tenant/_search',
-        JSON.stringify(executeQuery) ,
-        {headers: {'Content-Type': 'application/json'}}
-        );
-    res.data["way"]=way;
-    console.log(res.data);
-    yield put({
-      type: TenantAppModule.GET_LIST_SUCCESS,
-      datas: res.data,
-      receivedAt: Date.now(),
-    });
-  } catch (e) {
-    yield put({
-      type: TenantAppModule.GET_LIST_FAILURE,
-      e,
-    });
-  }
-}
-function* handleRequestData(action) {
-  try {
-    const id = action.id;
-    const res = yield axios.get(baseEndPoint + `/tenant/` + id);
-    yield put({
-      type: TenantAppModule.GET_DETAIL_SUCCESS,
-      data: res.data,
-      receivedAt: Date.now(),
-    });
-  } catch (e) {
-    yield put({
-      type: TenantAppModule.GET_DETAIL_FAILURE,
-      e,
-    });
-  }
-}
-function* handleRequestUpdate(action) {
-  try {
-    const data = action.data;
-    let currentRevision = data["revision"];
-    if (currentRevision === null) {
-      //for dirty data
-      currentRevision = 1;
-    }
-    data["revision"] = currentRevision + 1;
-    const res = yield axios.put(baseEndPoint + `/tenant/` + data.id, data);
-    yield put({
-      type: TenantAppModule.UPDATE_SUCCESS,
-      data: res.data,
-      receivedAt: Date.now(),
-    });
-  } catch (e) {
-    yield put({
-      type: TenantAppModule.UPDATE_FAILURE,
-      e,
-    });
-  }
-}
-function* handleRequestAdd(action) {
-  try {
-    const data = action.data;
-    data["revision"] = 1;
-    const res = yield axios.post(baseEndPoint + `/tenant`, data);
-    yield put({
-      type: TenantAppModule.ADD_SUCCESS,
-      data: res.data,
-      receivedAt: Date.now(),
-    });
-  } catch (e) {
-    yield put({
-      type: TenantAppModule.ADD_FAILURE,
-      e,
-    });
-  }
-}
-
-function* handleRequestDel(action) {
-  try {
-    const id = action.id;
-    const res = yield axios.delete(baseEndPoint + `/tenant/` + id);
-    yield put({
-      type: TenantAppModule.DEL_SUCCESS,
-      data: res.data,
-      receivedAt: Date.now(),
-    });
-  } catch (e) {
-    yield put({
-      type: TenantAppModule.DEL_FAILURE,
-      e,
-    });
-  }
-}
 
 function* handleRequestNewEnv(action) {
   const tenant = action.data;
-  let ret = makeTemplateMaker(tenant);
+  let ret = makeEnvironment(tenant);
   yield put({
     type: TenantAppModule.NEW_ENV_SUCCESS,
     environment: ret,
@@ -157,46 +30,14 @@ function* handleRequestGetOperation(action) {
   });
 }
 
-function* handleInvokeOperation(action) {
-  const envIndex = action.envIndex;
-  const env    = action.env;
-  const resource = env.resources;
-  const apiKey = action.apiKey;
-  const apiPwd = action.apiPwd;
-  const data = action.tenant;
-  const stackName = resource.name;
-  const template = converter.convert(resource);
-  env.status = 10;
-  console.log("保存開始")
-  console.log("保存完了")
-
-  const res = yield axios.post(`https://9l7wsipahj.execute-api.ap-northeast-1.amazonaws.com/operate`,
-      {
-        tenant    : data,
-        envIndex  : envIndex,
-        stackName : stackName,
-        template  : template,
-      });
-  console.log("開始完了")
-
-  //監視のPromiseを投げて終わる
-
-  yield put({
-    type: TenantAppModule.INVOKE_OPERATION_SUCCESS,
-    data      : res.data,
-    envIndex  : envIndex,
-    stackName : stackName,
-    template  : template,
-  });
-}
 
 function* mySaga() {
   all(
     yield takeEvery(TenantAppModule.GET_LIST_REQUEST, handleRequestList),
-    yield takeEvery(TenantAppModule.GET_DETAIL_REQUEST, handleRequestData),
-    yield takeEvery(TenantAppModule.UPDATE_REQUEST, handleRequestUpdate),
-    yield takeEvery(TenantAppModule.ADD_REQUEST, handleRequestAdd),
-    yield takeEvery(TenantAppModule.DEL_REQUEST, handleRequestDel),
+    yield takeEvery(TenantAppModule.GET_DETAIL_REQUEST, table.handleRequestData),
+    yield takeEvery(TenantAppModule.UPDATE_REQUEST, table.handleRequestUpdate),
+    yield takeEvery(TenantAppModule.ADD_REQUEST, table.handleRequestAdd),
+    yield takeEvery(TenantAppModule.DEL_REQUEST, table.handleRequestDel),
     yield takeEvery(TenantAppModule.NEW_ENV_REQUEST, handleRequestNewEnv),
     yield takeEvery(
       TenantAppModule.GET_OPERATION_REQUEST,
