@@ -1,4 +1,3 @@
-import React from "react";
 
 export function getNowYMD(){
     const dt = new Date();

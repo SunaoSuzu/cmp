@@ -7,6 +7,7 @@ import AssignmentIcon from "@material-ui/icons/AssignmentOutlined";
 import CodeIcon from "@material-ui/icons/CodeOutlined";
 import ReportIcon from "@material-ui/icons/ReportOutlined";
 import NoteIcon from "@material-ui/icons/NoteOutlined";
+import * as CommonCost from "./common/CommonConst"
 
 // 設定系の　JSON
 // Mst 仕様
@@ -62,12 +63,6 @@ const tenantListGridColumnsDef = {
   2: { caption: "状況", propName: "statusCaption" }
 };
 
-const productGridColumnsDef = {
-  1: { caption: "ライセンス名称", propName: "caption" },
-  2: { caption: "Version", propName: "version" },
-  3: { caption: "Patch", propName: "patch" }
-};
-
 const tenantVpcTypeMst = {
   1: {
     id: 1,
@@ -118,11 +113,12 @@ const landscapeTypeMst = {
 };
 
 const environmentStatusMst = [
-  { id: 1, caption: "未作成（予定なし）", description: "下書き", use: 1 },
-  { id: 10, caption: "未作成（予定あり）", description: "作業待ち", use: 1 },
-  { id: 100, caption: "作成済み", description: "作成済み（予定なし）", use: 1 },
+  { id: CommonCost.STATUS_DRAFT, caption: "下書き", description: "下書き" },
+  { id: CommonCost.STATUS_PLANED, caption: "未作成（予定あり）", description: "作業待ち" },
+  { id: CommonCost.STATUS_CREATING, caption: "構築中", description: "作業待ち" },
+  { id: CommonCost.STATUS_OK, caption: "作成済み", description: "作成済み（予定なし）" },
   {
-    id: 200,
+    id: CommonCost.STATUS_MOD_PLANED,
     caption: "作成済み(予定あり)",
     description: "作成済み（予定あり）",
     use: 1
@@ -281,13 +277,6 @@ const whi_configuration = {
   tenantListGridConf: {
     columnsDef: [tenantListGridColumnsDef[1], tenantListGridColumnsDef[2]]
   },
-  productGridConf: {
-    columnsDef: [
-      productGridColumnsDef[1],
-      productGridColumnsDef[2],
-      productGridColumnsDef[3]
-    ]
-  }
 };
 
 //いずれテナントで分岐

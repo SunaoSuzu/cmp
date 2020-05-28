@@ -7,6 +7,7 @@ import Selection from "../../components/Selection";
 import getConfiguration from "../../Configuration";
 import Divider from "@material-ui/core/Divider";
 import DomainSetting from "../../conf/Domain";
+import * as CommonCost from "../../common/CommonConst"
 
 const BasicInfoPanel = props => {
     const conf = getConfiguration();
@@ -18,12 +19,17 @@ const BasicInfoPanel = props => {
     const uiToJson = props.uiToJson;
 
     //ForDirtyData(今は全部Dirtyなので、いずれ改善)
-    if(env.strategy==undefined)env.strategy={};
-    if(env.strategy.network==undefined)env.strategy.network={};
-    if(env.strategy.bastion==undefined)env.strategy.bastion={};
+    if(env.strategy===undefined)env.strategy={};
+    if(env.strategy.network===undefined)env.strategy.network={};
+    if(env.strategy.bastion===undefined)env.strategy.bastion={};
 
     const paramPrefix = "environments." + index;
     const domain = DomainSetting.default;
+
+    const impossible = true;  //常に入力不可能な項目
+    const immutable  = env.status === CommonCost.STATUS_DRAFT ? true : false;  //一度決まったら変えれない
+    const changeable = env.status === CommonCost.STATUS_DRAFT ? true : false;  //構築が終わったら変えれる（あとで機能追加）
+    const noimpact   = true;  //いつでもいじれる（環境に反映されない）
 
     return (
         <>
@@ -33,6 +39,9 @@ const BasicInfoPanel = props => {
                 id="standard-env-name"
                 label="環境名"
                 value={env.name}
+                inputProps={{
+                    readOnly: !noimpact
+                }}
                 margin="dense"
                 helperText="環境名を入れてください"
             />
@@ -44,6 +53,9 @@ const BasicInfoPanel = props => {
                 value={env.subDomain}
                 margin="dense"
                 helperText={"https://" + env.subDomain + "." + domain.url}
+                inputProps={{
+                    readOnly: !immutable
+                }}
             />
             <TextField
                 name={paramPrefix + ".awsTag"}
@@ -52,7 +64,8 @@ const BasicInfoPanel = props => {
                 label="tag(aws)"
                 helperText="tag(aws)を入れてください"
                 inputProps={{
-                    required: true
+                    required: true,
+                    readOnly: !changeable
                 }}
                 value={env.awsTag}
             />
@@ -66,6 +79,9 @@ const BasicInfoPanel = props => {
                        helperText="環境状態"
                        margin="dense"
                        options={environmentStatusMst}
+                       inputProps={{
+                           readOnly: !impossible
+                       }}
             />
             <TextField
                 name={paramPrefix + ".specLevel"}
@@ -74,7 +90,7 @@ const BasicInfoPanel = props => {
                 label="SPECレベル"
                 value={env.specLevel}
                 inputProps={{
-                    readOnly: true
+                    readOnly: changeable
                 }}
                 margin="dense"
                 helperText="SPECレベル"
@@ -90,6 +106,9 @@ const BasicInfoPanel = props => {
                        helperText="VPC方針"
                        margin="dense"
                        options={environmentVpcTypeMst}
+                       inputProps={{
+                           readOnly: !immutable
+                       }}
             />
             <Selection input={true}
                        label="AZ数"
@@ -100,6 +119,9 @@ const BasicInfoPanel = props => {
                        helperText="AZ数"
                        margin="dense"
                        options={[{id:2 , caption : "2" ,},{id:3, caption : "3"}]}
+                       inputProps={{
+                           readOnly: !changeable
+                       }}
             />
             <Selection input={true}
                        label="NatGateWay"
@@ -110,6 +132,9 @@ const BasicInfoPanel = props => {
                        helperText="外部への通信用"
                        margin="dense"
                        options={[{id:false , caption: "不要"},{id:true , caption : "必要（EIP）" ,}]}
+                       inputProps={{
+                           readOnly: !changeable
+                       }}
             />
             <Divider/>
             <Selection input={true}
@@ -121,6 +146,9 @@ const BasicInfoPanel = props => {
                        helperText="SSH Bastion"
                        margin="dense"
                        options={[{id:0, caption: "作らない"},{id:1 , caption : "作る" ,}]}
+                       inputProps={{
+                           readOnly: !changeable
+                       }}
             />
             <TextField
                 name={paramPrefix + ".strategy.bastion.accessFroms"}
@@ -129,6 +157,9 @@ const BasicInfoPanel = props => {
                 label="許可するIP"
                 helperText="カンマ区切りで複数指定可能"
                 value={env.strategy.bastion.accessFroms}
+                inputProps={{
+                    readOnly: !changeable
+                }}
             />
         </>
     );

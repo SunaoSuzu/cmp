@@ -7,7 +7,7 @@ function* handleRequestList(action) {
     try {
         let executeQuery = {};
         let way = "";
-        if(action.keyword!=null&&action.keyword!=""){
+        if(action.keyword!==null&&action.keyword!==""){
             //キーワード検索
             executeQuery = {
                 "query": {

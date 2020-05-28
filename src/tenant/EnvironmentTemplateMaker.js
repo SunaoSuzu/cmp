@@ -2,12 +2,13 @@
 //ロジックをどんどん進化させていかないといけない
 
 import getConfiguration from "../Configuration";
+import * as CommonCost from "../common/CommonConst"
 
 function EnvironmentTemplateMaker(tenant) {
   let environment = {
     name: "開発環境",
     landScape: 1,
-    status: 1,
+    status: CommonCost.STATUS_DRAFT,
     statusCaption: "下書き",
     strategy : {web:{} , bastion:{}},
     specLevel: null,

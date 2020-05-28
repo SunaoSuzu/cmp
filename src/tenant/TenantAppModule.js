@@ -4,6 +4,8 @@ import {
   spliceObjOfArray,
 } from "../util/JsonUtils";
 import {getNowYMD} from "../util/DateUtils";
+import * as CommonCost from "../common/CommonConst"
+
 
 export const GET_LIST_REQUEST = "GET_LIST_REQUEST";
 export const GET_LIST_SUCCESS = "GET_LIST_SUCCESS";
@@ -253,6 +255,7 @@ export default function reducer(state = initialState, action) {
       let env = tenantObj.environments[action.envIndex];
       env["resources"] = action.resources;
       env["operations"] = action.operations;
+      env.status=CommonCost.STATUS_PLANED;
       return {
         ...state,
         getOperationCompleted: loadSuccess,
@@ -276,7 +279,7 @@ export default function reducer(state = initialState, action) {
       let env = tenantObj.environments[action.envIndex];
       delete env.operations;
       delete env.resources;
-      env.status = 1;
+      env.status = CommonCost.STATUS_DRAFT;
       return { ...state, invokeOperation: loadSuccess, data: tenantObj };
     }
     default:

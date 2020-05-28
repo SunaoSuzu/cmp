@@ -40,7 +40,7 @@ exports.convert = function (vpc) {
             "GatewayId": {"Ref": vpc.igw.stack}
         }
     }
-    vpc.subnets.map(function (subnet,index) {
+    vpc.subnets.forEach(function (subnet,index) {
         resources[subnet.stack] = {
             "Type": "AWS::EC2::Subnet",
             "Properties": {

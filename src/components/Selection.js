@@ -33,13 +33,12 @@ const Selection      = props => {
     };
 
     const valToStr = function valToStr(v){
-        let str="";
-        options.map(function (option) {
-            if(option.id=v){
-                str=option.caption;
-            }
-        })
-        return str;
+        const matched = options.find( option => option.id===v );
+        if (matched===null){
+            return null;
+        }else{
+            return matched.caption;
+        }
     }
 
     if(!input){

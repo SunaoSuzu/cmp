@@ -32,7 +32,7 @@ const ComponentPanel = props => {
     //ForDirtyData(今は全部Dirtyなので、いずれ改善)
     if(targetComponent.strategy===undefined)targetComponent.strategy={};
     if(targetComponent.strategy.version===undefined)targetComponent.strategy.version={};
-    if(targetComponent.strategy.ap===undefined)targetComponent.strategy.ap={};
+    if(targetComponent.strategy.ap===undefined)targetComponent.strategy.ap={type:1};
     if(targetComponent.strategy.ap.lb===undefined)targetComponent.strategy.ap.lb={};
     if(targetComponent.strategy.db===undefined)targetComponent.strategy.db={};
     if(targetComponent.strategy.batch===undefined)targetComponent.strategy.batch={};
@@ -41,35 +41,15 @@ const ComponentPanel = props => {
     return (
         <>
             基本
-            <Selection input={true}
-                       label="Version"
-                       name={paramPrefix + ".strategy.version.no"}
-                       onChange={uiToJson}
-                       id="component-conf-ap-lb-kind"
-                       value={targetComponent.strategy.version.no}
-                       helperText="Version"
-                       margin="dense"
-                       options={[{id:100, caption: "1.00"},{id:111, caption: "1.1.1"},{id:200 , caption : "2.00" ,}]}
-            />
             <Divider/>
             AP
             <TextField
                 name={paramPrefix + ".strategy.ap.internalDns"}
                 onChange={uiToJson}
-                id="standard-strategy-bastion-access-froms"
+                id="strategy-ap-internal-dns"
                 label="内部DNS名"
                 helperText="内部DNS名（ReadOnlyにしたい）"
                 value={targetComponent.strategy.ap.internalDns}
-            />
-            <Selection input={true}
-                       label="LB種別"
-                       name={paramPrefix + ".strategy.ap.lb.kind"}
-                       onChange={uiToJson}
-                       id="component-conf-ap-lb-kind"
-                       value={targetComponent.strategy.ap.lb.kind}
-                       helperText="LB種別"
-                       margin="dense"
-                       options={[{id:1, caption: "ALB"},{id:2 , caption : "ELB" ,}]}
             />
             <Selection input={true}
                        label="実行方法"
@@ -87,7 +67,7 @@ const ComponentPanel = props => {
             <TextField
                 name={paramPrefix + ".strategy.db.internalDns"}
                 onChange={uiToJson}
-                id="standard-strategy-bastion-access-froms"
+                id="strategy-db-internal-dns"
                 label="内部DNS名"
                 helperText="内部DNS名（ReadOnlyにしたい）"
                 value={targetComponent.strategy.db.internalDns}
@@ -97,7 +77,7 @@ const ComponentPanel = props => {
             <TextField
                 name={paramPrefix + ".strategy.batch.internalDns"}
                 onChange={uiToJson}
-                id="standard-strategy-bastion-access-froms"
+                id="strategy-bs-internal-dns"
                 label="内部DNS名"
                 helperText="内部DNS名（ReadOnlyにしたい）"
                 value={targetComponent.strategy.batch.internalDns}
@@ -107,7 +87,7 @@ const ComponentPanel = props => {
             <TextField
                 name={paramPrefix + ".strategy.search.internalDns"}
                 onChange={uiToJson}
-                id="standard-strategy-bastion-access-froms"
+                id="strategy-ss-internal-dns"
                 label="内部DNS名"
                 helperText="内部DNS名（ReadOnlyにしたい）"
                 value={targetComponent.strategy.search.internalDns}

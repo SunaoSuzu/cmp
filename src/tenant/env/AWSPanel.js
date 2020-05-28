@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import Button from "@material-ui/core/Button";
 import StorageIcon from "@material-ui/icons/StorageOutlined";
 import List from "@material-ui/core/List";
@@ -7,7 +7,6 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import VpcLogo from "../../components/aws/VpcLogo";
 import ListItemText from "@material-ui/core/ListItemText";
 import EC2Logo from "../../components/aws/EC2Logo";
-import CodeIcon from "@material-ui/icons/Code";
 import * as TenantAppModule from "../TenantAppModule";
 import Divider from "@material-ui/core/Divider";
 import {makeStyles} from "@material-ui/core/styles";
@@ -21,6 +20,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import DownloadLink from "react-download-link";
+import * as CommonCost from "../../common/CommonConst"
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -128,6 +128,11 @@ const AWSPanel = props => {
         setDiagOpen(false);
     };
 
+    const disableOperationBtn = env.status === CommonCost.STATUS_DRAFT ? false : true;
+    const disableAttachBtn = true;
+    const disableInvokeBtn = env.status === CommonCost.STATUS_PLANED ? false : true;
+    const disableResetBtn = false;
+
 
     return (
         <>
@@ -136,6 +141,7 @@ const AWSPanel = props => {
                 color="primary"
                 className={classes.button}
                 startIcon={<StorageIcon />}
+                disabled={disableOperationBtn}
                 onClick={() => getOperation(tenant, env, index)}
             >
                 構成決定
@@ -145,6 +151,7 @@ const AWSPanel = props => {
                 color="primary"
                 className={classes.button}
                 startIcon={<StorageIcon />}
+                disabled={disableAttachBtn}
                 onClick={() => handleClickOpenAsAtathchDiag(tenant, env, index)}
             >
                 アタッチ
@@ -154,6 +161,7 @@ const AWSPanel = props => {
                 color="primary"
                 className={classes.button}
                 startIcon={<StorageIcon />}
+                disabled={disableInvokeBtn}
                 onClick={() => handleClickOpenAsExecuteDiag(tenant, env, index)}
             >
                 作業実行
@@ -163,6 +171,7 @@ const AWSPanel = props => {
                 color="primary"
                 className={classes.button}
                 startIcon={<StorageIcon />}
+                disabled={disableResetBtn}
                 onClick={() => resetOperation(tenant, env, index)}
             >
                 破棄

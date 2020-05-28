@@ -10,7 +10,7 @@ exports.convert = function (vpc) {
     let resources = network.convert(vpc);
     resources = Object.assign(resources , sg.convert(vpc));
 
-    vpc.bastions.map(function (bastion, index) {
+    vpc.bastions.forEach(function (bastion, index) {
         resources[bastion.stack]={
             "Type" : "AWS::EC2::Instance",
             "Properties" : {
@@ -61,7 +61,7 @@ exports.convert = function (vpc) {
         }
 
     }
-    vpc.apps.map( app => {
+    vpc.apps.forEach( app => {
         resources[app.ap.stack + "Launch"]={
             "Type": "AWS::AutoScaling::LaunchConfiguration",
             "Properties": {
@@ -210,11 +210,9 @@ exports.convert = function (vpc) {
         }
     })
 
-    const ret = {
+    return {
         "AWSTemplateFormatVersion": "2010-09-09",
         "Description": "Sunao Test name=" + vpc.name,
         Resources : resources
     };
-
-    return ret;
 }

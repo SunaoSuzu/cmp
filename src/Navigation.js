@@ -7,7 +7,6 @@ import SignIn from "./signin/SignIn";
 
 //自作
 import SiteHeader from "./components/SiteHeader";
-import SiteFooter from "./components/SiteFooter";
 import Container from "@material-ui/core/Container";
 
 const useStyles = makeStyles((theme) => ({

@@ -25,9 +25,6 @@ function TenantList(props) {
   const { searchQuery, setSearchQuery } = useDebouncedQuery(loadSuggestions);
 
   const Searcher = <Input type="search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-  const updateSearchKeyword = event => {
-    setKeyword(event.target.value);
-  };
 
   const onPageChange = (event,newPageIndex) => {
     setPageIndex(newPageIndex);
@@ -36,11 +33,6 @@ function TenantList(props) {
 
   const onSizeChange = (event) => {
     setPageSize(event.target.value);
-    setPageIndex(1);
-    setDispatched(false);
-  };
-
-  const keywordSearch = function keywordSearch() {
     setPageIndex(1);
     setDispatched(false);
   };

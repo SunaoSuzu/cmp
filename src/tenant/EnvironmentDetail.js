@@ -14,6 +14,8 @@ import TabPanel from "./TabPanel";
 import AWSPanel from "./env/AWSPanel";
 import ComponentPanel from "./env/ComponentPanel";
 import BasicInfoPanel from "./env/BasicInfoPanel";
+import LockIcon from '@material-ui/icons/Lock';
+import * as CommonCost from "../common/CommonConst"
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -62,6 +64,8 @@ const EnvironmentDetail = props => {
   const handleChange = (event, newValue) => {
     setInnerTavLavlue(newValue);
   };
+
+  const Lock = env.status === CommonCost.STATUS_PLANED ? <LockIcon/> : "";
 
   return (
     <React.Fragment>
