@@ -21,6 +21,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import DownloadLink from "react-download-link";
 import * as CommonCost from "../../common/CommonConst"
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -160,7 +162,7 @@ const AWSPanel = props => {
                 variant="contained"
                 color="primary"
                 className={classes.button}
-                startIcon={<StorageIcon />}
+                startIcon={<CloudUploadIcon />}
                 disabled={disableInvokeBtn}
                 onClick={() => handleClickOpenAsExecuteDiag(tenant, env, index)}
             >
@@ -170,7 +172,7 @@ const AWSPanel = props => {
                 variant="contained"
                 color="primary"
                 className={classes.button}
-                startIcon={<StorageIcon />}
+                startIcon={<DeleteIcon />}
                 disabled={disableResetBtn}
                 onClick={() => resetOperation(tenant, env, index)}
             >
