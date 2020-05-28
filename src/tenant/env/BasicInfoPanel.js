@@ -75,13 +75,10 @@ const BasicInfoPanel = props => {
                        onChange={uiToJson}
                        id="standard-basic-status"
                        value={env.status}
-                       readOnly={true}
+                       readOnly={!impossible}
                        helperText="環境状態"
                        margin="dense"
                        options={environmentStatusMst}
-                       inputProps={{
-                           readOnly: !impossible
-                       }}
             />
             <TextField
                 name={paramPrefix + ".specLevel"}
@@ -102,26 +99,21 @@ const BasicInfoPanel = props => {
                        onChange={uiToJson}
                        id="standard-basic-vpc-type"
                        value={env.vpcType}
-                       readOnly={true}
+                       readOnly={!immutable}
                        helperText="VPC方針"
                        margin="dense"
                        options={environmentVpcTypeMst}
-                       inputProps={{
-                           readOnly: !immutable
-                       }}
             />
             <Selection input={true}
                        label="AZ数"
                        name={paramPrefix + ".strategy.network.az"}
                        onChange={uiToJson}
                        id="standard-strategy-web-minimum-az"
+                       readOnly={!changeable}
                        value={env.strategy.network.az}
                        helperText="AZ数"
                        margin="dense"
                        options={[{id:2 , caption : "2" ,},{id:3, caption : "3"}]}
-                       inputProps={{
-                           readOnly: !changeable
-                       }}
             />
             <Selection input={true}
                        label="NatGateWay"
@@ -132,9 +124,7 @@ const BasicInfoPanel = props => {
                        helperText="外部への通信用"
                        margin="dense"
                        options={[{id:false , caption: "不要"},{id:true , caption : "必要（EIP）" ,}]}
-                       inputProps={{
-                           readOnly: !changeable
-                       }}
+                       readOnly={!changeable}
             />
             <Divider/>
             <Selection input={true}
@@ -146,9 +136,7 @@ const BasicInfoPanel = props => {
                        helperText="SSH Bastion"
                        margin="dense"
                        options={[{id:0, caption: "作らない"},{id:1 , caption : "作る" ,}]}
-                       inputProps={{
-                           readOnly: !changeable
-                       }}
+                       readOnly={!changeable}
             />
             <TextField
                 name={paramPrefix + ".strategy.bastion.accessFroms"}
