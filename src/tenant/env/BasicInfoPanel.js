@@ -26,7 +26,7 @@ const BasicInfoPanel = props => {
     const paramPrefix = "environments." + index;
     const domain = DomainSetting.default;
 
-    const impossible = true;  //常に入力不可能な項目
+    const impossible = false;  //常に入力不可能な項目
     const immutable  = env.status === CommonCost.STATUS_DRAFT ? true : false;  //一度決まったら変えれない
     const changeable = env.status === CommonCost.STATUS_DRAFT ? true : false;  //構築が終わったら変えれる（あとで機能追加）
     const noimpact   = true;  //いつでもいじれる（環境に反映されない）
@@ -87,7 +87,7 @@ const BasicInfoPanel = props => {
                 label="SPECレベル"
                 value={env.specLevel}
                 inputProps={{
-                    readOnly: changeable
+                    readOnly: !changeable
                 }}
                 margin="dense"
                 helperText="SPECレベル"
