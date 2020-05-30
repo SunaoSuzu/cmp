@@ -65,6 +65,47 @@ exports.convert = function (vpc) {
                     }
                 }
             }
+            if(vpc.nat){
+                resources[subnet.stack + "NatEip"]={
+                    "Type": "AWS::EC2::EIP",
+                    "Properties": {
+                        "Domain": {"Ref": vpc.stack},
+                        "Tags": subnet.tags.concat({Key: "Name", Value: subnet.subnetName + "NatEip"}),
+                    }
+                }
+                resources[subnet.stack + "Nat"]={
+                    "Type": "AWS::EC2::NatGateway",
+                    "Properties": {
+                        "AllocationId": {"Fn::GetAtt": [subnet.stack + "NatEip", "AllocationId"]},
+                        "SubnetId": {"Ref": subnet.stack},
+                        "Tags": subnet.tags.concat({Key: "Name", Value: subnet.subnetName + "Nat"}),
+                    }
+                }
+            }
+        }else{
+            if(vpc.nat){
+                resources[subnet.stack + "RouteTable"]={
+                    "Type": "AWS::EC2::RouteTable",
+                    "Properties": {"VpcId": {"Ref": vpc.stack},
+                        "Tags": subnet.tags.concat({Key: "Name", Value: subnet.subnetName + "RouteTable"}),
+                    }
+                }
+                resources[subnet.stack + "Route"]={
+                    "Type": "AWS::EC2::Route",
+                    "Properties": {
+                        "RouteTableId": {"Ref": subnet.stack + "RouteTable"},
+                        "DestinationCidrBlock": "0.0.0.0/0",
+                        "NatGatewayId": {"Ref": subnet.publicSubnetStack + "Nat"}
+                    }
+                }
+                resources[subnet.stack + "RouteTableAssociation"]={
+                    "Type": "AWS::EC2::SubnetRouteTableAssociation",
+                    "Properties": {
+                        "SubnetId": {"Ref": subnet.stack},
+                        "RouteTableId": {"Ref": subnet.stack + "RouteTable"}
+                    }
+                }
+            }
         }
     })
     resources[vpc.stack + "InternalDns"] = {

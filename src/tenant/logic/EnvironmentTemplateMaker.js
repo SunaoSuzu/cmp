@@ -1,8 +1,8 @@
 //所有しているライセンスから、環境の雛形を決定する
 //ロジックをどんどん進化させていかないといけない
 
-import getConfiguration from "../Configuration";
-import * as CommonCost from "../common/CommonConst"
+import getConfiguration from "../../Configuration";
+import * as CommonCost from "../../common/CommonConst"
 
 function EnvironmentTemplateMaker(tenant) {
   let environment = {

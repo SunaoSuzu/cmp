@@ -1,9 +1,9 @@
 //作業を割り出す
-import getConfiguration from "../Configuration";
-import * as SecurityGroup  from  "../conf/SecurityGroup";
-import DomainSetting from "../conf/Domain";
-import Region from "../conf/Region";
-import Products from "../conf/Products";
+import getConfiguration from "../../Configuration";
+import * as SecurityGroup  from "../../conf/SecurityGroup";
+import DomainSetting from "../../conf/Domain";
+import Region from "../../conf/Region";
+import Products from "../../conf/Products";
 
 //Operationsは多分不要
 function OperationTemplateMaker(tenant, environment) {
@@ -53,6 +53,7 @@ function OperationTemplateMaker(tenant, environment) {
         ec2s : [],
         apps : [],
         bastions : [],
+        nat  : strategy.network.nat,
         tags: managementTag , add: true , attached: false
     };
 
@@ -91,6 +92,7 @@ function OperationTemplateMaker(tenant, environment) {
             attachIgw : true,
             type : "public",
             role : "app",
+            nat  : strategy.network.nat,
             tags : managementTag,
         }
         publicSubnets.push(subnet);
@@ -104,10 +106,11 @@ function OperationTemplateMaker(tenant, environment) {
             subnetName: subnetName,
             stack : "privateSubnet" + i,
             publicSubnetName : psub.subnetName,
+            publicSubnetStack : psub.stack,
             AvailabilityZone: availabilityZones[i],
             cidr: "172.20." + (++counter) + ".0/28",
             attachIgw: false,
-            natGateWay : strategy.network.natgateway,
+            nat : strategy.network.nat,
             type : "private",
             role: "app",
             tags: managementTag,

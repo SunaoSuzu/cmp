@@ -117,13 +117,13 @@ const BasicInfoPanel = props => {
             />
             <Selection input={true}
                        label="NatGateWay"
-                       name={paramPrefix + ".strategy.network.natgateway"}
+                       name={paramPrefix + ".strategy.network.nat"}
                        onChange={uiToJson}
                        id="standard-strategy-web-publishing"
-                       value={env.strategy.network.natgateway}
+                       value={env.strategy.network.nat}
                        helperText="外部への通信用"
                        margin="dense"
-                       options={[{id:false , caption: "不要"},{id:true , caption : "必要（EIP）" ,}]}
+                       options={[{id:false , caption: "不要"},{id:true , caption : "必要（EIP）" }]}
                        readOnly={!changeable}
             />
             <Divider/>
