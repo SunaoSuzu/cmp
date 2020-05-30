@@ -68,7 +68,7 @@ exports.convert = function (vpc) {
                 ...app.ap.launch,
                 "InstanceMonitoring" :app.ap.InstanceMonitoring,
                 "SecurityGroups": app.ap.securityGroupStack.map( stack => ({ "Ref" : stack})),
-                "UserData": {"Fn::Base64":"ls -l"}
+                "UserData": {"Fn::Base64":app.ap.launch.UserData}
             }
         }
         resources[app.ap.stack + "Auto"]={

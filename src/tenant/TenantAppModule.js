@@ -64,7 +64,7 @@ export const failed = 9;
 export const yet = 1;
 export const requested = 2;
 export const started   = 3;
-export const loadSuccess = 3;
+export const loadSuccess = 4;
 export const loadFailed = 9;
 
 // for new add
@@ -87,7 +87,6 @@ export const empty = {
 };
 
 const initialState = {
-  breadcrumbStack: [],
 
   loadSuccess: yet,
   datas: [],
@@ -101,7 +100,7 @@ const initialState = {
 
   deleteComplete: yet,
 
-  newEnvComplated: yet,
+  newEnvCompleted: yet,
 
   attachAwsCompleted: yet,
   attachedAwsInfo: null,
@@ -112,7 +111,6 @@ const initialState = {
   invokeOperation: yet,
 };
 
-const breadcrumbStackList = { caption: "テナント一覧", to: "/tenant/list" };
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
@@ -139,7 +137,6 @@ export default function reducer(state = initialState, action) {
         data: action.data,
         getDetailComplete: loadSuccess,
         updateComplete: noNeed,
-        breadcrumbStack: [breadcrumbStackList],
       };
     case GET_DETAIL_FAILURE:
       return { ...state, data: null, getDetailComplete: loadFailed }; //どうするのが正しいか未定
@@ -158,7 +155,6 @@ export default function reducer(state = initialState, action) {
         ...state,
         newData: { ...empty },
         addComplete: noNeed,
-        breadcrumbStack: [breadcrumbStackList],
       };
     case CHANGE_PROPERTY_OF_NEW:
       const obj = { ...state.newData };
@@ -219,12 +215,12 @@ export default function reducer(state = initialState, action) {
         addComplete: necessary,
       };
     case NEW_ENV_REQUEST:
-      return { ...state, newEnvComplated: syncing };
+      return { ...state, newEnvCompleted: syncing };
     case NEW_ENV_SUCCESS: {
       const tenantObj = { ...state.data };
       const environment = action.environment;
       tenantObj.environments = tenantObj.environments.concat(environment);
-      return { ...state, newEnvComplated: synced, data: tenantObj };
+      return { ...state, newEnvCompleted: synced, data: tenantObj };
     }
     case ATTACH_AWS_REQUEST:
       return { ...state, attachAwsCompleted: requested, attachedAwsInfo: null };
@@ -251,6 +247,7 @@ export default function reducer(state = initialState, action) {
     case GET_OPERATION_REQUEST:
       return { ...state, getOperationCompleted: requested, operations: null };
     case GET_OPERATION_SUCCESS: {
+
       let tenantObj = { ...state.data };
       let env = tenantObj.environments[action.envIndex];
       env["resources"] = action.resources;

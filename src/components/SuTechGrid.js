@@ -63,7 +63,7 @@ export default function SuTechGrid(props) {
   const selectToBase = props.selectToBase;
 
   //とりあえずの互換
-  const elasticSearch = props.selectToBase;
+  const elasticSearch = props.elasticSearch;
   let datas           = props.datas;
 
   if(elasticSearch){

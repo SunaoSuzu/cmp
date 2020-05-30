@@ -15,7 +15,7 @@ exports.convert = function (vpc) {
     })
     vpc.securityGroups.forEach(function (sg, index) {
         sg.ingress.forEach(function (ing, t) {
-            if (ing.toMyGroup === true||ing.toOtherGroup!==null) {
+            if (ing.toMyGroup === true||(ing.toOtherGroup!==null&&ing.toOtherGroup!==undefined)) {
                 const targetGroup = ing.toMyGroup ? sg.stack : ing.toOtherGroupStack;
                 resources[sg.stack + "Ingress" + t]={
                     "Type": "AWS::EC2::SecurityGroupIngress",

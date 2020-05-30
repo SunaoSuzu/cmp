@@ -10,7 +10,6 @@ function* handleInvokeOperation(action) {
     const data = action.tenant;
     const stackName = resource.name;
     const template = converter.convert(resource);
-    env.status = 10;
 
     const res = yield axios.post(`https://9l7wsipahj.execute-api.ap-northeast-1.amazonaws.com/operate`,
         {

@@ -1,4 +1,4 @@
-import { put, takeEvery, all } from "redux-saga/effects";
+import { put, all,takeLatest } from "redux-saga/effects";
 import * as TenantAppModule from "../TenantAppModule";
 import makeEnvironment from "../EnvironmentTemplateMaker";
 import * as AwsAppSaga from "../../aws/AwsAppSaga";
@@ -15,6 +15,10 @@ function* handleRequestNewEnv(action) {
     type: TenantAppModule.NEW_ENV_SUCCESS,
     environment: ret,
   });
+  yield put({
+    type: TenantAppModule.UPDATE_REQUEST,
+    data: tenant,
+  });
 }
 
 function* handleRequestGetOperation(action) {
@@ -28,29 +32,24 @@ function* handleRequestGetOperation(action) {
     operations: operations,
     envIndex: envIndex,
   });
+  yield put({
+    type: TenantAppModule.UPDATE_REQUEST,
+    data: tenant,
+  });
 }
 
 
 function* mySaga() {
   all(
-    yield takeEvery(TenantAppModule.GET_LIST_REQUEST, handleRequestList),
-    yield takeEvery(TenantAppModule.GET_DETAIL_REQUEST, table.handleRequestData),
-    yield takeEvery(TenantAppModule.UPDATE_REQUEST, table.handleRequestUpdate),
-    yield takeEvery(TenantAppModule.ADD_REQUEST, table.handleRequestAdd),
-    yield takeEvery(TenantAppModule.DEL_REQUEST, table.handleRequestDel),
-    yield takeEvery(TenantAppModule.NEW_ENV_REQUEST, handleRequestNewEnv),
-    yield takeEvery(
-      TenantAppModule.GET_OPERATION_REQUEST,
-      handleRequestGetOperation
-    ),
-    yield takeEvery(
-      TenantAppModule.ATTACH_AWS_REQUEST,
-      AwsAppSaga.handleAttachByTag
-    ),
-    yield takeEvery(
-      TenantAppModule.INVOKE_OPERATION_REQUEST,
-      handleInvokeOperation
-    )
+    yield takeLatest(TenantAppModule.GET_LIST_REQUEST, handleRequestList),
+    yield takeLatest(TenantAppModule.GET_DETAIL_REQUEST, table.handleRequestData),
+    yield takeLatest(TenantAppModule.UPDATE_REQUEST, table.handleRequestUpdate),
+    yield takeLatest(TenantAppModule.ADD_REQUEST, table.handleRequestAdd),
+    yield takeLatest(TenantAppModule.DEL_REQUEST, table.handleRequestDel),
+    yield takeLatest(TenantAppModule.NEW_ENV_REQUEST, handleRequestNewEnv),
+    yield takeLatest(TenantAppModule.GET_OPERATION_REQUEST, handleRequestGetOperation),
+    yield takeLatest(TenantAppModule.ATTACH_AWS_REQUEST, AwsAppSaga.handleAttachByTag),
+    yield takeLatest(TenantAppModule.INVOKE_OPERATION_REQUEST, handleInvokeOperation)
   );
 }
 

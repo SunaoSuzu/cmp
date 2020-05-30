@@ -10,23 +10,26 @@
  **/
 const products = {
     99 : {
-        suffix  : "-app0",
+        suffix  : "-spring",
         ap : {
             canDistribute     : true  ,   //APは冗長化可能か
             isStateless       : false ,   //うーーん。冗長化方法みたいなのが良いかな
             canDocker         : true  ,   //
-            healthCheckUrl    : "/index.html",
-            sn                : "app0-ap",
+            healthCheckUrl    : "/currentversion",
+            sn                : "spring-ap",
             stack             : "RyoSpringAp",
             launch : {
-                ImageId      : "ami-03e4521d84f084007",
+                ImageId      : "ami-08cb2a57735400567",
                 InstanceType : "t2.micro",
                 KeyName      : "sunao",
+                UserData     : "#!/bin/bash\n" +
+                    "cd /var/tmp/\n" +
+                    "bash start.sh\n",
             },
             InstanceMonitoring: "false"
         },
         db : {
-            sn            : "app0-db",
+            sn            : "spring-db",
             stack             : "RyoSpringDb",
             launch: {
                 ImageId      : "ami-03e4521d84f084007",
@@ -38,7 +41,7 @@ const products = {
             },
         },
         bs : {
-            sn            : "app0-bs",
+            sn            : "spring-bs",
             stack             : "RyoSpringBs",
             launch: {
                 ImageId      : "ami-03e4521d84f084007",
@@ -47,7 +50,7 @@ const products = {
             },
         },
         ss : {
-            sn            : "app0-ss",
+            sn            : "spring-ss",
             stack             : "RyoSpringSS",
             launch: {
                 ImageId      : "ami-03e4521d84f084007",
