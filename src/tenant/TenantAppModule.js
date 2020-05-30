@@ -276,6 +276,7 @@ export default function reducer(state = initialState, action) {
       let env = tenantObj.environments[action.envIndex];
       delete env.operations;
       delete env.resources;
+      delete env.stack;
       env.status = CommonCost.STATUS_DRAFT;
       return { ...state, invokeOperation: loadSuccess, data: tenantObj };
     }
