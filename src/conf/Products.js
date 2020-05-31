@@ -12,9 +12,9 @@ const products = {
     99 : {
         suffix  : "-spring",
         ap : {
-            canDistribute     : true  ,   //APは冗長化可能か
-            isStateless       : false ,   //うーーん。冗長化方法みたいなのが良いかな
-            canDocker         : true  ,   //
+            canDistribute     : true  ,   //特にまだ使われてない
+            isStateless       : false ,   //特にまだ使われてない
+            canDocker         : true  ,   //特にまだ使われてない
             healthCheckUrl    : "/currentversion",
             sn                : "spring-ap",
             stack             : "RyoSpringAp",
@@ -35,6 +35,7 @@ const products = {
                 ImageId      : "ami-03e4521d84f084007",
                 InstanceType : "t2.micro",
                 KeyName      : "sunao",
+                UserData     : "ls -l",
                 BlockDeviceMappings : [
                     {DeviceName: "/dev/sdg" , Ebs:{VolumeSize:"1" , VolumeType: "gp2"}},
                 ],
@@ -46,6 +47,7 @@ const products = {
             launch: {
                 ImageId      : "ami-03e4521d84f084007",
                 InstanceType : "t2.micro",
+                UserData     : "ls -l",
                 KeyName      : "sunao",
             },
         },
@@ -55,12 +57,13 @@ const products = {
             launch: {
                 ImageId      : "ami-03e4521d84f084007",
                 InstanceType : "t2.micro",
+                UserData     : "ls -l",
                 KeyName      : "sunao",
             },
         },
         efs : {
             stack             : "RyoSpringEFS",
-            sn            : "efs",
+            sn            : "spring-efs",
             launch: {
                 PerformanceMode      : "generalPurpose",
                 Encrypted : "true",

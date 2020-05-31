@@ -150,7 +150,7 @@ exports.convert = function (vpc) {
                 "SecurityGroupIds": app.db.securityGroupStack.map( stack => ({ "Ref" : stack})),
                 "SubnetId": {"Ref": app.db.subnetStack},
                 "Tags" : app.db.tags.concat({Key: "Name", Value: app.db.name}),
-                "UserData" : {"Fn::Base64": "ls -l"},
+                "UserData" : {"Fn::Base64": app.db.launch.UserData},
             }
         }
         resources[app.db.stack + "PrivateDNS"]={
@@ -167,32 +167,65 @@ exports.convert = function (vpc) {
                 ]
             }
         }
-        resources[app.bs.stack]={
-            "Type" : "AWS::EC2::Instance",
-            "Properties" : {
-                ...app.bs.launch,
-                "SecurityGroupIds": app.bs.securityGroupStack.map( stack => ({ "Ref" : stack})),
-                "SubnetId": {"Ref": app.bs.subnetStack},
-                "Tags" : app.bs.tags.concat({Key: "Name", Value: app.bs.name}),
-                "UserData" : {"Fn::Base64": "ls -l"},
+        //BS
+        if(app.bs !== undefined) {
+            resources[app.bs.stack]={
+                "Type" : "AWS::EC2::Instance",
+                "Properties" : {
+                    ...app.bs.launch,
+                    "SecurityGroupIds": app.bs.securityGroupStack.map( stack => ({ "Ref" : stack})),
+                    "SubnetId": {"Ref": app.bs.subnetStack},
+                    "Tags" : app.bs.tags.concat({Key: "Name", Value: app.bs.name}),
+                    "UserData" : {"Fn::Base64": app.bs.launch.UserData},
+                }
+            }
+            resources[app.bs.stack + "PrivateDNS"] = {
+                "Type": "AWS::Route53::RecordSet",
+                "DependsOn": vpc.stack + "InternalDns",
+                "Properties": {
+                    "HostedZoneName": vpc.hostedZone + ".",
+                    "Comment": "DNS name for DB",
+                    "Name": app.bs.internalDomain,
+                    "Type": "CNAME",
+                    "TTL": "300",
+                    "ResourceRecords": [
+                        {"Fn::GetAtt": [app.bs.stack, "PrivateDnsName"]}
+                    ]
+                }
             }
         }
-        resources[app.bs.stack + "PrivateDNS"]={
-            "Type" : "AWS::Route53::RecordSet",
-            "DependsOn" : vpc.stack + "InternalDns",
-            "Properties" : {
-                "HostedZoneName" : vpc.hostedZone + ".",
-                "Comment" : "DNS name for DB",
-                "Name" : app.bs.internalDomain,
-                "Type" : "CNAME",
-                "TTL" : "300",
-                "ResourceRecords" : [
-                    { "Fn::GetAtt" : [ app.bs.stack, "PrivateDnsName" ] }
-                ]
+        //EFS
+        if(app.efs !== undefined){
+            resources[app.efs.stack]= {
+                "Type": "AWS::EFS::FileSystem",
+                "Properties": {
+                    ...app.efs.launch,
+                    "FileSystemTags": vpc.tags.concat({Key: "Name", Value: vpc.name + app.efs.sn}),
+                }
+            }
+            app.efs.subnetsStack.forEach( stack => {
+                resources[stack + "MountTarget"]= {
+                    "Type": "AWS::EFS::MountTarget",
+                    "Properties": {
+                        "FileSystemId": {"Ref": app.efs.stack},
+                        "SubnetId": {"Ref": stack},
+                        "SecurityGroups": app.bs.securityGroupStack.map( stack => ({ "Ref" : stack})),
+                    }
+                }
+            })
+            resources[app.efs.stack + "PrivateDNS"]= {
+                "Type": "AWS::Route53::RecordSet",
+                "DependsOn": vpc.stack + "InternalDns",
+                "Properties": {
+                    "HostedZoneName": vpc.hostedZone + ".",
+                    "Comment": "DNS name for EFS",
+                    "Name": app.efs.internalDomain,
+                    "Type": "CNAME",
+                    "TTL": "300",
+                    "ResourceRecords": [{"Fn::Sub": "${" + app.efs.stack + "}.efs.${AWS::Region}.amazonaws.com"}]
+                }
             }
         }
-
-
 
         resources[app.ap.stack + "PublicDNS"]={
             "Type" : "AWS::Route53::RecordSet",
@@ -203,16 +236,14 @@ exports.convert = function (vpc) {
                 "Name" : app.ap.domain,
                 "Type" : "CNAME",
                 "TTL" : "300",
-                "ResourceRecords" : [
-                    { "Fn::GetAtt" : [ vpc.lb.stack, "DNSName" ] }
-                ]
+                "ResourceRecords" : [{ "Fn::GetAtt" : [ vpc.lb.stack, "DNSName" ] }]
             }
         }
     })
 
     return {
         "AWSTemplateFormatVersion": "2010-09-09",
-        "Description": "Sunao Test name=" + vpc.name,
+        "Description": vpc.name,
         Resources : resources
     };
 }

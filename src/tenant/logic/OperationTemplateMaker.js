@@ -74,12 +74,27 @@ function OperationTemplateMaker(tenant, environment) {
     const webSecurityGroupName  = namePrefix + "-sg-web-publish";
     const webSecurityIngressPtn = SecurityGroup.ApIngressPattern.both;
     const webSecurityGroup      = {
-        stack : "webSecurityGroupName",
+        stack : "webPublishSecurityGroup",
         GroupName   : webSecurityGroupName,
         Description : "for web-publish of ap",
         ingress : webSecurityIngressPtn,
     };
     apSecurityGroups.push(webSecurityGroup);
+
+    const landscapeGroup      = {
+        stack : "landscapeGroup",
+        GroupName   : "landscapeGroup",
+        Description : "for grouping landscape",
+        ingress : [
+            {
+                toMyGroup : true,
+                IpProtocol: "-1",
+                FromPort: -1,
+                ToPort: -1,
+            },
+        ],
+    };
+    apSecurityGroups.push(landscapeGroup);
 
     //public subnetを作る
     for (let i = 0; i < aznum ; i++) {
@@ -224,7 +239,7 @@ function OperationTemplateMaker(tenant, environment) {
             autoScale         : true,
             alb               : true,
             name              : namePrefix + config.ap.sn,
-            SecurityGroupNames: [webSecurityGroupName],
+            SecurityGroupNames: [webSecurityGroupName,landscapeGroup],
             subnets: privateSubnetNames,
             securityGroupStack: [webSecurityGroup.stack],
             subnetsStack: privateSubnetStacks,
@@ -239,9 +254,9 @@ function OperationTemplateMaker(tenant, environment) {
             internalDomain    : config.db.sn + "." +  subDomain + "." + internalDomainRoot,
             name              : namePrefix + config.db.sn,
             launch : {...config.db.launch },
-            SecurityGroupNames: [webSecurityGroupName],
+            SecurityGroupNames: [webSecurityGroupName,landscapeGroup],
             SubnetName : privateSubnetNames[0] ,
-            securityGroupStack: [webSecurityGroup.stack],
+            securityGroupStack: [webSecurityGroup.stack,landscapeGroup.stack],
             subnetStack: privateSubnets[0].stack,
             efs : true,
             efsDomain: subDomain +  config.db.suffix + "." + internalDomainRoot,
@@ -253,9 +268,9 @@ function OperationTemplateMaker(tenant, environment) {
             internalDomain    : config.bs.sn + "." +  subDomain + "." + internalDomainRoot,
             name              : namePrefix + config.bs.sn,
             launch : {...config.bs.launch },
-            SecurityGroupNames: [webSecurityGroupName],
+            SecurityGroupNames: [landscapeGroup],
             SubnetName : privateSubnetNames[0] ,
-            securityGroupStack: [webSecurityGroup.stack],
+            securityGroupStack: [landscapeGroup.stack],
             subnetStack: privateSubnets[0].stack,
             tags:managementTag,
         }
@@ -265,9 +280,9 @@ function OperationTemplateMaker(tenant, environment) {
             internalDomain    : config.ss.sn + "." +  subDomain + "." + internalDomainRoot,
             name              : namePrefix + config.ss.sn,
             launch : {...config.ss.launch },
-            SecurityGroupNames: [webSecurityGroupName],
+            SecurityGroupNames: [landscapeGroup],
             SubnetName : privateSubnetNames[0] ,
-            securityGroupStack: [webSecurityGroup.stack],
+            securityGroupStack: [landscapeGroup.stack],
             subnetStack: privateSubnets[0].stack,
             tags:managementTag,
         }
@@ -279,6 +294,8 @@ function OperationTemplateMaker(tenant, environment) {
             launch : {...config.efs.launch },
             SubnetNames : privateSubnetNames ,
             subnetsStack: privateSubnetStacks,
+            SecurityGroupNames: [landscapeGroup],
+            securityGroupStack: [landscapeGroup.stack],
             tags:managementTag,
         }
 

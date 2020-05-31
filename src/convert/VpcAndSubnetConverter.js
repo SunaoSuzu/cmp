@@ -65,7 +65,7 @@ exports.convert = function (vpc) {
                     }
                 }
             }
-            if(vpc.nat){
+            if(vpc.nat&&subnet.role !== "bastion"){
                 resources[subnet.stack + "NatEip"]={
                     "Type": "AWS::EC2::EIP",
                     "Properties": {
