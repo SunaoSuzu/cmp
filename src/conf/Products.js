@@ -41,34 +41,6 @@ const products = {
                 ],
             },
         },
-        bs : {
-            sn            : "spring-bs",
-            stack             : "RyoSpringBs",
-            launch: {
-                ImageId      : "ami-03e4521d84f084007",
-                InstanceType : "t2.micro",
-                UserData     : "ls -l",
-                KeyName      : "sunao",
-            },
-        },
-        ss : {
-            sn            : "spring-ss",
-            stack             : "RyoSpringSS",
-            launch: {
-                ImageId      : "ami-03e4521d84f084007",
-                InstanceType : "t2.micro",
-                UserData     : "ls -l",
-                KeyName      : "sunao",
-            },
-        },
-        efs : {
-            stack             : "RyoSpringEFS",
-            sn            : "spring-efs",
-            launch: {
-                PerformanceMode      : "generalPurpose",
-                Encrypted : "true",
-            },
-        },
     }
 }
 function getById(id){

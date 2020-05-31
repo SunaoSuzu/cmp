@@ -263,52 +263,61 @@ function OperationTemplateMaker(tenant, environment) {
             tags:managementTag,
         }
 
-        const bs = {
-            stack             : config.bs.stack,
-            internalDomain    : config.bs.sn + "." +  subDomain + "." + internalDomainRoot,
-            name              : namePrefix + config.bs.sn,
-            launch : {...config.bs.launch },
-            SecurityGroupNames: [landscapeGroup],
-            SubnetName : privateSubnetNames[0] ,
-            securityGroupStack: [landscapeGroup.stack],
-            subnetStack: privateSubnets[0].stack,
-            tags:managementTag,
+        let bs = undefined;
+        if(config.bs!==undefined){
+            bs = {
+                stack             : config.bs.stack,
+                internalDomain    : config.bs.sn + "." +  subDomain + "." + internalDomainRoot,
+                name              : namePrefix + config.bs.sn,
+                launch : {...config.bs.launch },
+                SecurityGroupNames: [landscapeGroup],
+                SubnetName : privateSubnetNames[0] ,
+                securityGroupStack: [landscapeGroup.stack],
+                subnetStack: privateSubnets[0].stack,
+                tags:managementTag,
+            }
         }
 
-        const search = {
-            stack             : config.ss.stack,
-            internalDomain    : config.ss.sn + "." +  subDomain + "." + internalDomainRoot,
-            name              : namePrefix + config.ss.sn,
-            launch : {...config.ss.launch },
-            SecurityGroupNames: [landscapeGroup],
-            SubnetName : privateSubnetNames[0] ,
-            securityGroupStack: [landscapeGroup.stack],
-            subnetStack: privateSubnets[0].stack,
-            tags:managementTag,
+
+        let ss = undefined;
+        if(config.ss!==undefined) {
+            ss = {
+                stack: config.ss.stack,
+                internalDomain: config.ss.sn + "." + subDomain + "." + internalDomainRoot,
+                name: namePrefix + config.ss.sn,
+                launch: {...config.ss.launch},
+                SecurityGroupNames: [landscapeGroup],
+                SubnetName: privateSubnetNames[0],
+                securityGroupStack: [landscapeGroup.stack],
+                subnetStack: privateSubnets[0].stack,
+                tags: managementTag,
+            }
+        }
+        let efs = undefined;
+        if(config.efs!==undefined) {
+            efs = {
+                stack: config.efs.stack,
+                internalDomain: config.efs.sn + "." + subDomain + "." + internalDomainRoot,
+                name: namePrefix + config.efs.sn,
+                launch: {...config.efs.launch},
+                SubnetNames: privateSubnetNames,
+                subnetsStack: privateSubnetStacks,
+                SecurityGroupNames: [landscapeGroup],
+                securityGroupStack: [landscapeGroup.stack],
+                tags: managementTag,
+            }
         }
 
-        const efs = {
-            stack             : config.efs.stack,
-            internalDomain    : config.efs.sn + "." +  subDomain + "." + internalDomainRoot,
-            name              : namePrefix + config.efs.sn,
-            launch : {...config.efs.launch },
-            SubnetNames : privateSubnetNames ,
-            subnetsStack: privateSubnetStacks,
-            SecurityGroupNames: [landscapeGroup],
-            securityGroupStack: [landscapeGroup.stack],
-            tags:managementTag,
-        }
+        if(sshSgName!==null)ap.SecurityGroupNames.push(sshSgName);
+        if(sshSgName!==null)db.SecurityGroupNames.push(sshSgName);
+        if(sshSgName!==null&&bs!==undefined)bs.SecurityGroupNames.push(sshSgName);
+        if(sshSgName!==null&&ss!==undefined)ss.SecurityGroupNames.push(sshSgName);
+        if(sshSgStack!==null)ap.securityGroupStack.push(sshSgStack);
+        if(sshSgStack!==null)db.securityGroupStack.push(sshSgStack);
+        if(sshSgStack!==null&&bs!==undefined)bs.securityGroupStack.push(sshSgStack);
+        if(sshSgStack!==null&&ss!==undefined)ss.securityGroupStack.push(sshSgStack);
 
-        if(sshSgName!=null)ap.SecurityGroupNames.push(sshSgName);
-        if(sshSgName!=null)db.SecurityGroupNames.push(sshSgName);
-        if(sshSgName!=null)bs.SecurityGroupNames.push(sshSgName);
-        if(sshSgName!=null)search.SecurityGroupNames.push(sshSgName);
-        if(sshSgStack!=null)ap.securityGroupStack.push(sshSgStack);
-        if(sshSgStack!=null)db.securityGroupStack.push(sshSgStack);
-        if(sshSgStack!=null)bs.securityGroupStack.push(sshSgStack);
-        if(sshSgStack!=null)search.securityGroupStack.push(sshSgStack);
-
-        apps.push({ product : product ,ap : ap, db : db , bs : bs, search : search , efs : efs });
+        apps.push({ product : product ,ap : ap, db : db , bs : bs, ss : ss , efs : efs });
     })
 
     lb = {

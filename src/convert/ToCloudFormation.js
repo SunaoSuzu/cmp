@@ -194,6 +194,33 @@ exports.convert = function (vpc) {
                 }
             }
         }
+        //SS
+        if(app.ss !== undefined) {
+            resources[app.ss.stack]={
+                "Type" : "AWS::EC2::Instance",
+                "Properties" : {
+                    ...app.ss.launch,
+                    "SecurityGroupIds": app.ss.securityGroupStack.map( stack => ({ "Ref" : stack})),
+                    "SubnetId": {"Ref": app.ss.subnetStack},
+                    "Tags" : app.ss.tags.concat({Key: "Name", Value: app.ss.name}),
+                    "UserData" : {"Fn::Base64": app.ss.launch.UserData},
+                }
+            }
+            resources[app.ss.stack + "PrivateDNS"] = {
+                "Type": "AWS::Route53::RecordSet",
+                "DependsOn": vpc.stack + "InternalDns",
+                "Properties": {
+                    "HostedZoneName": vpc.hostedZone + ".",
+                    "Comment": "DNS name for DB",
+                    "Name": app.ss.internalDomain,
+                    "Type": "CNAME",
+                    "TTL": "300",
+                    "ResourceRecords": [
+                        {"Fn::GetAtt": [app.ss.stack, "PrivateDnsName"]}
+                    ]
+                }
+            }
+        }
         //EFS
         if(app.efs !== undefined){
             resources[app.efs.stack]= {
