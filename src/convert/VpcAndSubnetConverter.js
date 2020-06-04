@@ -1,6 +1,7 @@
 const region = require("../conf/Region")
 exports.convert = function (vpc) {
     const resources = {};
+    const privateSubnetRouteTables = [];
     resources[vpc.stack] = {
         "Type": "AWS::EC2::VPC",
         "Properties": {
@@ -65,7 +66,7 @@ exports.convert = function (vpc) {
                     }
                 }
             }
-            if(vpc.nat&&subnet.role !== "bastion"){
+            if(vpc.nat &&subnet.role !== "bastion"){
                 resources[subnet.stack + "NatEip"]={
                     "Type": "AWS::EC2::EIP",
                     "Properties": {
@@ -84,12 +85,14 @@ exports.convert = function (vpc) {
             }
         }else{
             if(vpc.nat){
+                const stackName = subnet.stack + "RouteTable";
                 resources[subnet.stack + "RouteTable"]={
                     "Type": "AWS::EC2::RouteTable",
                     "Properties": {"VpcId": {"Ref": vpc.stack},
                         "Tags": subnet.tags.concat({Key: "Name", Value: subnet.subnetName + "RouteTable"}),
                     }
                 }
+                privateSubnetRouteTables.push(stackName);
                 resources[subnet.stack + "Route"]={
                     "Type": "AWS::EC2::Route",
                     "Properties": {
@@ -115,13 +118,46 @@ exports.convert = function (vpc) {
             "Name": vpc.hostedZone,
             "VPCs": [
                 {
-                    "VPCId": {
-                        "Ref": vpc.stack
-                    },
+                    "VPCId": {"Ref": vpc.stack},
                     "VPCRegion": region.name
                 }
             ]
         }
     }
+    //必要なVpcEndPointを作る(s3はGateWay型)
+    resources[vpc.stack + "EndPointS3"] = {
+        "Type": "AWS::EC2::VPCEndpoint",
+        "Properties": {
+            "RouteTableIds": privateSubnetRouteTables.map( t => ({Ref:t})).concat({"Ref": "publicRouteTable"}),
+            "ServiceName": {"Fn::Sub": "com.amazonaws.${AWS::Region}.s3"},
+            "VpcId": {"Ref": vpc.stack},
+        }
+    }
+
+    //必要なVpcEndPointを作る(logはPrivateLogs)
+    const endpoints = [
+        {name:"EndPointLogs" , sn : "logs" , SubnetIds : vpc.privateSubnetStacks },
+        {name:"EndPointMonitoring" , sn : "monitoring" , SubnetIds : vpc.privateSubnetStacks },
+        {name:"EndPointEvents" , sn : "events" , SubnetIds : vpc.privateSubnetStacks },
+        {name:"EndPointSSM" , sn : "ssm" , SubnetIds : vpc.privateSubnetStacks },
+        {name:"EndPointKMS" , sn : "kms" , SubnetIds : vpc.privateSubnetStacks },
+        {name:"EndPointEFS" , sn : "elasticfilesystem" , SubnetIds : vpc.privateSubnetStacks },
+        ];
+
+    endpoints.forEach( point => {
+        const service = "com.amazonaws.${AWS::Region}." + point.sn;
+        resources[vpc.stack + point.name] = {
+            "Type": "AWS::EC2::VPCEndpoint",
+            "Properties": {
+                "VpcEndpointType" : "Interface",
+                "PrivateDnsEnabled": "true",
+                "SubnetIds": point.SubnetIds.map( t => ({Ref:t})),
+                "SecurityGroupIds" : [{"Ref" : vpc.landscapeGroupStack}],
+                "ServiceName": {"Fn::Sub": service},
+                "VpcId": {"Ref": vpc.stack},
+            }
+        }
+    })
+
     return resources;
 }

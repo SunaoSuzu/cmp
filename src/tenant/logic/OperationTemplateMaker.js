@@ -103,7 +103,7 @@ function OperationTemplateMaker(tenant, environment) {
             subnetName : subnetName,
             stack : "publicSubnet" + i,
             AvailabilityZone : availabilityZones[i] ,
-            cidr : "172.20." + ( ++counter ) + ".0/28" ,
+            cidr : "172.20." + ( ++counter ) + ".0/24" ,
             attachIgw : true,
             type : "public",
             role : "app",
@@ -123,7 +123,7 @@ function OperationTemplateMaker(tenant, environment) {
             publicSubnetName : psub.subnetName,
             publicSubnetStack : psub.stack,
             AvailabilityZone: availabilityZones[i],
-            cidr: "172.20." + (++counter) + ".0/28",
+            cidr: "172.20." + (++counter) + ".0/24",
             attachIgw: false,
             nat : strategy.network.nat,
             type : "private",
@@ -196,7 +196,7 @@ function OperationTemplateMaker(tenant, environment) {
             subnetName : subnetName,
             stack : "BastionSubnet",
             AvailabilityZone : availabilityZones[0] ,
-            cidr : "172.20." + ( ++counter ) + ".0/28" ,
+            cidr : "172.20." + ( ++counter ) + ".0/24" ,
             attachIgw : true,
             role : "bastion",
             tags : managementTag,
@@ -333,9 +333,14 @@ function OperationTemplateMaker(tenant, environment) {
 
     //組み立て
     resources.subnets=resources.subnets.concat(publicSubnets).concat(privateSubnets);
+    resources.publicSubnetStacks=publicSubnetStacks;
+    resources.privateSubnetStacks=publicSubnetStacks;
+    resources.subnetStacks=resources.subnets.map( subnet => subnet.stack);
+    resources.landscapeGroupStack=landscapeGroup.stack;
     resources.securityGroups=resources.securityGroups.concat(apSecurityGroups);
     resources.lb = lb;
     resources.apps = apps;
+
 
     return { resources, operations };
 }
