@@ -139,10 +139,8 @@ exports.convert = function (vpc) {
         {name:"EndPointLogs" , sn : "logs" , SubnetIds : vpc.privateSubnetStacks },
         {name:"EndPointMonitoring" , sn : "monitoring" , SubnetIds : vpc.privateSubnetStacks },
         {name:"EndPointEvents" , sn : "events" , SubnetIds : vpc.privateSubnetStacks },
-        {name:"EndPointSSM" , sn : "ssm" , SubnetIds : vpc.privateSubnetStacks },
-        {name:"EndPointKMS" , sn : "kms" , SubnetIds : vpc.privateSubnetStacks },
         {name:"EndPointEFS" , sn : "elasticfilesystem" , SubnetIds : vpc.privateSubnetStacks },
-        ];
+    ];
 
     endpoints.forEach( point => {
         const service = "com.amazonaws.${AWS::Region}." + point.sn;
