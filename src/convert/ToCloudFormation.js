@@ -4,6 +4,7 @@
 const network = require('./VpcAndSubnetConverter');
 const sg = require('./SecurityGroupsConverter');
 const domain = require("../conf/Domain")
+const dateUtil = require("../util/DateUtils");
 
 
 exports.convert = function (vpc) {
@@ -143,6 +144,30 @@ exports.convert = function (vpc) {
             }
 
         }
+        //夜間停止
+        const g = dateUtil.getUCDSdate();
+        resources[app.ap.stack + "AutoDailyStop"]={
+            "Type" : "AWS::AutoScaling::ScheduledAction",
+            "Properties" : {
+            "AutoScalingGroupName" : {"Ref":app.ap.stack + "Auto"},
+                "MaxSize" : 0,
+                "MinSize" : 0,
+//                "Recurrence" : "0 22 * * *",
+                "StartTime" : dateUtil.getUCDSdate(10)
+            }
+        }
+        resources[app.ap.stack + "AutoDailyStart"]={
+            "Type" : "AWS::AutoScaling::ScheduledAction",
+            "Properties" : {
+                "AutoScalingGroupName" : {"Ref":app.ap.stack + "Auto"},
+                "MaxSize" : 1,
+                "MinSize" : 1,
+//                "Recurrence" : "0 22 * * *",
+                "StartTime" : dateUtil.getUCDSdate(5)
+            }
+        }
+
+
         resources[app.db.stack]={
             "Type" : "AWS::EC2::Instance",
             "Properties" : {

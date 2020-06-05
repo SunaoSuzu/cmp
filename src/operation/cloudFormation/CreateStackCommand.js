@@ -38,6 +38,39 @@ exports.prepare = function (config,name,body,deleteIfExist) {
 
 }
 
+exports.changeSet = function (config,name,setName , body) {
+    console.log("config=" + JSON.stringify(config));
+    console.log("name=" + name);
+
+    const cloudFormation = new AWS.CloudFormation(config);
+    try{
+
+        console.log("createChangeSet=" + name);
+        return cloudFormation.createChangeSet({
+            StackName: name,
+            ChangeSetName : setName,
+            TemplateBody : body,
+            ChangeSetType: "UPDATE",
+        } ).promise().then(function (result) {
+            console.log("waitFor=" + name);
+            return cloudFormation.waitFor("changeSetCreateComplete" , {StackName: name,ChangeSetName: setName}).promise()
+        }).then(function (result) {
+            console.log("describeChangeSet=" + name);
+            return cloudFormation.describeChangeSet({StackName: name,ChangeSetName: setName}).promise();
+        }).then(function (result) {
+            console.log("result=" + name);
+            console.log(JSON.stringify(result));
+            console.log(JSON.stringify(result.Changes));
+        }).catch(function (e) {
+            console.log(e)
+        })
+    }catch (e) {
+        console.log(e);
+    }
+
+
+}
+
 exports.watch = function (config,name) {
     console.log("config=" + JSON.stringify(config));
     console.log("name=" + name);

@@ -23,6 +23,7 @@ import DownloadLink from "react-download-link";
 import * as CommonCost from "../../common/CommonConst"
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import DeleteIcon from '@material-ui/icons/Delete';
+import converter from "../../convert/ToCloudFormation";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -182,6 +183,11 @@ const AWSPanel = props => {
                 label="JSON(開発用)"
                 filename="env.json"
                 exportFile={() => JSON.stringify(env.resources) }
+            />
+            <DownloadLink
+                label="Template"
+                filename="template.json"
+                exportFile={() => JSON.stringify(converter.convert(env.resources)) }
             />
 
             {env.resources != null ? (
