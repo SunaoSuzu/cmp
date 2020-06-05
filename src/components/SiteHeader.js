@@ -11,7 +11,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/SearchOutlined";
 import AccountCircle from "@material-ui/icons/AccountCircleOutlined";
-import NotificationsIcon from "@material-ui/icons/NotificationsOutlined";
+import CloudQueueIcon from '@material-ui/icons/CloudQueue';
 import MoreIcon from "@material-ui/icons/MoreVertOutlined";
 import SuTechIcon from "./SuTechIcon";
 import { Link } from "react-router-dom";
@@ -183,10 +183,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SiteHeader(prop) {
+export default function SiteHeader(props) {
   const classes = useStyles();
-  const { selectMenu, selectReport } = prop;
-  const { functionType, selectedMenuId, selectedReportId } = prop;
+  const { selectMenu, selectReport } = props;
+  const { functionType, selectedMenuId, selectedReportId } = props;
+  const {targetOperations} = props;
 
   const anchor = "left";
   const [state, setState] = React.useState({
@@ -209,8 +210,19 @@ export default function SiteHeader(prop) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
+  const [anchorNotify, setAnchorNotify] = React.useState(null);
+
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const isNotificationOpen = Boolean(anchorNotify);
+
+  const handleNotificationOpen = (event) => {
+    console.log("handleNotificationOpen");
+    setAnchorNotify(event.currentTarget);
+  };
+  const handleNotificationClose = () => {
+    setAnchorNotify(null);
+  };
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -241,18 +253,37 @@ export default function SiteHeader(prop) {
       onClose={handleMenuClose}
     >
       {/* modified by asaka 0513 */}
-      <MenuItem onClick={prop.selectProfile} component={Link} to="/profile">
+      <MenuItem onClick={props.selectProfile} component={Link} to="/profile">
         Profile
       </MenuItem>
-      <MenuItem onClick={prop.selectAccount} component={Link} to="/account">
+      <MenuItem onClick={props.selectAccount} component={Link} to="/account">
         My account
       </MenuItem>
       <MenuItem onClick={handleMenuClose}>Close</MenuItem>
-      <MenuItem onClick={prop.selectLogout} component={Link} to="/login">
+      <MenuItem onClick={props.selectLogout} component={Link} to="/login">
         Logout
       </MenuItem>
       {/* modified by asaka 0513 */}
     </Menu>
+  );
+
+  const notifyId = "notification-menu";
+  const noticications = (
+      <Menu
+          anchorEl={anchorNotify}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          id={notifyId}
+          keepMounted
+          transformOrigin={{ vertical: "top", horizontal: "right" }}
+          open={isNotificationOpen}
+          onClose={handleNotificationClose}
+      >
+        {
+          targetOperations.map( job => (
+              <MenuItem onClick={handleNotificationClose}>{job.jobId}</MenuItem>
+          ))
+        }
+      </Menu>
   );
 
   const open = state[anchor];
@@ -268,10 +299,10 @@ export default function SiteHeader(prop) {
       onClose={handleMobileMenuClose}
     >
       <Link to="/notice">
-        <MenuItem onClick={prop.selectNotice}>
+        <MenuItem onClick={handleNotificationOpen}>
           <IconButton aria-label="show 4 new mails" color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={targetOperations.length} color="secondary">
+              <CloudQueueIcon />
             </Badge>
           </IconButton>
           <p>Messages</p>
@@ -299,7 +330,7 @@ export default function SiteHeader(prop) {
       >
         <Toolbar className={classes.toolbar}>
           {/* <Link to="/home"> */}
-          <SuTechIcon onClick={prop.selectHome} component={Link} to="/home" />
+          <SuTechIcon onClick={props.selectHome} component={Link} to="/home" />
           {/* </Link> */}
           <div className={classes.grow} />
           <div className={classes.search}>
@@ -320,10 +351,10 @@ export default function SiteHeader(prop) {
             <IconButton
               aria-label="show 4 new mails"
               color="inherit"
-              onClick={prop.selectNotice}
+              onClick={handleNotificationOpen}
             >
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
+              <Badge badgeContent={targetOperations.length} color="secondary">
+                <CloudQueueIcon />
               </Badge>
             </IconButton>
             {/* </Link> */}
@@ -351,6 +382,7 @@ export default function SiteHeader(prop) {
           </div>
         </Toolbar>
       </AppBar>
+      {noticications}
       {renderMobileMenu}
       {renderMenu}
       <Drawer

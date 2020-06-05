@@ -9,16 +9,27 @@ const LOGOUT = "LOGOUT";
 
 const SUCCESS_AUTH = "SUCCESS_AUTH";
 
+const GET_STATUS    = "GET_STATUS";
+const ON_SUCCESS_GET_STATUS    = "ON_SUCCESS_GET_STATUS";
+const JOB_COMPLETE = "JOB_COMPLETE";
+
+
 const initialState = {
   authorized : false,         //ここも変わるはず
-  userInfo   : null,          //　とりあえず平文でUsreId持っておくけどあとで変える
+  userInfo   : null,          //とりあえず平文でUsreId持っておくけどあとで変える
   functionType: HOME,
   selectedMenuId: null,
   targetReportId: null,
+  targetOperations : [],
 };
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
+    case ON_SUCCESS_GET_STATUS:
+      console.log(JSON.stringify(action.payload));
+      return {...state , targetOperations : action.payload };
+    case JOB_COMPLETE:
+      return {...state};
     case SUCCESS_AUTH:
       return {
         ...state,
@@ -68,6 +79,13 @@ export default function reducer(state = initialState, action) {
 }
 
 // Action Creators
+export const startMonitor = () => {
+  console.log("startMonitor");
+  return {
+    type: GET_STATUS,
+  };
+};
+
 export const selectMenu = (menu) => {
   return {
     type: MENU,
@@ -125,3 +143,4 @@ export const authSuccess = (uid) => {
     uid : uid,
   };
 };
+

@@ -32,13 +32,14 @@ const Navigation = (props) => {
     selectAccount,
     selectNotice,
     selectSearch,
-    selectLogout
+    selectLogout,
+    startMonitor
   } = props;
 
-  console.log(props);
-
-  const { functionType, selectedMenuId, selectedReportId } = props;
+  const { functionType, selectedMenuId, selectedReportId,targetOperations } = props;
   const { selectMenu, selectReport } = props;
+
+  const [monitor, setMonitor] = React.useState(false);
 
   if (isIOS && isMobile) {
     document.body.classList.add("ios-mobile-view-height");
@@ -55,6 +56,10 @@ const Navigation = (props) => {
   if(!props.authorized){
     return <SignIn authSuccess={authSuccess.bind()}/>;
   }else{
+    if(monitor===false){
+      startMonitor();
+      setMonitor(true);
+    }
     return (
         <React.StrictMode>
           <div className={classes.root}>
@@ -70,6 +75,7 @@ const Navigation = (props) => {
                 selectedReportId={selectedReportId}
                 selectMenu={selectMenu}
                 selectReport={selectReport}
+                targetOperations={targetOperations}
             />
             <main className={classes.content}>
               <div className={classes.appBarSpacer} />

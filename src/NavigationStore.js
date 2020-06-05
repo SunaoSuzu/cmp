@@ -3,22 +3,26 @@ import history from "./asset/history";
 import { createLogger } from "redux-logger";
 import { routerMiddleware, connectRouter } from "connected-react-router";
 import navigationReducer from "./NavigationModule";
+import createSagaMiddleware from "redux-saga";
+import rootSaga from "./notification/saga/Polling";
 
+const sagaMiddleware = createSagaMiddleware();
 const routeMiddleware = routerMiddleware(history);
-
-const middlewares = [routeMiddleware, createLogger()];
+const middlewares = [routeMiddleware,sagaMiddleware, createLogger()];
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export default function configureStore(initialState) {
-  return createStore(
-    combineReducers({
-      router: connectRouter(history),
-      navigationReducer,
-    }),
-    initialState,
-    composeEnhancers(applyMiddleware(...middlewares))
-  );
 
-  //    sagaMiddleware.run(rootSaga);
+    const store =  createStore(
+        combineReducers({
+          router: connectRouter(history),
+          navigationReducer,
+        }),
+        initialState,
+        composeEnhancers(applyMiddleware(...middlewares))
+    );
+
+  sagaMiddleware.run(rootSaga);
+  return store;
 }
 export { history };

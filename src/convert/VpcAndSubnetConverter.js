@@ -124,38 +124,45 @@ exports.convert = function (vpc) {
             ]
         }
     }
-    //必要なVpcEndPointを作る(s3はGateWay型)
-    resources[vpc.stack + "EndPointS3"] = {
-        "Type": "AWS::EC2::VPCEndpoint",
-        "Properties": {
-            "RouteTableIds": privateSubnetRouteTables.map( t => ({Ref:t})).concat({"Ref": "publicRouteTable"}),
-            "ServiceName": {"Fn::Sub": "com.amazonaws.${AWS::Region}.s3"},
-            "VpcId": {"Ref": vpc.stack},
-        }
-    }
 
-    //必要なVpcEndPointを作る(logはPrivateLogs)
-    const endpoints = [
-        {name:"EndPointLogs" , sn : "logs" , SubnetIds : vpc.privateSubnetStacks },
-        {name:"EndPointMonitoring" , sn : "monitoring" , SubnetIds : vpc.privateSubnetStacks },
-        {name:"EndPointEvents" , sn : "events" , SubnetIds : vpc.privateSubnetStacks },
-        {name:"EndPointEFS" , sn : "elasticfilesystem" , SubnetIds : vpc.privateSubnetStacks },
-    ];
-
-    endpoints.forEach( point => {
-        const service = "com.amazonaws.${AWS::Region}." + point.sn;
-        resources[vpc.stack + point.name] = {
+    //TODO ここよく考えて、いずれ個別の設定を持つのかな？
+    //NatがあるからPrivateからインターネットに出れる、
+    //だから、AWSの各種APIへのルートをインターネット経由じゃなくする
+    if(vpc.nat){
+        //必要なVpcEndPointを作る(s3はGateWay型)
+        resources[vpc.stack + "EndPointS3"] = {
             "Type": "AWS::EC2::VPCEndpoint",
             "Properties": {
-                "VpcEndpointType" : "Interface",
-                "PrivateDnsEnabled": "true",
-                "SubnetIds": point.SubnetIds.map( t => ({Ref:t})),
-                "SecurityGroupIds" : [{"Ref" : vpc.landscapeGroupStack}],
-                "ServiceName": {"Fn::Sub": service},
+                "RouteTableIds": privateSubnetRouteTables.map( t => ({Ref:t})).concat({"Ref": "publicRouteTable"}),
+                "ServiceName": {"Fn::Sub": "com.amazonaws.${AWS::Region}.s3"},
                 "VpcId": {"Ref": vpc.stack},
             }
         }
-    })
+
+        //必要なVpcEndPointを作る(logはPrivateLogs)
+        const endpoints = [
+            {name:"EndPointLogs" , sn : "logs" , SubnetIds : vpc.privateSubnetStacks },
+            {name:"EndPointMonitoring" , sn : "monitoring" , SubnetIds : vpc.privateSubnetStacks },
+            {name:"EndPointEvents" , sn : "events" , SubnetIds : vpc.privateSubnetStacks },
+            {name:"EndPointEFS" , sn : "elasticfilesystem" , SubnetIds : vpc.privateSubnetStacks },
+        ];
+
+        endpoints.forEach( point => {
+            const service = "com.amazonaws.${AWS::Region}." + point.sn;
+            resources[vpc.stack + point.name] = {
+                "Type": "AWS::EC2::VPCEndpoint",
+                "Properties": {
+                    "VpcEndpointType" : "Interface",
+                    "PrivateDnsEnabled": "true",
+                    "SubnetIds": point.SubnetIds.map( t => ({Ref:t})),
+                    "SecurityGroupIds" : [{"Ref" : vpc.landscapeGroupStack}],
+                    "ServiceName": {"Fn::Sub": service},
+                    "VpcId": {"Ref": vpc.stack},
+                }
+            }
+        })
+
+    }
 
     return resources;
 }
