@@ -10,11 +10,11 @@ export function* getStatus() {
 }
 
 export function* isComplete(action) {
-    const prev = yield select(state => state.targetOperations);
+    const prev = yield select(state => state.navigationReducer.targetOperations);
     const now  = action.payload;
 
     if(prev.length!==now.length){
-        //いずれなんか目立つ処理をいれる（もう少ししっかり比較する必要もある）
+        console.log("Job数に変更あり！！！！！！");
     }
 
     yield delay(20000);

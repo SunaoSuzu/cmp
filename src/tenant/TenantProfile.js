@@ -6,7 +6,7 @@ import ActionProgress from "../components/ActionProgress";
 
 function TenantProfile(props) {
   const tenantId = props.match.params.tenantId;
-  const { getDetailComplete, requestLoadDetail, updateComplete } = props;
+  const { getDetailComplete, requestLoadDetail, updateComplete,invokeOperation } = props;
 
   switch (getDetailComplete) {
     case tenantAppModule.yet:
@@ -16,7 +16,7 @@ function TenantProfile(props) {
       return <ActionProgress />;
     case tenantAppModule.loadSuccess:
       let Block = null;
-      if (updateComplete === tenantAppModule.syncing) {
+      if (updateComplete === tenantAppModule.syncing||invokeOperation===tenantAppModule.requested) {
         Block= <ActionProgress />;
       }
       return (
@@ -44,6 +44,7 @@ const mapStateToProps = (state) => {
     getDetailComplete: state.getDetailComplete,
     updateComplete: state.updateComplete,
     data: state.data,
+    invokeOperation : state.invokeOperation
   };
 };
 

@@ -26,7 +26,6 @@ const initialState = {
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case ON_SUCCESS_GET_STATUS:
-      console.log(JSON.stringify(action.payload));
       return {...state , targetOperations : action.payload };
     case JOB_COMPLETE:
       return {...state};

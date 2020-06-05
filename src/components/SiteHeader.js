@@ -279,8 +279,8 @@ export default function SiteHeader(props) {
           onClose={handleNotificationClose}
       >
         {
-          targetOperations.map( job => (
-              <MenuItem onClick={handleNotificationClose}>{job.jobId}</MenuItem>
+          targetOperations.map( (job , index) => (
+              <MenuItem key={index} onClick={handleNotificationClose}>{job.jobId}</MenuItem>
           ))
         }
       </Menu>
