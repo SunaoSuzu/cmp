@@ -19,6 +19,7 @@ import Drawer from "@material-ui/core/Drawer";
 import Divider from "@material-ui/core/Divider";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeftOutlined";
 import SideMenu from "./SideMenu";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const drawerWidth = 240;
 
@@ -280,7 +281,7 @@ export default function SiteHeader(props) {
       >
         {
           targetOperations.map( (job , index) => (
-              <MenuItem key={index} onClick={handleNotificationClose}>{job.jobId}</MenuItem>
+              <MenuItem key={index} onClick={handleNotificationClose}><CircularProgress size="1" />{job.jobId}</MenuItem>
           ))
         }
       </Menu>

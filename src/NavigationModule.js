@@ -9,9 +9,9 @@ const LOGOUT = "LOGOUT";
 
 const SUCCESS_AUTH = "SUCCESS_AUTH";
 
-const GET_STATUS    = "GET_STATUS";
-const ON_SUCCESS_GET_STATUS    = "ON_SUCCESS_GET_STATUS";
-const JOB_COMPLETE = "JOB_COMPLETE";
+export const GET_STATUS    = "GET_STATUS";
+export const ON_SUCCESS_GET_STATUS    = "ON_SUCCESS_GET_STATUS";
+export const JOB_UPDATE = "JOB_UPDATE";
 
 
 const initialState = {
@@ -25,10 +25,8 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case ON_SUCCESS_GET_STATUS:
+    case JOB_UPDATE:
       return {...state , targetOperations : action.payload };
-    case JOB_COMPLETE:
-      return {...state};
     case SUCCESS_AUTH:
       return {
         ...state,
