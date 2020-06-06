@@ -4,7 +4,7 @@ import {JOB_UPDATE,ON_SUCCESS_GET_STATUS,GET_STATUS} from "../../NavigationModul
 
 export function* getStatus() {
     yield get({
-        url: `https://9l7wsipahj.execute-api.ap-northeast-1.amazonaws.com/operation`,
+        url: `https://9l7wsipahj.execute-api.ap-northeast-1.amazonaws.com/my.operation`,
         onSuccess: ON_SUCCESS_GET_STATUS,
         onError: "ON_ERROR",
     });

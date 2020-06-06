@@ -26,7 +26,7 @@ const menuIconsDef = {
     menuId: 4,
     caption: "作業予実",
     icon: AssignmentIcon,
-    appTo: "/operation"
+    appTo: "/operation/list"
   },
   5: { menuId: 5, caption: "通知", icon: NotificationsIcon, appTo: "/home" },
   11: {

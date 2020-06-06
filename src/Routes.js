@@ -7,7 +7,7 @@ import NoticeApp from "./notice/NoticeApp";
 import ActivityApp from "./activity/ActivityApp";
 import TenantSubApp from "./tenant/TenantSubApp";
 import ProductApp from "./product/ProductApp";
-import OperationApp from "./operation/OperationApp";
+import OperationSubApp from "./operation/OperationSubApp";
 import ReportApp from "./report/ReportApp";
 import AwsSubApp from "./aws/AwsSubApp";
 
@@ -21,7 +21,7 @@ const Routes = ({ match }) => (
     <Route path={`${match.url}activity`} component={ActivityApp} />
     <Route path={`${match.url}tenant`} component={TenantSubApp} />
     <Route path={`${match.url}product`} component={ProductApp} />
-    <Route path={`${match.url}operation`} component={OperationApp} />
+    <Route path={`${match.url}operation`} component={OperationSubApp} />
     <Route exact path={`${match.url}report`} component={ReportApp} />
     <Route path={`${match.url}report/:reportId`} component={ReportApp} />
     <Route path={`${match.url}aws`} component={AwsSubApp} />
