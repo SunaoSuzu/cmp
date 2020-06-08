@@ -12,7 +12,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import getConfiguration from "../Configuration";
 import IndeterminateCheckBoxIcon from "@material-ui/icons/IndeterminateCheckBox";
-import { empty_contract } from "./TenantAppModule";
+import { empty_contract } from "./module/TenantAppModule";
 
 const useStyles = makeStyles(theme => ({
   button: {

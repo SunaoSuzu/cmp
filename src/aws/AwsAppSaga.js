@@ -4,7 +4,7 @@ import axios from "axios";
 import aws from "aws-sdk";
 import EC2 from "aws-sdk/clients/ec2";
 import getConfiguration from "../Configuration";
-import * as TenantAppModule from "../tenant/TenantAppModule";
+import * as TenantAppModule from "../tenant/module/TenantAppModule";
 
 const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
 const accessKeyId = process.env.REACT_APP_DEV_AWS_API_KEY;

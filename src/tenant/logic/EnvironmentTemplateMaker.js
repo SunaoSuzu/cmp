@@ -7,6 +7,7 @@ import * as CommonCost from "../../common/CommonConst"
 function EnvironmentTemplateMaker(tenant) {
   let environment = {
     name: "開発環境",
+    revision :1,
     landScape: 1,
     status: CommonCost.STATUS_DRAFT,
     statusCaption: "下書き",
@@ -58,11 +59,8 @@ function EnvironmentTemplateMaker(tenant) {
   //パラメータを付与（設定をちゃんと読むように直さないとダメ）
   const componentDefConf = conf.installableComponentConf;
   let mainComponents = [];
-  console.log("componentDefConf=" + componentDefConf);
   retMain.map(function (main) {
-    console.log("main=" + main);
     let componentDef = componentDefConf[main];
-    console.log("componentDefConf=" + componentDef);
     let component = { ...componentDef };
     mainComponents.push(component);
     return null;

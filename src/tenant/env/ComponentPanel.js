@@ -4,7 +4,7 @@
  **/
 import React from "react";
 import {connect} from "react-redux";
-import * as tenantAppModule from "../TenantAppModule";
+import * as tenantAppModule from "../module/TenantAppModule";
 import {makeStyles} from "@material-ui/core/styles";
 import Selection from "../../components/Selection";
 import TextField from "@material-ui/core/TextField";

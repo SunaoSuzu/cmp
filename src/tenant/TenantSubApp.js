@@ -1,14 +1,13 @@
 import React from "react";
-import App from "./TenantAppContainer";
+import App from "./TenantApp";
 
 import { Provider } from "react-redux";
-import createStore from "./TenantAppStore";
+import createStore from "./module/TenantAppStore";
 
 export default class TenantSubApp extends React.Component {
   constructor(props) {
     super(props);
     this.store = createStore();
-    console.log("this.store=" + this.store);
   }
   render() {
     return (

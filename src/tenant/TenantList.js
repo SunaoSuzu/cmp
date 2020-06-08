@@ -1,6 +1,6 @@
 import React from "react";
 import SuTechGrid from "../components/SuTechGrid";
-import * as tenantAppModule from "./TenantAppModule";
+import * as tenantAppModule from "./module/TenantAppModule";
 import { connect } from "react-redux";
 import FabLink from "../asset/FabLink";
 import getConfiguration from "../Configuration";
@@ -10,6 +10,9 @@ import Input from '@material-ui/core/Input';
 import Select from '@material-ui/core/Select';
 import {Box} from "@material-ui/core";
 import ActionProgress from "../components/ActionProgress";
+import {requestSearchList} from "./module/ListModule";
+import {goToAdd} from "./module/AddNewModule";
+
 
 function TenantList(props) {
   const conf = getConfiguration();
@@ -48,13 +51,12 @@ function TenantList(props) {
     BLOCK=<ActionProgress/>
     setDispatched(true);
   }
-
-  let tenants = props.datas;
+  let tenants = props.tenants;
   let total = 0;
   const loaded = (tenants.hits !== undefined);
   if(loaded){
     total = tenants.hits.total;
-    tenants = props.datas.hits.hits.map(hit => {
+    tenants = tenants.hits.hits.map(hit => {
           hit._source.highlight=hit.highlight;
           return hit._source.data;
         }
@@ -99,24 +101,22 @@ function TenantList(props) {
           </Select>
         </Box>
       </Box>
-      <FabLink to="/tenant/add" onClick={props.selectGoToAdd} />
+      <FabLink to="/tenant/add" onClick={props.goToAdd} />
     </React.Fragment>
   );
 }
 
 const mapStateToProps = (state) => {
   return {
-    operationType: state.operationType,
-    deleteComplete: state.deleteComplete,
-    datas: state.datas,
+    tenants : state.list.tenants,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    requestSearchList: (keyword,from,size) => dispatch(tenantAppModule.requestSearchList(keyword,from,size)),
+    requestSearchList: (keyword,from,size) => dispatch(requestSearchList(keyword,from,size)),
     requestDel: (id) => dispatch(tenantAppModule.requestDel(id)),
-    selectGoToAdd: () => dispatch(tenantAppModule.selectGoToAdd()),
+    goToAdd: () => dispatch(goToAdd()),
     selectGoToDetail: (tenant) =>
       dispatch(tenantAppModule.selectGoToDetail(tenant)),
   };

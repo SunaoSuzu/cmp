@@ -2,14 +2,11 @@ import {
   setProperty,
   pushEmptyToArray,
   spliceObjOfArray,
-} from "../util/JsonUtils";
-import {getNowYMD} from "../util/DateUtils";
-import * as CommonCost from "../common/CommonConst"
+} from "../../util/JsonUtils";
+import {getNowYMD} from "../../util/DateUtils";
+import * as CommonCost from "../../common/CommonConst"
+import {ADD_SUCCESS} from "./AddNewModule";
 
-
-export const GET_LIST_REQUEST = "GET_LIST_REQUEST";
-export const GET_LIST_SUCCESS = "GET_LIST_SUCCESS";
-export const GET_LIST_FAILURE = "GET_LIST_FAILURE";
 
 export const GOTO_DETAIL = "GOTO_DETAIL";
 export const GET_DETAIL_REQUEST = "GET_DETAIL_REQUEST";
@@ -21,24 +18,14 @@ export const UPDATE_REQUEST = "UPDATE_REQUEST";
 export const UPDATE_SUCCESS = "UPDATE_SUCCESS";
 export const UPDATE_FAILURE = "UPDATE_FAILURE";
 
-export const GOTO_ADD = "GOTO_ADD";
-export const CHANGE_PROPERTY_OF_NEW = "CHANGE_PROPERTY_OF_NEW";
-export const ADD_REQUEST = "ADD_REQUEST";
-export const ADD_SUCCESS = "ADD_SUCCESS";
-export const ADD_FAILURE = "ADD_FAILURE";
-
 export const DEL_REQUEST = "DEL_REQUEST";
 export const DEL_SUCCESS = "DEL_SUCCESS";
 export const DEL_FAILURE = "DEL_FAILURE";
 
 //
 export const PUSH_EMPTY_TO_ARRAY = "PUSH_EMPTY_TO_ARRAY";
-export const PUSH_EMPTY_TO_ARRAY_NEW = "PUSH_EMPTY_TO_ARRAY_NEW";
 export const DEL_FROM_ARRAY = "DEL_FROM_ARRAY";
-export const DEL_FROM_ARRAY_NEW = "DEL_FROM_ARRAY_NEW";
 
-export const NEW_ENV_REQUEST = "NEW_ENV_REQUEST";
-export const NEW_ENV_SUCCESS = "NEW_ENV_SUCCESS";
 
 export const ATTACH_AWS_REQUEST = "ATTACH_AWS_REQUEST";
 export const ATTACH_AWS_SUCCESS = "ATTACH_AWS_SUCCESS";
@@ -70,36 +57,14 @@ export const loadFailed = 9;
 // for new add
 export const empty_contract = { productMstId: "", amount: "" };
 
-export const empty = {
-  name: "",
-  status: 1,
-  statusCaption: "下書き",
-  tags: [{}],
-  environmentSetting: {
-    vpcType: 1,
-  },
-  contract: {
-    details: [
-      { productMstId: "", amount: "" }, //empty_contractを参照できない
-    ],
-  },
-  environments: [],
-};
-
 const initialState = {
-
-  datas: [],
 
   tenant: {},
   getDetailComplete: yet,
   updateComplete: noNeed,
 
-  newData: {},
-  addComplete: noNeed,
-
   deleteComplete: yet,
 
-  newEnvCompleted: yet,
 
   attachAwsCompleted: yet,
   attachedAwsInfo: null,
@@ -113,20 +78,12 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case GET_LIST_REQUEST:
+    case ADD_SUCCESS:
       return {
-        ...state,
-        breadcrumbStack: [],
-        tenant: null,
-        newData: null,
-        datas: [],
+        getDetailComplete: yet,
       };
-    case GET_LIST_SUCCESS:
-      return { ...state, datas: action.datas };
-    case GET_LIST_FAILURE:
-      return { ...state, datas: [] }; //どうするのが正しいか未定
     case GOTO_DETAIL:
-      return { ...state, tenant: null, newData: null, getDetailComplete: yet };
+      return { ...state, tenant: null, getDetailComplete: yet };
     case GET_DETAIL_REQUEST:
       return { ...state, getDetailComplete: requested };
     case GET_DETAIL_SUCCESS:
@@ -148,61 +105,18 @@ export default function reducer(state = initialState, action) {
       return { ...state, updateComplete: synced };
     case UPDATE_FAILURE:
       return { ...state, updateComplete: failed };
-    case GOTO_ADD:
-      return {
-        ...state,
-        newData: { ...empty },
-        addComplete: noNeed,
-      };
-    case CHANGE_PROPERTY_OF_NEW:
-      const obj = { ...state.newData };
-      setProperty(obj, action.name, action.value);
-      return { ...state, newData: obj, addComplete: necessary };
-    case ADD_REQUEST:
-      return { ...state, addComplete: syncing };
-    case ADD_SUCCESS:
-      return {
-        ...state,
-        addComplete: synced,
-        newData: action.tenant,
-        getDetailComplete: yet,
-      };
-    case ADD_FAILURE:
-      return { ...state, addComplete: failed };
     case DEL_REQUEST:
       return { ...state, delComplete: syncing };
     case DEL_SUCCESS:
-      return { ...state, delComplete: synced, datas: null };
+      return { ...state, delComplete: synced };
     case DEL_FAILURE:
       return { ...state, delComplete: failed };
     //ここから先は細かい処理
-    case PUSH_EMPTY_TO_ARRAY_NEW:
-      return {
-        ...state,
-        operationType: PUSH_EMPTY_TO_ARRAY_NEW,
-        newData: pushEmptyToArray(
-          { ...state.newData },
-          action.path,
-          action.empty
-        ),
-        addComplete: necessary,
-      };
     case PUSH_EMPTY_TO_ARRAY:
       return {
         ...state,
         operationType: PUSH_EMPTY_TO_ARRAY,
         tenant: pushEmptyToArray({ ...state.tenant }, action.path, action.empty),
-        addComplete: necessary,
-      };
-    case DEL_FROM_ARRAY_NEW:
-      return {
-        ...state,
-        operationType: DEL_FROM_ARRAY_NEW,
-        newData: spliceObjOfArray(
-          { ...state.newData },
-          action.path,
-          action.index
-        ),
         addComplete: necessary,
       };
     case DEL_FROM_ARRAY:
@@ -212,14 +126,6 @@ export default function reducer(state = initialState, action) {
         tenant: spliceObjOfArray({ ...state.tenant }, action.path, action.index),
         addComplete: necessary,
       };
-    case NEW_ENV_REQUEST:
-      return { ...state, newEnvCompleted: syncing };
-    case NEW_ENV_SUCCESS: {
-      const tenantObj = { ...state.tenant };
-      const environment = action.environment;
-      tenantObj.environments = tenantObj.environments.concat(environment);
-      return { ...state, newEnvCompleted: synced, tenant: tenantObj };
-    }
     case ATTACH_AWS_REQUEST:
       return { ...state, attachAwsCompleted: requested, attachedAwsInfo: null };
     case ATTACH_AWS_SUCCESS:
@@ -285,29 +191,6 @@ export default function reducer(state = initialState, action) {
 
 // Action Creators
 
-export const requestList = () => {
-  return {
-    type: GET_LIST_REQUEST,
-    from : 0,
-    size : 1,
-  };
-};
-
-export const requestSearchList = (keyword,from,size) => {
-  return {
-    type: GET_LIST_REQUEST,
-    keyword : keyword,
-    from : from,
-    size : size,
-  };
-};
-
-export const selectGoToAdd = () => {
-  return {
-    type: GOTO_ADD,
-  };
-};
-
 export const selectGoToDetail = (tenant) => {
   return {
     type: GOTO_DETAIL,
@@ -330,13 +213,6 @@ export const changeProperty = (e) => {
   };
 };
 
-export const changePropertyOfNew = (e) => {
-  return {
-    type: CHANGE_PROPERTY_OF_NEW,
-    name: e.target.name,
-    value: e.target.value,
-  };
-};
 
 export const requestUpdate = (tenant) => {
   return {
@@ -345,12 +221,6 @@ export const requestUpdate = (tenant) => {
   };
 };
 
-export const requestAdd = (tenant) => {
-  return {
-    type: ADD_REQUEST,
-    tenant: tenant,
-  };
-};
 
 export const requestDel = (id) => {
   return {
@@ -360,13 +230,6 @@ export const requestDel = (id) => {
 };
 
 //
-export const pushEmptyForNew = (path, empty) => {
-  return {
-    type: PUSH_EMPTY_TO_ARRAY_NEW,
-    path: path,
-    empty: empty,
-  };
-};
 
 export const pushEmpty = (path, empty) => {
   return {
@@ -376,26 +239,12 @@ export const pushEmpty = (path, empty) => {
   };
 };
 
-export const delFromArrayForNew = (path, index) => {
-  return {
-    type: DEL_FROM_ARRAY_NEW,
-    path: path,
-    index: index,
-  };
-};
 
 export const delFromArray = (path, index) => {
   return {
     type: DEL_FROM_ARRAY,
     path: path,
     index: index,
-  };
-};
-
-export const requestNewEnv = (tenant) => {
-  return {
-    type: NEW_ENV_REQUEST,
-    tenant: tenant,
   };
 };
 

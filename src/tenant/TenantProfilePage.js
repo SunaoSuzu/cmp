@@ -15,6 +15,10 @@ import EnvironmentDetail from "./EnvironmentDetail";
 import TabPanel from "./TabPanel";
 import Box from "@material-ui/core/Box";
 import Selection from "../components/Selection";
+import {connect} from "react-redux";
+import * as tenantAppModule from "./module/TenantAppModule";
+import {requestNewEnv} from "./module/EnvironmentModule";
+
 
 const useStyles = makeStyles(theme => ({
   basicInformationPanel: {
@@ -50,7 +54,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function TenantProfilePage(props) {
+function TenantProfilePage(props) {
   const conf = getConfiguration();
   const tenantStatusMst = conf.tenantStatusMst;
   const tenantVpcTypeMst = conf.tenantVpcTypeMst;
@@ -80,7 +84,6 @@ export default function TenantProfilePage(props) {
   const newEnv = function newEnv() {
     props.requestNewEnv(targetData);
   };
-
 
   return (
     <React.Fragment>
@@ -182,7 +185,7 @@ export default function TenantProfilePage(props) {
               wrapped
               className={classes.sideTab}
             />
-            {targetData.environments.map((env, index) => (
+            {props.environments.map((env, index) => (
               <Tab
                 label={env.name}
                 {...a11yProps(index + 2)}
@@ -224,7 +227,7 @@ export default function TenantProfilePage(props) {
                        options={tenantVpcTypeMst}
             />
           </TabPanel>
-          {targetData.environments.map((env, index) => (
+          {props.environments.map((env, index) => (
             <TabPanel
               className={classes.tabPanel}
               value={tabValue}
@@ -253,3 +256,25 @@ function a11yProps(index) {
     "aria-controls": `vertical-tabpanel-${index}`
   };
 }
+
+const mapStateToProps = (state) => {
+  return {
+    tenant: state.tenant.tenant,
+    environments: state.env.environments,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    requestUpdate: (tenant) => dispatch(tenantAppModule.requestUpdate(tenant)),
+    changeProperty: (e) => dispatch(tenantAppModule.changeProperty(e)),
+    pushEmpty: (path, empty) =>
+        dispatch(tenantAppModule.pushEmpty(path, empty)),
+    delFromArray: (path, index) =>
+        dispatch(tenantAppModule.delFromArray(path, index)),
+    requestNewEnv: (tenant) => dispatch(requestNewEnv(tenant)),
+  };
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(TenantProfilePage);

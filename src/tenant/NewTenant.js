@@ -1,5 +1,7 @@
 import NewTenantPage from "./NewTenentPage";
-import * as tenantAppModule from "./TenantAppModule";
+import * as tenantAppModule from "./module/TenantAppModule";
+import * as addNew from "./module/AddNewModule";
+
 import ActionProgress from "../components/ActionProgress";
 import React from "react";
 import { Redirect } from "react-router-dom";
@@ -32,22 +34,21 @@ function NewTenant(props) {
 
 const mapStateToProps = (state) => {
   return {
-    getDetailComplete: state.getDetailComplete,
-    addComplete: state.addComplete,
-    newData: state.newData,
+    addComplete: state.addNew.addComplete,
+    newData: state.addNew.newData,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    selectGoToAdd: () => dispatch(tenantAppModule.selectGoToAdd()),
-    requestAdd: (e) => dispatch(tenantAppModule.requestAdd(e)),
+    selectGoToAdd: () => dispatch(addNew.goToAdd()),
+    requestAdd: (e) => dispatch(addNew.requestAdd(e)),
     changePropertyOfNew: (e) =>
-      dispatch(tenantAppModule.changePropertyOfNew(e)),
+      dispatch(addNew.changePropertyOfNew(e)),
     pushEmptyForNew: (path, empty) =>
-      dispatch(tenantAppModule.pushEmptyForNew(path, empty)),
+      dispatch(addNew.pushEmptyForNew(path, empty)),
     delFromArrayForNew: (path, index) =>
-      dispatch(tenantAppModule.delFromArrayForNew(path, index)),
+      dispatch(addNew.delFromArrayForNew(path, index)),
   };
 };
 

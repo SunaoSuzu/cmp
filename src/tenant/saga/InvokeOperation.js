@@ -1,7 +1,7 @@
 import converter from "../../convert/ToCloudFormation";
 import axios from "axios";
 import {put} from "redux-saga/effects";
-import * as TenantAppModule from "../TenantAppModule";
+import * as TenantAppModule from "../module/TenantAppModule";
 
 function* handleInvokeOperation(action) {
     const envIndex = action.envIndex;

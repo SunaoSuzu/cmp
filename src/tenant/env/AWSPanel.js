@@ -7,11 +7,11 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import VpcLogo from "../../components/aws/VpcLogo";
 import ListItemText from "@material-ui/core/ListItemText";
 import EC2Logo from "../../components/aws/EC2Logo";
-import * as TenantAppModule from "../TenantAppModule";
+import * as TenantAppModule from "../module/TenantAppModule";
 import Divider from "@material-ui/core/Divider";
 import {makeStyles} from "@material-ui/core/styles";
 import {connect} from "react-redux";
-import * as tenantAppModule from "../TenantAppModule";
+import * as tenantAppModule from "../module/TenantAppModule";
 import {getName} from "../../util/AWSUtils";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -182,7 +182,7 @@ const AWSPanel = props => {
             <DownloadLink
                 label="JSON(開発用)"
                 filename="env.json"
-                exportFile={() => JSON.stringify(env.resources) }
+                exportFile={() => JSON.stringify(env) }
             />
             <DownloadLink
                 label="Template"
@@ -304,10 +304,10 @@ const AWSPanel = props => {
 
 const mapStateToProps = (state) => {
     return {
-        getOperationCompleted: state.getOperationCompleted,
-        operations: state.operations,
-        attachedAwsInfo: state.attachedAwsInfo,
-        attachAwsCompleted: state.attachAwsCompleted,
+        getOperationCompleted: state.tenant.getOperationCompleted,
+        operations: state.tenant.operations,
+        attachedAwsInfo: state.tenant.attachedAwsInfo,
+        attachAwsCompleted: state.tenant.attachAwsCompleted,
     };
 };
 

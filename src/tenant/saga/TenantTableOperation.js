@@ -1,6 +1,9 @@
 import axios from "axios";
 import {put} from "redux-saga/effects";
-import * as TenantAppModule from "../TenantAppModule";
+import * as TenantAppModule from "../module/TenantAppModule";
+import {ADD_SUCCESS , ADD_FAILURE} from "../module/AddNewModule";
+import makeEnvironment from "../logic/EnvironmentTemplateMaker";
+import {NEW_ENV_SUCCESS} from "../module/EnvironmentModule";
 
 const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
 export function* handleRequestData(action) {
@@ -9,7 +12,8 @@ export function* handleRequestData(action) {
         const res = yield axios.get(baseEndPoint + `/tenant/` + id);
         yield put({
             type: TenantAppModule.GET_DETAIL_SUCCESS,
-            tenant: res.data,
+            tenant: res.data.tenant,
+            environments : res.data.environments,
             receivedAt: Date.now(),
         });
     } catch (e) {
@@ -42,8 +46,7 @@ export function* handleRequestUpdateImpl(tenant) {
         currentRevision = 1;
     }
     tenant["revision"] = currentRevision + 1;
-    const res = yield axios.put(baseEndPoint + `/tenant/` + tenant.id, tenant);
-    return res;
+    return yield axios.put(baseEndPoint + `/tenant/` + tenant.id, tenant);
 }
 
 export function* handleRequestAdd(action) {
@@ -52,13 +55,13 @@ export function* handleRequestAdd(action) {
         tenant["revision"] = 1;
         const res = yield axios.post(baseEndPoint + `/tenant`, tenant);
         yield put({
-            type: TenantAppModule.ADD_SUCCESS,
+            type: ADD_SUCCESS,
             tenant: res.data,
             receivedAt: Date.now(),
         });
     } catch (e) {
         yield put({
-            type: TenantAppModule.ADD_FAILURE,
+            type: ADD_FAILURE,
             e,
         });
     }
@@ -79,4 +82,18 @@ export function* handleRequestDel(action) {
             e,
         });
     }
+}
+
+export function* handleRequestNewEnv(action) {
+    let ret = makeEnvironment(action.tenant);
+
+    const res = yield axios.post(baseEndPoint + `/env`, {tenant : action.tenant , env : ret});
+
+    console.log(res);
+
+    yield put({
+        type: NEW_ENV_SUCCESS,
+        tenant : res.data.tenant,
+        environment: res.data.env,
+    });
 }

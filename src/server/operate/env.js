@@ -1,5 +1,5 @@
-var AWS = require('aws-sdk'),
-    documentClient = new AWS.DynamoDB.DocumentClient();
+const AWS = require('aws-sdk'),
+    documentClient = new AWS.DynamoDB.DocumentClient({region : "ap-northeast-1"});
 const util = require('util');
 
 const prefix_latest = "latest";
@@ -43,15 +43,18 @@ function getNowYMD(){
     return result;
 }
 
-exports.getById = async function getById(tenantId,user){
+const TABLE_NAME = "environment";
+
+
+exports.getById = async function getById(user,envId){
     try {
-        console.log("tenant.getById id=" + tenantId);
-        const dataKeys=decideDataKeys(user,tenantId,0);
+        console.log("env.getById id=" + envId);
+        const dataKeys=decideDataKeys(user,envId,0);
         let result = await documentClient.get({
-            TableName: "tenant",
+            TableName: TABLE_NAME,
             Key:{
-                "tenantKey" : dataKeys.tenantKey,
-                "dataKey" : dataKeys.dataKey,
+                "tenant" : dataKeys.tenantKey,
+                "envKey" : dataKeys.dataKey,
             }}).promise();
         return result.Item.data;
     }catch (e) {
@@ -64,8 +67,8 @@ exports.getList = async function getList(user){
     try {
         const searchKeys = decideSearchKeys(user);
         let result = await documentClient.query({
-            TableName : 'tenant',
-            KeyConditionExpression: "tenantKey = :tenantKey and begins_with(dataKey , :dataKey) ",
+            TableName : TABLE_NAME,
+            KeyConditionExpression:  " tenant = :tenantKey and begins_with(envKey , :dataKey) ",
             ProjectionExpression: "#d",
             ExpressionAttributeNames :{
                 "#d" : "data",
@@ -75,7 +78,6 @@ exports.getList = async function getList(user){
                 ":dataKey": searchKeys.searchKey,
             }
         }).promise();
-        console.log(result);
         return result.Items.map(item => item.data);
     }catch (e) {
         console.log("🐱" + util.inspect(e, false, null));
@@ -86,7 +88,8 @@ exports.getList = async function getList(user){
 exports.upsert = async  function upsert(method ,user, json ){
     try {
         console.log("更新or追加");
-        const key = json.name;  //TODO サロゲート？
+        const e_time = new Date();
+        const key = e_time.getTime();  //TODO サロゲート？
         if(method==='POST'){
             json["id"]=key;
         }
@@ -96,13 +99,13 @@ exports.upsert = async  function upsert(method ,user, json ){
         let saveValue = json;
         console.log("latest保存します。name=" + json.name + "revision=" + revision);
         let result = await documentClient.put({
-            TableName: "tenant",
+            TableName: TABLE_NAME,
             "Item" : {
-                "tenantKey"  : keys.tenantKey ,
-                "dataKey"    : keys.dataKey,
+                "tenant"  : keys.tenantKey ,
+                "envKey"    : keys.dataKey,
                 "revision"   : revision,
-                "tenantId"   : json.id,
-                "tenantName" : json.name,
+                "envId"      : json.id,
+                "envName" : json.name,
                 "prcIdKey"   : user.userName, //後でarnに変更
                 "prcDate"    : prcDate,
                 "data" : saveValue
@@ -112,13 +115,13 @@ exports.upsert = async  function upsert(method ,user, json ){
         console.log("latest保存しました");
         console.log("log保存します。name=" + json.name + "revision=" + revision);
         result = await documentClient.put({
-            TableName: "tenant",
+            TableName: TABLE_NAME,
             "Item" : {
-                "tenantKey"  : keys.tenantKey ,
-                "dataKey"    : keys.logKey,
+                "tenant"  : keys.tenantKey ,
+                "envKey"    : keys.logKey,
                 "revision"   : revision,
-                "tenantId"   : json.id,
-                "tenantName" : json.name,
+                "envId"   : json.id,
+                "envName" : json.name,
                 "prcIdKey"   : user.userName, //後でarnに変更
                 "prcDate"    : prcDate,
                 "data" : saveValue
@@ -132,15 +135,14 @@ exports.upsert = async  function upsert(method ,user, json ){
 
 }
 
-exports.del = async  function del(user, tenantId ){
+exports.del = async  function del(user, envId ){
     try {
-        const dataKeys=decideDataKeys(user,tenantId,0);
-        console.log(JSON.stringify(dataKeys))
+        const dataKeys=decideDataKeys(user,envId,0);
         let result = await documentClient.delete({
-            TableName: "tenant",
+            TableName: TABLE_NAME,
             Key:{
-                "tenantKey" : dataKeys.tenantKey,
-                "dataKey" : dataKeys.dataKey,
+                "tenant" : dataKeys.tenantKey,
+                "envKey" : dataKeys.dataKey,
             }}).promise();
     }  catch (e) {
         throw e;
