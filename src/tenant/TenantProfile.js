@@ -27,7 +27,7 @@ function TenantProfile(props) {
             changeProperty={props.changeProperty}
             pushEmpty={props.pushEmpty}
             delFromArray={props.delFromArray}
-            data={props.data}
+            tenant={props.tenant}
             requestUpdate={props.requestUpdate}
             backToList="/tenant/list"
             requestNewEnv={props.requestNewEnv}
@@ -43,21 +43,21 @@ const mapStateToProps = (state) => {
     operationType: state.operationType,
     getDetailComplete: state.getDetailComplete,
     updateComplete: state.updateComplete,
-    data: state.data,
+    tenant: state.tenant,
     invokeOperation : state.invokeOperation
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    requestUpdate: (data) => dispatch(tenantAppModule.requestUpdate(data)),
+    requestUpdate: (tenant) => dispatch(tenantAppModule.requestUpdate(tenant)),
     changeProperty: (e) => dispatch(tenantAppModule.changeProperty(e)),
     requestLoadDetail: (id) => dispatch(tenantAppModule.requestLoadDetail(id)),
     pushEmpty: (path, empty) =>
       dispatch(tenantAppModule.pushEmpty(path, empty)),
     delFromArray: (path, index) =>
       dispatch(tenantAppModule.delFromArray(path, index)),
-    requestNewEnv: (data) => dispatch(tenantAppModule.requestNewEnv(data)),
+    requestNewEnv: (tenant) => dispatch(tenantAppModule.requestNewEnv(tenant)),
   };
 };
 

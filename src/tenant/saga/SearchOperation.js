@@ -13,7 +13,7 @@ function* handleRequestList(action) {
                 "query": {
                     "multi_match": {
                         "fields": [ "tenantName", "alias"],
-                        "query": "鈴木",
+                        "query": action.keyword,
                     }
                 },
                 "_source" : ["data"],

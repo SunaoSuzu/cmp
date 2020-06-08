@@ -13,8 +13,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     selectList: () => dispatch(tenantAppModule.requestList()),
     selectGoToAdd: () => dispatch(tenantAppModule.selectGoToAdd()),
-    selectGoToDetail: (data) =>
-      dispatch(tenantAppModule.selectGoToDetail(data)),
+    selectGoToDetail: (tenant) =>
+      dispatch(tenantAppModule.selectGoToDetail(tenant)),
   };
 };
 

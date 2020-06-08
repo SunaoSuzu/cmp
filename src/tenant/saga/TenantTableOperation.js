@@ -9,7 +9,7 @@ export function* handleRequestData(action) {
         const res = yield axios.get(baseEndPoint + `/tenant/` + id);
         yield put({
             type: TenantAppModule.GET_DETAIL_SUCCESS,
-            data: res.data,
+            tenant: res.data,
             receivedAt: Date.now(),
         });
     } catch (e) {
@@ -21,11 +21,11 @@ export function* handleRequestData(action) {
 }
 export function* handleRequestUpdate(action) {
     try {
-        const data = action.data;
-        const res = yield handleRequestUpdateImpl(data);
+        const tenant = action.tenant;
+        const res = yield handleRequestUpdateImpl(tenant);
         yield put({
             type: TenantAppModule.UPDATE_SUCCESS,
-            data: res.data,
+            tenant: res.data,
             receivedAt: Date.now(),
         });
     } catch (e) {
@@ -35,25 +35,25 @@ export function* handleRequestUpdate(action) {
         });
     }
 }
-export function* handleRequestUpdateImpl(data) {
-    let currentRevision = data["revision"];
+export function* handleRequestUpdateImpl(tenant) {
+    let currentRevision = tenant["revision"];
     if (currentRevision === null) {
         //for dirty data
         currentRevision = 1;
     }
-    data["revision"] = currentRevision + 1;
-    const res = yield axios.put(baseEndPoint + `/tenant/` + data.id, data);
+    tenant["revision"] = currentRevision + 1;
+    const res = yield axios.put(baseEndPoint + `/tenant/` + tenant.id, tenant);
     return res;
 }
 
 export function* handleRequestAdd(action) {
     try {
-        const data = action.data;
-        data["revision"] = 1;
-        const res = yield axios.post(baseEndPoint + `/tenant`, data);
+        const tenant = action.tenant;
+        tenant["revision"] = 1;
+        const res = yield axios.post(baseEndPoint + `/tenant`, tenant);
         yield put({
             type: TenantAppModule.ADD_SUCCESS,
-            data: res.data,
+            tenant: res.data,
             receivedAt: Date.now(),
         });
     } catch (e) {
@@ -70,7 +70,7 @@ export function* handleRequestDel(action) {
         const res = yield axios.delete(baseEndPoint + `/tenant/` + id);
         yield put({
             type: TenantAppModule.DEL_SUCCESS,
-            data: res.data,
+            tenant: res.data,
             receivedAt: Date.now(),
         });
     } catch (e) {

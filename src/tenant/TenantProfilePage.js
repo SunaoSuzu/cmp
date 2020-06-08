@@ -64,9 +64,9 @@ export default function TenantProfilePage(props) {
   };
 
   //ここで新規登録画面との変数名の違いを吸収
-  const targetData = props.data;
+  const targetData = props.tenant;
   const save = function save() {
-    requestUpdate(props.data);
+    requestUpdate(props.tenant);
   };
   const uiToJson = event => {
     changeProperty(event);

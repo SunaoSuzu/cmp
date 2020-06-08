@@ -91,7 +91,7 @@ const initialState = {
   loadSuccess: yet,
   datas: [],
 
-  data: {},
+  tenant: {},
   getDetailComplete: yet,
   updateComplete: noNeed,
 
@@ -119,7 +119,7 @@ export default function reducer(state = initialState, action) {
         ...state,
         loadSuccess: requested,
         breadcrumbStack: [],
-        data: null,
+        tenant: null,
         newData: null,
         datas: [],
       };
@@ -128,22 +128,22 @@ export default function reducer(state = initialState, action) {
     case GET_LIST_FAILURE:
       return { ...state, loadSuccess: loadFailed, datas: [] }; //どうするのが正しいか未定
     case GOTO_DETAIL:
-      return { ...state, data: null, newData: null, getDetailComplete: yet };
+      return { ...state, tenant: null, newData: null, getDetailComplete: yet };
     case GET_DETAIL_REQUEST:
       return { ...state, getDetailComplete: requested };
     case GET_DETAIL_SUCCESS:
       return {
         ...state,
-        data: action.data,
+        tenant: action.tenant,
         getDetailComplete: loadSuccess,
         updateComplete: noNeed,
       };
     case GET_DETAIL_FAILURE:
-      return { ...state, data: null, getDetailComplete: loadFailed }; //どうするのが正しいか未定
+      return { ...state, tenant: null, getDetailComplete: loadFailed }; //どうするのが正しいか未定
     case CHANGE_PROPERTY:
-      const newData = { ...state.data };
+      const newData = { ...state.tenant };
       setProperty(newData, action.name, action.value);
-      return { ...state, data: newData, updateComplete: necessary };
+      return { ...state, tenant: newData, updateComplete: necessary };
     case UPDATE_REQUEST:
       return { ...state, updateComplete: syncing };
     case UPDATE_SUCCESS:
@@ -166,7 +166,7 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         addComplete: synced,
-        newData: action.data,
+        newData: action.tenant,
         getDetailComplete: yet,
       };
     case ADD_FAILURE:
@@ -193,7 +193,7 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         operationType: PUSH_EMPTY_TO_ARRAY,
-        data: pushEmptyToArray({ ...state.data }, action.path, action.empty),
+        tenant: pushEmptyToArray({ ...state.tenant }, action.path, action.empty),
         addComplete: necessary,
       };
     case DEL_FROM_ARRAY_NEW:
@@ -211,28 +211,28 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         operationType: DEL_FROM_ARRAY,
-        data: spliceObjOfArray({ ...state.data }, action.path, action.index),
+        tenant: spliceObjOfArray({ ...state.tenant }, action.path, action.index),
         addComplete: necessary,
       };
     case NEW_ENV_REQUEST:
       return { ...state, newEnvCompleted: syncing };
     case NEW_ENV_SUCCESS: {
-      const tenantObj = { ...state.data };
+      const tenantObj = { ...state.tenant };
       const environment = action.environment;
       tenantObj.environments = tenantObj.environments.concat(environment);
-      return { ...state, newEnvCompleted: synced, data: tenantObj };
+      return { ...state, newEnvCompleted: synced, tenant: tenantObj };
     }
     case ATTACH_AWS_REQUEST:
       return { ...state, attachAwsCompleted: requested, attachedAwsInfo: null };
     case ATTACH_AWS_SUCCESS:
       {
-        let tenantObj = { ...state.data };
+        let tenantObj = { ...state.tenant };
         let env = tenantObj.environments[action.envIndex];
         env["attached"] = { result: action.data , status : loadSuccess , execDate : getNowYMD()};
         return {
           ...state,
           attachAwsCompleted: loadSuccess,
-          data: tenantObj,
+          tenant: tenantObj,
           attachedAwsInfo: action.data,
         };
 
@@ -248,7 +248,7 @@ export default function reducer(state = initialState, action) {
       return { ...state, getOperationCompleted: requested, operations: null };
     case GET_OPERATION_SUCCESS: {
 
-      let tenantObj = { ...state.data };
+      let tenantObj = { ...state.tenant };
       let env = tenantObj.environments[action.envIndex];
       env["resources"] = action.resources;
       env["operations"] = action.operations;
@@ -256,7 +256,7 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         getOperationCompleted: loadSuccess,
-        data: tenantObj,
+        tenant: tenantObj,
         operations: action.resources,
       };
     }
@@ -265,20 +265,20 @@ export default function reducer(state = initialState, action) {
     case INVOKE_OPERATION_REQUEST:
       return { ...state, invokeOperation: requested };
     case INVOKE_OPERATION_STARTED:
-      return { ...state, invokeOperation: started , data: action.data};
+      return { ...state, invokeOperation: started , tenant: action.tenant};
     case INVOKE_OPERATION_SUCCESS: {
-      return { ...state, invokeOperation: loadSuccess, data: action.data };
+      return { ...state, invokeOperation: loadSuccess, tenant: action.tenant };
     }
     case INVOKE_OPERATION_FAIL:
       return { ...state, invokeOperation: loadFailed };
     case RESET_OPERATION_REQUEST: {
-      let tenantObj = { ...state.data };
+      let tenantObj = { ...state.tenant };
       let env = tenantObj.environments[action.envIndex];
       delete env.operations;
       delete env.resources;
       delete env.stack;
       env.status = CommonCost.STATUS_DRAFT;
-      return { ...state, invokeOperation: loadSuccess, data: tenantObj };
+      return { ...state, invokeOperation: loadSuccess, tenant: tenantObj };
     }
     default:
       return state;
@@ -310,10 +310,10 @@ export const selectGoToAdd = () => {
   };
 };
 
-export const selectGoToDetail = (data) => {
+export const selectGoToDetail = (tenant) => {
   return {
     type: GOTO_DETAIL,
-    data: data,
+    tenant: tenant,
   };
 };
 
@@ -340,17 +340,17 @@ export const changePropertyOfNew = (e) => {
   };
 };
 
-export const requestUpdate = (data) => {
+export const requestUpdate = (tenant) => {
   return {
     type: UPDATE_REQUEST,
-    data: data,
+    tenant: tenant,
   };
 };
 
-export const requestAdd = (data) => {
+export const requestAdd = (tenant) => {
   return {
     type: ADD_REQUEST,
-    data: data,
+    tenant: tenant,
   };
 };
 
@@ -394,10 +394,10 @@ export const delFromArray = (path, index) => {
   };
 };
 
-export const requestNewEnv = (data) => {
+export const requestNewEnv = (tenant) => {
   return {
     type: NEW_ENV_REQUEST,
-    data: data,
+    tenant: tenant,
   };
 };
 

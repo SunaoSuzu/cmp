@@ -29,8 +29,6 @@ function DataRow(props) {
   const to = baseTo + "/" + data.id;
 
   const deleteData = function deleteData(id) {
-    console.log("deleteHandler=" + id);
-
     if (deleteHandler !== null) {
       deleteHandler(id);
     }
@@ -62,20 +60,7 @@ export default function SuTechGrid(props) {
   const classes = useStyles();
   const selectToBase = props.selectToBase;
 
-  //とりあえずの互換
-  const elasticSearch = props.elasticSearch;
-  let datas           = props.datas;
-
-  if(elasticSearch){
-
-    //とりあえずの互換
-    const ret = datas.hits.hits.map(function (hit) {
-          hit._source.highlight=hit.highlight;
-          return hit._source.data;
-        }
-    )
-    datas=ret;
-  }
+  const datas           = props.datas;
 
   return (
     <React.Fragment>

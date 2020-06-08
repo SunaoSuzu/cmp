@@ -9,7 +9,7 @@ import * as table from "./TenantTableOperation"
 
 
 function* handleRequestNewEnv(action) {
-  const tenant = action.data;
+  const tenant = action.tenant;
   let ret = makeEnvironment(tenant);
   yield put({
     type: TenantAppModule.NEW_ENV_SUCCESS,
@@ -17,7 +17,7 @@ function* handleRequestNewEnv(action) {
   });
   yield put({
     type: TenantAppModule.UPDATE_REQUEST,
-    data: tenant,
+    tenant: tenant,
   });
 }
 
@@ -34,7 +34,7 @@ function* handleRequestGetOperation(action) {
   });
   yield put({
     type: TenantAppModule.UPDATE_REQUEST,
-    data: tenant,
+    tenant: tenant,
   });
 }
 

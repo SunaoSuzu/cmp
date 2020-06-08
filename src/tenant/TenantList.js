@@ -9,15 +9,18 @@ import useDebouncedQuery from "../util/useDebouncedQuery";
 import Input from '@material-ui/core/Input';
 import Select from '@material-ui/core/Select';
 import {Box} from "@material-ui/core";
+import ActionProgress from "../components/ActionProgress";
 
 function TenantList(props) {
   const conf = getConfiguration();
   const gridConf = conf.tenantListGridConf;
 
-  const [dispatched , setDispatched] = React.useState(false);
+  const [dispatched , setDispatched] = React.useState(true);
   const [pageIndex  , setPageIndex] = React.useState(1);
   const [pageSize   , setPageSize] = React.useState(50);
-  const [keyword    , setKeyword] = React.useState("");
+  const [keyword   , setKeyword] = React.useState(50);
+
+  let BLOCK = null;
   const loadSuggestions = (query) => {
     setKeyword(query);
     setDispatched(false);
@@ -37,68 +40,68 @@ function TenantList(props) {
     setDispatched(false);
   };
 
-  if (!dispatched){
+  if(dispatched){
+    BLOCK="";
+  }else{
     const from = (pageIndex - 1) * pageSize;
     props.requestSearchList(keyword , from , pageSize);
+    BLOCK=<ActionProgress/>
     setDispatched(true);
-    return Searcher;
   }
 
-  if (props.loadSuccess === tenantAppModule.yet) {
-    return (Searcher);
-  }
-  if (
-    props.loadSuccess === tenantAppModule.requested ||
-    props.deleteComplete === tenantAppModule.syncing
-  ) {
-    return Searcher;
-  }
-  if (props.loadSuccess === tenantAppModule.loadSuccess) {
-    const datas = props.datas;
-    const total = datas.hits.total
-    const count = Math.floor(total / pageSize) + ((total % pageSize)===0 ? 0 : 1);
-    const Pager=<Pagination count={count} page={pageIndex} onChange={onPageChange.bind()} />;
-
-    return (
-      <React.Fragment>
-        {Searcher}
-        <SuTechGrid
-          title={"テナント一覧(" + props.operationType + ")"}
-          gridConf={gridConf}
-          datas={datas}
-          goDetailHandler={props.selectGoToDetail}
-          selectToBase="/tenant/profile"
-          deleteHandler={props.requestDel}
-          elasticSearch={true}
-          requestSearchList={props.requestSearchList}
-        />
-        <Box display="flex" flexDirection="row">
-          <Box flexGrow={1}>{Pager}</Box>
-          <Box>
-            <Select
-                native
-                value={pageSize}
-                onChange={onSizeChange}
-                label="PageSize"
-                inputProps={{
-                  name: 'PageSize',
-                  id: 'outlined-age-native-simple',
-                }}
-            >
-              <option aria-label="None" value="" />
-              <option value={1}>1(test)</option>
-              <option value={20}>20</option>
-              <option value={30}>30</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-            </Select>
-          </Box>
-        </Box>
-        <FabLink to="/tenant/add" onClick={props.selectGoToAdd} />
-      </React.Fragment>
+  let tenants = props.datas;
+  let total = 0;
+  const loaded = (tenants.hits !== undefined);
+  if(loaded){
+    total = tenants.hits.total;
+    tenants = props.datas.hits.hits.map(hit => {
+          hit._source.highlight=hit.highlight;
+          return hit._source.data;
+        }
     );
   }
-  return <div>ERROR!!!!</div>;
+
+  const count = Math.floor(total / pageSize) + ((total % pageSize)===0 ? 0 : 1);
+  const Pager=<Pagination count={count} page={pageIndex} onChange={onPageChange.bind()} />;
+
+  return (
+    <React.Fragment>
+      {BLOCK}
+      {Searcher}
+      <SuTechGrid
+        title={"テナント一覧(" + props.operationType + ")"}
+        gridConf={gridConf}
+        datas={tenants}
+        goDetailHandler={props.selectGoToDetail}
+        selectToBase="/tenant/profile"
+        deleteHandler={props.requestDel}
+        requestSearchList={props.requestSearchList}
+      />
+      <Box display="flex" flexDirection="row">
+        <Box flexGrow={1}>{Pager}</Box>
+        <Box>
+          <Select
+              native
+              value={pageSize}
+              onChange={onSizeChange}
+              label="PageSize"
+              inputProps={{
+                name: 'PageSize',
+                id: 'outlined-age-native-simple',
+              }}
+          >
+            <option aria-label="None" value="" />
+            <option value={1}>1(test)</option>
+            <option value={20}>20</option>
+            <option value={30}>30</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+          </Select>
+        </Box>
+      </Box>
+      <FabLink to="/tenant/add" onClick={props.selectGoToAdd} />
+    </React.Fragment>
+  );
 }
 
 const mapStateToProps = (state) => {
@@ -115,8 +118,8 @@ const mapDispatchToProps = (dispatch) => {
     requestSearchList: (keyword,from,size) => dispatch(tenantAppModule.requestSearchList(keyword,from,size)),
     requestDel: (id) => dispatch(tenantAppModule.requestDel(id)),
     selectGoToAdd: () => dispatch(tenantAppModule.selectGoToAdd()),
-    selectGoToDetail: (data) =>
-      dispatch(tenantAppModule.selectGoToDetail(data)),
+    selectGoToDetail: (tenant) =>
+      dispatch(tenantAppModule.selectGoToDetail(tenant)),
   };
 };
 
