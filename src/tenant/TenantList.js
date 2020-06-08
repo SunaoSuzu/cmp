@@ -107,7 +107,6 @@ function TenantList(props) {
 const mapStateToProps = (state) => {
   return {
     operationType: state.operationType,
-    loadSuccess: state.loadSuccess,
     deleteComplete: state.deleteComplete,
     datas: state.datas,
   };

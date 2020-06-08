@@ -88,7 +88,6 @@ export const empty = {
 
 const initialState = {
 
-  loadSuccess: yet,
   datas: [],
 
   tenant: {},
@@ -117,16 +116,15 @@ export default function reducer(state = initialState, action) {
     case GET_LIST_REQUEST:
       return {
         ...state,
-        loadSuccess: requested,
         breadcrumbStack: [],
         tenant: null,
         newData: null,
         datas: [],
       };
     case GET_LIST_SUCCESS:
-      return { ...state, loadSuccess: loadSuccess, datas: action.datas };
+      return { ...state, datas: action.datas };
     case GET_LIST_FAILURE:
-      return { ...state, loadSuccess: loadFailed, datas: [] }; //どうするのが正しいか未定
+      return { ...state, datas: [] }; //どうするのが正しいか未定
     case GOTO_DETAIL:
       return { ...state, tenant: null, newData: null, getDetailComplete: yet };
     case GET_DETAIL_REQUEST:
@@ -174,7 +172,7 @@ export default function reducer(state = initialState, action) {
     case DEL_REQUEST:
       return { ...state, delComplete: syncing };
     case DEL_SUCCESS:
-      return { ...state, delComplete: synced, loadSuccess: yet, datas: null };
+      return { ...state, delComplete: synced, datas: null };
     case DEL_FAILURE:
       return { ...state, delComplete: failed };
     //ここから先は細かい処理
