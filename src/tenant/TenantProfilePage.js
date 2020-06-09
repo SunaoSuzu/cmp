@@ -11,7 +11,7 @@ import StorageIcon from "@material-ui/icons/StorageOutlined";
 import ContractDetails from "./ContractDetails";
 import Badge from "@material-ui/core/Badge";
 import getConfiguration from "../Configuration";
-import EnvironmentDetail from "./EnvironmentDetail";
+import EnvironmentDetail from "./env/EnvironmentDetail";
 import TabPanel from "./TabPanel";
 import Box from "@material-ui/core/Box";
 import Selection from "../components/Selection";
@@ -59,7 +59,7 @@ function TenantProfilePage(props) {
   const tenantStatusMst = conf.tenantStatusMst;
   const tenantVpcTypeMst = conf.tenantVpcTypeMst;
   const classes = useStyles();
-  const { requestUpdate, changeProperty, attachAws } = props;
+  const { requestUpdate, changeProperty,updateComplete } = props;
 
   const [tabValue, setValue] = React.useState(0);
 
@@ -70,7 +70,7 @@ function TenantProfilePage(props) {
   //ここで新規登録画面との変数名の違いを吸収
   const targetData = props.tenant;
   const save = function save() {
-    requestUpdate(props.tenant);
+    requestUpdate(targetData);
   };
   const uiToJson = event => {
     changeProperty(event);
@@ -84,7 +84,7 @@ function TenantProfilePage(props) {
   const newEnv = function newEnv() {
     props.requestNewEnv(targetData);
   };
-
+  const disableSaveButton = (updateComplete !== tenantAppModule.necessary);
   return (
     <React.Fragment>
       <form encType="multipart/form-data">
@@ -99,6 +99,7 @@ function TenantProfilePage(props) {
                 className={classes.button}
                 startIcon={<SaveIcon />}
                 onClick={save.bind(this)}
+                disabled={disableSaveButton}
               >
                 Save
               </Button>
@@ -168,7 +169,7 @@ function TenantProfilePage(props) {
             variant="scrollable"
             value={tabValue}
             onChange={handleChange}
-            aria-label="Vertical tabs example"
+            aria-label="Vertical tabs "
             className={classes.tabs}
           >
             <Tab
@@ -237,9 +238,7 @@ function TenantProfilePage(props) {
               <EnvironmentDetail
                 index={index}
                 env={env}
-                uiToJson={uiToJson}
                 key={index}
-                attachAws={attachAws}
                 tenant={targetData}
               />
             </TabPanel>
@@ -261,6 +260,7 @@ const mapStateToProps = (state) => {
   return {
     tenant: state.tenant.tenant,
     environments: state.env.environments,
+    updateComplete: state.tenant.updateComplete,
   };
 };
 

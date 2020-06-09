@@ -1,9 +1,10 @@
 import axios from "axios";
-import {put} from "redux-saga/effects";
+import {put,select} from "redux-saga/effects";
 import * as TenantAppModule from "../module/TenantAppModule";
 import {ADD_SUCCESS , ADD_FAILURE} from "../module/AddNewModule";
 import makeEnvironment from "../logic/EnvironmentTemplateMaker";
-import {NEW_ENV_SUCCESS} from "../module/EnvironmentModule";
+import {NEW_ENV_SUCCESS,UPDATE_ENV_SUCCESS} from "../module/EnvironmentModule";
+
 
 const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
 export function* handleRequestData(action) {
@@ -40,19 +41,12 @@ export function* handleRequestUpdate(action) {
     }
 }
 export function* handleRequestUpdateImpl(tenant) {
-    let currentRevision = tenant["revision"];
-    if (currentRevision === null) {
-        //for dirty data
-        currentRevision = 1;
-    }
-    tenant["revision"] = currentRevision + 1;
     return yield axios.put(baseEndPoint + `/tenant/` + tenant.id, tenant);
 }
 
 export function* handleRequestAdd(action) {
     try {
         const tenant = action.tenant;
-        tenant["revision"] = 1;
         const res = yield axios.post(baseEndPoint + `/tenant`, tenant);
         yield put({
             type: ADD_SUCCESS,
@@ -89,11 +83,21 @@ export function* handleRequestNewEnv(action) {
 
     const res = yield axios.post(baseEndPoint + `/env`, {tenant : action.tenant , env : ret});
 
-    console.log(res);
-
     yield put({
         type: NEW_ENV_SUCCESS,
         tenant : res.data.tenant,
         environment: res.data.env,
+    });
+}
+
+export function* updateEnv(action) {
+    const envs = yield select( state => state.env.environments);
+    const env = envs[action.envIndex];
+    const res = yield axios.put(baseEndPoint + `/env/` + env.id, env);
+
+    yield put({
+        type: UPDATE_ENV_SUCCESS,
+        envIndex : action.envIndex,
+        environment: res.data,
     });
 }

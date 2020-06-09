@@ -4,7 +4,6 @@ import axios from "axios";
 import aws from "aws-sdk";
 import EC2 from "aws-sdk/clients/ec2";
 import getConfiguration from "../Configuration";
-import * as TenantAppModule from "../tenant/module/TenantAppModule";
 
 const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
 const accessKeyId = process.env.REACT_APP_DEV_AWS_API_KEY;
@@ -14,7 +13,6 @@ const secretAccessKey = process.env.REACT_APP_DEV_AWS_API_PWD;
 //https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property
 
 function getEc2ByTag(action) {
-  console.log(action);
   const conf = getConfiguration();
   const tagUsage = conf.tagUsage;
   const tenantTag = action.tenantTag;
@@ -102,14 +100,14 @@ export function* handleAttachByTag(action) {
     console.log("data=" + vpcs);
 
     yield put({
-      type: TenantAppModule.ATTACH_AWS_SUCCESS,
+      type: "ATTACH_AWS_SUCCESS",
       envIndex:action.envIndex,
       data: { ec2, vpcs },
     });
   } catch (e) {
     console.log(e);
     yield put({
-      type: TenantAppModule.ATTACH_AWS_FAIL,
+      type: "ATTACH_AWS_FAIL",
     });
   }
 }

@@ -9,10 +9,13 @@ import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import TabPanel from "./TabPanel";
-import AWSPanel from "./env/AWSPanel";
-import ComponentPanel from "./env/ComponentPanel";
-import BasicInfoPanel from "./env/BasicInfoPanel";
+import TabPanel from "../TabPanel";
+import AWSPanel from "./AWSPanel";
+import ComponentPanel from "./ComponentPanel";
+import BasicInfoPanel from "./BasicInfoPanel";
+import { connect } from "react-redux";
+import {changeEnvProperty} from "../module/EnvironmentModule";
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -53,8 +56,12 @@ const EnvironmentDetail = props => {
 
   const index = props.index;
   const env = props.env;
-  const uiToJson = props.uiToJson;
+  const changeEnvProperty = props.changeEnvProperty;
   const tenant = props.tenant;
+
+  const uiToJson = event => {
+    changeEnvProperty(event,index);
+  };
 
   //for tab
   const [innerTabValue, setInnerTavLavlue] = React.useState(0);
@@ -137,9 +144,7 @@ const EnvironmentDetail = props => {
                     ? component.params.map((param, i) => (
                         <TextField
                           name={
-                            "environments." +
-                            index +
-                            ".mainComponents." +
+                            "mainComponents." +
                             c +
                             ".params." +
                             i +
@@ -171,4 +176,17 @@ function a11yProps(index) {
     "aria-controls": `simple-tabpanel-${index}`
   };
 }
-export default EnvironmentDetail;
+
+const mapStateToProps = (state) => {
+  return {
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    changeEnvProperty: (e,index) => dispatch(changeEnvProperty(e,index)),
+  };
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(EnvironmentDetail);

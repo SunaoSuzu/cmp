@@ -11,7 +11,6 @@ import * as TenantAppModule from "../module/TenantAppModule";
 import Divider from "@material-ui/core/Divider";
 import {makeStyles} from "@material-ui/core/styles";
 import {connect} from "react-redux";
-import * as tenantAppModule from "../module/TenantAppModule";
 import {getName} from "../../util/AWSUtils";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -24,6 +23,8 @@ import * as CommonCost from "../../common/CommonConst"
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import DeleteIcon from '@material-ui/icons/Delete';
 import converter from "../../convert/ToCloudFormation";
+import {requestGetOperation,requestInvokeOperation,requestResetOperation} from "../module/EnvironmentModule";
+
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -64,36 +65,27 @@ const useStyles = makeStyles(theme => ({
 const AWSPanel = props => {
     const classes = useStyles();
     const [diagOpen, setDiagOpen] = React.useState(false);
-    const [mode, setMode] = React.useState("");
 
     const tenant = props.tenant;
     const env = props.env;
     const index = props.index;
 
     const getOperationCompleted= props.getOperationCompleted;
-    const operations= props.operations;
     const attachedAwsInfo= props.attachedAwsInfo;
     const attachAwsCompleted= props.attachAwsCompleted;
 
     const getOperation = function getOperation(t, e, i) {
-        console.log("getOperation");
         props.requestGetOperation(t, e, i);
     };
 
     const invokeOperation = function invokeOperation(t, e, i) {
         const key = document.getElementById("apiKey").value;
         const pwd = document.getElementById("apiPwd").value;
-        console.log("key=" + key);
-        console.log("pwd=" + pwd);
-        console.log("t.awsTag=" + t.awsTag);
-        console.log("t.awsTag=" + t.awsTag);
-        console.log("invokeOperation");
         props.requestInvokeOperation(t, e, i,key,pwd);
         handleClose();
     };
 
     const resetOperation = function getOperation(t, e, i) {
-        console.log("resetOperation");
         props.requestResetOperation(t, e, i);
     };
 
@@ -104,29 +96,22 @@ const AWSPanel = props => {
     //DiagOpen
     const handleClickOpenAsAtathchDiag = () => {
         setDiagOpen(true);
-        setMode("attach");
     };
 
     //DiagOpen
     const handleClickOpenAsExecuteDiag = () => {
         setDiagOpen(true);
-        setMode("attach");
     };
 
     //DiagClose
     const handleClose = () => {
         setDiagOpen(false);
-        setMode("");
     };
 
     //DiagClose
     const handleAttachStart = (t, e, i) => {
         const key = document.getElementById("apiKey").value;
         const pwd = document.getElementById("apiPwd").value;
-        console.log("key=" + key);
-        console.log("pwd=" + pwd);
-        console.log("t.awsTag=" + t.awsTag);
-        console.log("t.awsTag=" + t.awsTag);
         props.attachAws(t.awsTag, e.awsTag,index,key,pwd);
         setDiagOpen(false);
     };
@@ -148,16 +133,6 @@ const AWSPanel = props => {
                 onClick={() => getOperation(tenant, env, index)}
             >
                 構成決定
-            </Button>
-            <Button
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                startIcon={<StorageIcon />}
-                disabled={disableAttachBtn}
-                onClick={() => handleClickOpenAsAtathchDiag(tenant, env, index)}
-            >
-                アタッチ
             </Button>
             <Button
                 variant="contained"
@@ -265,33 +240,10 @@ const AWSPanel = props => {
                         }}
                         fullWidth
                     />
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="apiKey"
-                        label="API KEY"
-                        inputProps={{
-                            required: true,
-                        }}
-                        fullWidth
-                    />
-                    <TextField
-                        margin="dense"
-                        id="apiPwd"
-                        label="API_PASSWORD"
-                        type="password"
-                        inputProps={{
-                            required: true,
-                        }}
-                        fullWidth
-                    />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
                         Cancel
-                    </Button>
-                    <Button id="diagButton" onClick={() => handleAttachStart(tenant, env, index)} color="primary">
-                        Attach
                     </Button>
                     <Button id="diagButton" onClick={() => invokeOperation(tenant, env, index)} color="primary">
                         実行
@@ -304,8 +256,7 @@ const AWSPanel = props => {
 
 const mapStateToProps = (state) => {
     return {
-        getOperationCompleted: state.tenant.getOperationCompleted,
-        operations: state.tenant.operations,
+        getOperationCompleted: state.env.getOperationCompleted,
         attachedAwsInfo: state.tenant.attachedAwsInfo,
         attachAwsCompleted: state.tenant.attachAwsCompleted,
     };
@@ -313,15 +264,12 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        changeProperty: (e) => dispatch(tenantAppModule.changeProperty(e)),
         requestGetOperation: (tenant, env, envIndex) =>
-            dispatch(tenantAppModule.requestGetOperation(tenant, env, envIndex)),
+            dispatch(requestGetOperation(tenant, env, envIndex)),
         requestInvokeOperation: (tenant, env, envIndex , key , pwd) =>
-            dispatch(tenantAppModule.requestInvokeOperation(tenant, env, envIndex , key , pwd)),
+            dispatch(requestInvokeOperation(tenant, env, envIndex , key , pwd)),
         requestResetOperation: (tenant, env, envIndex) =>
-            dispatch(tenantAppModule.requestResetOperation(tenant, env, envIndex)),
-        attachAws: (tenantTag, envTag, envIndex , key , pwd) =>
-            dispatch(tenantAppModule.requestAttachAws(tenantTag, envTag, envIndex , key , pwd)),
+            dispatch(requestResetOperation(tenant, env, envIndex)),
     };
 };
 

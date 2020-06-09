@@ -6,34 +6,25 @@ import ActionProgress from "../components/ActionProgress";
 
 function TenantProfile(props) {
   const tenantId = props.match.params.tenantId;
-  const { getDetailComplete, requestLoadDetail, updateComplete,invokeOperation } = props;
+  const { blocking,updateComplete, requestLoadDetail} = props;
 
-  switch (getDetailComplete) {
-    case tenantAppModule.yet:
-      requestLoadDetail(tenantId);
-      return <ActionProgress />;
-    case tenantAppModule.requested:
-      return <ActionProgress />;
-    case tenantAppModule.loadSuccess:
-      let Block = null;
-      if (updateComplete === tenantAppModule.syncing||invokeOperation===tenantAppModule.requested) {
-        Block= <ActionProgress />;
-      }
-      return (
-        <React.Fragment>
-          {Block}
-          <TenantProfilePage />
-        </React.Fragment>
-      );
-    default:
+  if(updateComplete===tenantAppModule.noLoading){
+    requestLoadDetail(tenantId);
+    return <ActionProgress />;
   }
+  const Block = blocking ? <ActionProgress /> : "";
+  return (
+    <React.Fragment>
+      {Block}
+      <TenantProfilePage />
+    </React.Fragment>
+  );
 }
 
 const mapStateToProps = (state) => {
   return {
-    getDetailComplete: state.tenant.getDetailComplete,
+    blocking: state.tenant.blocking,
     updateComplete: state.tenant.updateComplete,
-    invokeOperation : state.tenant.invokeOperation
   };
 };
 

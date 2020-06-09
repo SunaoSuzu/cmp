@@ -10,11 +10,9 @@ function EnvironmentTemplateMaker(tenant) {
     revision :1,
     landScape: 1,
     status: CommonCost.STATUS_DRAFT,
-    statusCaption: "下書き",
-    strategy : {web:{} , bastion:{}},
+    strategy : {network:{az:2,nat:false} , bastion:{create:0,accessFroms:""}},
     specLevel: null,
     vpcType: null,
-    vpcTypeCaption: "独自VPC",
     mainComponents: null,
     subComponents: null,
   };

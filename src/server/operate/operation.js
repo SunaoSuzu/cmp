@@ -130,7 +130,8 @@ exports.getStatusById = async function getStatusById(user , jobId){
 exports.updateJobStatus = async  function updateJobStatus(user, jobId , status ){
     const job = await this.getById(user , jobId);
     console.log("updateJobStatus:" + JSON.stringify(job) );
-    const revision  = job.revision + 1;
+    job.revision++;
+    const revision  = job.revision;
     const jobStatus = status;
     const prcDate   = getNowYMD();
     const component = 'cfn';

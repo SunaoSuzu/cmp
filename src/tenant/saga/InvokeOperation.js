@@ -1,7 +1,7 @@
 import converter from "../../convert/ToCloudFormation";
 import axios from "axios";
 import {put} from "redux-saga/effects";
-import * as TenantAppModule from "../module/TenantAppModule";
+import {INVOKE_OPERATION_STARTED} from "../module/EnvironmentModule";
 
 function* handleInvokeOperation(action) {
     const envIndex = action.envIndex;
@@ -19,9 +19,8 @@ function* handleInvokeOperation(action) {
             stackName : stackName,
             template  : template,
         });
-    console.log("開始完了");
     yield put({
-        type: TenantAppModule.INVOKE_OPERATION_STARTED,
+        type: INVOKE_OPERATION_STARTED,
         tenant      : res.data,
         envIndex  : envIndex,
         stackName : stackName,

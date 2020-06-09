@@ -23,7 +23,7 @@ const BasicInfoPanel = props => {
     if(env.strategy.network===undefined)env.strategy.network={};
     if(env.strategy.bastion===undefined)env.strategy.bastion={};
 
-    const paramPrefix = "environments." + index;
+    const paramPrefix = ""; //消してOKのはず
     const domain = DomainSetting.default;
 
     const impossible = false;  //常に入力不可能な項目
@@ -34,7 +34,7 @@ const BasicInfoPanel = props => {
     return (
         <>
             <TextField
-                name={paramPrefix + ".name"}
+                name={"name"}
                 onChange={uiToJson}
                 id="standard-env-name"
                 label="環境名"
@@ -46,7 +46,7 @@ const BasicInfoPanel = props => {
                 helperText="環境名を入れてください"
             />
             <TextField
-                name={paramPrefix + ".subDomain"}
+                name={"subDomain"}
                 onChange={uiToJson}
                 id="standard-sub-domain"
                 label="サブドメイン"
@@ -58,7 +58,7 @@ const BasicInfoPanel = props => {
                 }}
             />
             <TextField
-                name={paramPrefix + ".awsTag"}
+                name={"awsTag"}
                 onChange={uiToJson}
                 id="standard-env-awsTag"
                 label="tag(aws)"
@@ -71,7 +71,7 @@ const BasicInfoPanel = props => {
             />
             <Selection input={true}
                        label="環境状態"
-                       name={paramPrefix + ".status"}
+                       name={"status"}
                        onChange={uiToJson}
                        id="standard-basic-status"
                        value={env.status}
@@ -81,7 +81,7 @@ const BasicInfoPanel = props => {
                        options={environmentStatusMst}
             />
             <TextField
-                name={paramPrefix + ".specLevel"}
+                name={"specLevel"}
                 onChange={uiToJson}
                 id="standard-env-spec-level"
                 label="SPECレベル"
@@ -95,7 +95,7 @@ const BasicInfoPanel = props => {
             <Divider/>
             <Selection input={true}
                        label="VPC方針"
-                       name={paramPrefix + ".vpcType"}
+                       name={"vpcType"}
                        onChange={uiToJson}
                        id="standard-basic-vpc-type"
                        value={env.vpcType}
@@ -106,7 +106,7 @@ const BasicInfoPanel = props => {
             />
             <Selection input={true}
                        label="AZ数"
-                       name={paramPrefix + ".strategy.network.az"}
+                       name={"strategy.network.az"}
                        onChange={uiToJson}
                        id="standard-strategy-web-minimum-az"
                        readOnly={!changeable}
@@ -117,7 +117,7 @@ const BasicInfoPanel = props => {
             />
             <Selection input={true}
                        label="NatGateWay"
-                       name={paramPrefix + ".strategy.network.nat"}
+                       name={"strategy.network.nat"}
                        onChange={uiToJson}
                        id="standard-strategy-web-publishing"
                        value={env.strategy.network.nat}
@@ -129,7 +129,7 @@ const BasicInfoPanel = props => {
             <Divider/>
             <Selection input={true}
                        label="SSH Bastion"
-                       name={paramPrefix + ".strategy.bastion.create"}
+                       name={"strategy.bastion.create"}
                        onChange={uiToJson}
                        id="standard-strategy-bastion-create"
                        value={env.strategy.bastion.create}
@@ -139,7 +139,7 @@ const BasicInfoPanel = props => {
                        readOnly={!changeable}
             />
             <TextField
-                name={paramPrefix + ".strategy.bastion.accessFroms"}
+                name={"strategy.bastion.accessFroms"}
                 onChange={uiToJson}
                 id="standard-strategy-bastion-access-froms"
                 label="許可するIP"

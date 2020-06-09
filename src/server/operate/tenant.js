@@ -89,7 +89,9 @@ exports.upsert = async  function upsert(method ,user, json ){
         const key = json.name;  //TODO サロゲート？
         if(method==='POST'){
             json["id"]=key;
+            json.revision=0;
         }
+        json.revision++;
         const revision  = json.revision;
         const keys = decideDataKeys(user,json.id,revision) ;
         const prcDate   = getNowYMD();
