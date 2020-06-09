@@ -27,10 +27,12 @@ export function* handleRequestData(action) {
 export function* handleRequestUpdate(action) {
     try {
         const tenant = action.tenant;
-        const res = yield handleRequestUpdateImpl(tenant);
+        const envs   = action.envs;
+        const res = yield axios.put(baseEndPoint + `/tenant/` + tenant.id, {tenant : tenant , envs : envs});
         yield put({
             type: TenantAppModule.UPDATE_SUCCESS,
-            tenant: res.data,
+            tenant: res.data.tenant,
+            envs: res.data.envs,
             receivedAt: Date.now(),
         });
     } catch (e) {
@@ -40,9 +42,7 @@ export function* handleRequestUpdate(action) {
         });
     }
 }
-export function* handleRequestUpdateImpl(tenant) {
-    return yield axios.put(baseEndPoint + `/tenant/` + tenant.id, tenant);
-}
+
 
 export function* handleRequestAdd(action) {
     try {

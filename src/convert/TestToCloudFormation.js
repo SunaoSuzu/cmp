@@ -5,7 +5,7 @@ const requestQue = {
 const region = require("../conf/Region");
 
 const converter = require("./ToCloudFormation");
-const command   = require("../operation/cloudFormation/CreateStackCommand")
+const command   = require("../server/CreateStackCommand")
 const ret = converter.convert(requestQue.vpc);
 console.log(JSON.stringify(ret));
 

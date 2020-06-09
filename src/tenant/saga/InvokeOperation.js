@@ -14,6 +14,7 @@ function* handleInvokeOperation(action) {
     const res = yield axios.post(`https://9l7wsipahj.execute-api.ap-northeast-1.amazonaws.com/operate`,
         {
             command   : "create",
+            env    : env,
             tenant    : tenant,
             envIndex  : envIndex,
             stackName : stackName,
@@ -21,7 +22,8 @@ function* handleInvokeOperation(action) {
         });
     yield put({
         type: INVOKE_OPERATION_STARTED,
-        tenant      : res.data,
+        tenant      : res.data.tenant,
+        env    : res.data.env,
         envIndex  : envIndex,
         stackName : stackName,
         template  : template,

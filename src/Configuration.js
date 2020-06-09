@@ -127,14 +127,8 @@ const environmentStatusMst = [
 
 const tenantStatusMst = [
   { id: 1, caption: "下書き", description: "下書き", use: 1 },
-  { id: 10, caption: "導入中", description: "作業待ち", use: 1 },
-  { id: 100, caption: "本番稼働", description: "作成済み（予定なし）", use: 1 },
-  {
-    id: 200,
-    caption: "本番稼働(変更予定あり)",
-    description: "作成済み（予定あり）",
-    use: 1
-  }
+  { id: 10, caption: "環境作成予定あり", description: "環境作成予定あり", use: 1 },
+  { id: 100, caption: "環境作成済み", description: "環境作成済み", use: 1 },
 ];
 
 //以下は設定ではなくマスタ。将来は不要になるはず
