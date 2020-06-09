@@ -10,6 +10,7 @@ function NewTenant(props) {
   if (props.addComplete === addNew.syncing) {
     return <ActionProgress />;
   } else if (props.addComplete === addNew.synced) {
+    console.log("リダイレクト！");
     return <Redirect to={"/tenant/profile/" + props.newData.id} />;
   } else {
     if (props.newData.name === undefined) {

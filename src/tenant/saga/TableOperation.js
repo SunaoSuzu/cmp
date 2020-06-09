@@ -98,6 +98,6 @@ export function* updateEnv(action) {
     yield put({
         type: UPDATE_ENV_SUCCESS,
         envIndex : action.envIndex,
-        environment: res.data,
+        env: res.data,
     });
 }

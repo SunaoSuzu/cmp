@@ -53,7 +53,7 @@ const initialState = {
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case ADD_SUCCESS:
-      return {...state,blocking: false};
+      return {...state,blocking: false,updateComplete : noLoading};
     case GOTO_DETAIL:
       return { ...state, tenant: null, blocking: true,updateComplete : noLoading };
     case GET_DETAIL_REQUEST:
