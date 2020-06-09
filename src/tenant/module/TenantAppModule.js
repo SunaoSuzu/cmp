@@ -3,10 +3,9 @@ import {
   pushEmptyToArray,
   spliceObjOfArray,
 } from "../../util/JsonUtils";
-import {getNowYMD} from "../../util/DateUtils";
-import * as CommonCost from "../../common/CommonConst"
 import {ADD_SUCCESS} from "./AddNewModule";
 import {
+  CHANGE_PROPERTY_ENV,
   GET_OPERATION_REQUEST,
   INVOKE_OPERATION_REQUEST, INVOKE_OPERATION_STARTED,
   NEW_ENV_REQUEST,
@@ -39,15 +38,6 @@ export const DEL_FROM_ARRAY = "DEL_FROM_ARRAY";
 export const noLoading = 0;
 export const noNeed = 1;
 export const necessary = 2;
-export const syncing = 3;
-export const synced = 4;
-export const failed = 9;
-
-export const yet = 1;
-export const requested = 2;
-export const started   = 3;
-export const loadSuccess = 4;
-export const loadFailed = 9;
 
 // for new add
 export const empty_contract = { productMstId: "", amount: "" };
@@ -75,6 +65,8 @@ export default function reducer(state = initialState, action) {
       const newData = { ...state.tenant };
       setProperty(newData, action.name, action.value);
       return { ...state, tenant: newData, updateComplete: necessary };
+    case CHANGE_PROPERTY_ENV:
+      return { ...state, updateComplete: necessary };
     case NEW_ENV_REQUEST:
       return { ...state, blocking: true };
     case NEW_ENV_SUCCESS:
@@ -82,7 +74,7 @@ export default function reducer(state = initialState, action) {
     case UPDATE_REQUEST:
       return { ...state, blocking: true };
     case UPDATE_SUCCESS:
-      return { ...state, blocking: false,updateComplete : noNeed };
+      return { ...state, tenant: action.tenant,blocking: false,updateComplete : noNeed };
     case UPDATE_FAILURE:
       return { ...state, blocking: false };
     case DEL_REQUEST:
@@ -104,11 +96,14 @@ export default function reducer(state = initialState, action) {
         tenant: spliceObjOfArray({ ...state.tenant }, action.path, action.index),
         addComplete: necessary,
       };
+    case INVOKE_OPERATION_STARTED: {
+      return { ...state, blocking: false,tenant : action.tenant ,updateComplete : noNeed};
+    }
+    //他のモジュールの処理でローディングを出す為の処理
     case GET_OPERATION_REQUEST:
     case RESET_OPERATION_REQUEST:
     case INVOKE_OPERATION_REQUEST:
       return { ...state, blocking: true };
-    case INVOKE_OPERATION_STARTED:
     case UPDATE_ENV_SUCCESS:
       return { ...state, blocking: false ,updateComplete : noNeed};
     default:
@@ -142,10 +137,11 @@ export const changeProperty = (e) => {
 };
 
 
-export const requestUpdate = (tenant) => {
+export const requestUpdate = (tenant,envs) => {
   return {
     type: UPDATE_REQUEST,
     tenant: tenant,
+    envs: envs,
   };
 };
 

@@ -1,4 +1,4 @@
-import {GET_DETAIL_SUCCESS,} from "./TenantAppModule";
+import {GET_DETAIL_SUCCESS, UPDATE_SUCCESS,} from "./TenantAppModule";
 import * as CommonCost from "../../common/CommonConst";
 import {setProperty} from "../../util/JsonUtils";
 
@@ -38,6 +38,8 @@ export default function reducer(state = initialState, action) {
             envs[action.envIndex]=env;
             return { ...state, environments: envs }
         }
+        case UPDATE_SUCCESS:
+            return {...state, environments: action.envs};
         case GET_OPERATION_REQUEST:
             return { ...state};
         case GET_OPERATION_SUCCESS: {
@@ -59,8 +61,11 @@ export default function reducer(state = initialState, action) {
             return { ...state};
         case INVOKE_OPERATION_REQUEST:
             return { ...state, blocking: true };
-        case INVOKE_OPERATION_STARTED:
-            return { ...state, blocking: false};
+        case INVOKE_OPERATION_STARTED:{
+            const envs = [ ...state.environments ];
+            envs[action.envIndex]=action.env;
+            return { ...state, environments: envs , blocking: false};
+        }
         case INVOKE_OPERATION_FAIL:
             return { ...state, blocking: false };
         case RESET_OPERATION_REQUEST: {
@@ -103,14 +108,12 @@ export const changeEnvProperty = (e,envIndex) => {
     };
 };
 
-export const requestInvokeOperation = (tenant, env, envIndex , apiKey , apiPwd) => {
+export const requestInvokeOperation = (tenant, env, envIndex ) => {
     return {
         type: INVOKE_OPERATION_REQUEST,
         tenant: tenant,
         env: env,
         envIndex: envIndex,
-        apiKey : apiKey,
-        apiPwd : apiPwd,
     };
 };
 

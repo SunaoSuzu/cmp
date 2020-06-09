@@ -1,4 +1,4 @@
-const operation   = require("./operation");
+const operation   = require("../operation");
 const userName   = "sunao";
 const mt     = "sutech";  //マルチテナントのテナント
 const stage  = "pro";     //Landscape

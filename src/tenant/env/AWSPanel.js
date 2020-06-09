@@ -7,11 +7,8 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import VpcLogo from "../../components/aws/VpcLogo";
 import ListItemText from "@material-ui/core/ListItemText";
 import EC2Logo from "../../components/aws/EC2Logo";
-import * as TenantAppModule from "../module/TenantAppModule";
-import Divider from "@material-ui/core/Divider";
 import {makeStyles} from "@material-ui/core/styles";
 import {connect} from "react-redux";
-import {getName} from "../../util/AWSUtils";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -70,32 +67,17 @@ const AWSPanel = props => {
     const env = props.env;
     const index = props.index;
 
-    const getOperationCompleted= props.getOperationCompleted;
-    const attachedAwsInfo= props.attachedAwsInfo;
-    const attachAwsCompleted= props.attachAwsCompleted;
-
     const getOperation = function getOperation(t, e, i) {
         props.requestGetOperation(t, e, i);
     };
 
     const invokeOperation = function invokeOperation(t, e, i) {
-        const key = document.getElementById("apiKey").value;
-        const pwd = document.getElementById("apiPwd").value;
-        props.requestInvokeOperation(t, e, i,key,pwd);
+        props.requestInvokeOperation(t, e, i);
         handleClose();
     };
 
     const resetOperation = function getOperation(t, e, i) {
         props.requestResetOperation(t, e, i);
-    };
-
-    if (attachAwsCompleted === TenantAppModule.loadSuccess) {
-        console.log("AWSから取り込み成功");
-    }
-
-    //DiagOpen
-    const handleClickOpenAsAtathchDiag = () => {
-        setDiagOpen(true);
     };
 
     //DiagOpen
@@ -108,16 +90,7 @@ const AWSPanel = props => {
         setDiagOpen(false);
     };
 
-    //DiagClose
-    const handleAttachStart = (t, e, i) => {
-        const key = document.getElementById("apiKey").value;
-        const pwd = document.getElementById("apiPwd").value;
-        props.attachAws(t.awsTag, e.awsTag,index,key,pwd);
-        setDiagOpen(false);
-    };
-
     const disableOperationBtn = env.status === CommonCost.STATUS_DRAFT ? false : true;
-    const disableAttachBtn = true;
     const disableInvokeBtn = env.status === CommonCost.STATUS_PLANED ? false : true;
     const disableResetBtn = false;
 
@@ -195,39 +168,11 @@ const AWSPanel = props => {
                 ""
             )}
 
-            {attachAwsCompleted === TenantAppModule.loadSuccess
-                ? attachedAwsInfo.vpcs.map( (vpc , vi) => (
-                    <React.Fragment key={vi}>
-                        <Divider />
-                        <div>
-                            <VpcLogo />
-                            {getName(vpc.Tags)} {vpc.VpcId}
-                        </div>
-                    </React.Fragment>
-                ))
-                : ""}
-            {attachAwsCompleted === TenantAppModule.loadSuccess
-                ? attachedAwsInfo.ec2.map( (ec2,ei ) => (
-                    <React.Fragment key={ei}>
-                        {ec2.Instances.map(instance => (
-                            <>
-                                <div>
-                                    <EC2Logo />
-                                    {getName(instance.Tags)} {instance.InstanceId}{" "}
-                                    {instance.InstanceType}
-                                </div>
-                            </>
-                        ))}
-                    </React.Fragment>
-                ))
-                : ""
-            }
             <Dialog open={diagOpen} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">アタッチ</DialogTitle>
+                <DialogTitle id="form-dialog-title">CloudFormationの実行</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        AWSから情報取得を実行します。API_KEYとパスワードを入力して下さい
-                        入力された値の保持は行いません
+                         AWSで処理を実施します
                     </DialogContentText>
                     <TextField
                         margin="dense"
@@ -256,9 +201,6 @@ const AWSPanel = props => {
 
 const mapStateToProps = (state) => {
     return {
-        getOperationCompleted: state.env.getOperationCompleted,
-        attachedAwsInfo: state.tenant.attachedAwsInfo,
-        attachAwsCompleted: state.tenant.attachAwsCompleted,
     };
 };
 
@@ -266,8 +208,8 @@ const mapDispatchToProps = (dispatch) => {
     return {
         requestGetOperation: (tenant, env, envIndex) =>
             dispatch(requestGetOperation(tenant, env, envIndex)),
-        requestInvokeOperation: (tenant, env, envIndex , key , pwd) =>
-            dispatch(requestInvokeOperation(tenant, env, envIndex , key , pwd)),
+        requestInvokeOperation: (tenant, env, envIndex ) =>
+            dispatch(requestInvokeOperation(tenant, env, envIndex )),
         requestResetOperation: (tenant, env, envIndex) =>
             dispatch(requestResetOperation(tenant, env, envIndex)),
     };

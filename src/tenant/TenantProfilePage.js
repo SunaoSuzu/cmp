@@ -70,7 +70,7 @@ function TenantProfilePage(props) {
   //ここで新規登録画面との変数名の違いを吸収
   const targetData = props.tenant;
   const save = function save() {
-    requestUpdate(targetData);
+    requestUpdate(targetData,props.environments);
   };
   const uiToJson = event => {
     changeProperty(event);
@@ -266,7 +266,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    requestUpdate: (tenant) => dispatch(tenantAppModule.requestUpdate(tenant)),
+    requestUpdate: (tenant,envs) => dispatch(tenantAppModule.requestUpdate(tenant,envs)),
     changeProperty: (e) => dispatch(tenantAppModule.changeProperty(e)),
     pushEmpty: (path, empty) =>
         dispatch(tenantAppModule.pushEmpty(path, empty)),

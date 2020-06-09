@@ -1,5 +1,4 @@
 import NewTenantPage from "./NewTenentPage";
-import * as tenantAppModule from "./module/TenantAppModule";
 import * as addNew from "./module/AddNewModule";
 
 import ActionProgress from "../components/ActionProgress";
@@ -8,9 +7,9 @@ import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 
 function NewTenant(props) {
-  if (props.addComplete === tenantAppModule.syncing) {
+  if (props.addComplete === addNew.syncing) {
     return <ActionProgress />;
-  } else if (props.addComplete === tenantAppModule.synced) {
+  } else if (props.addComplete === addNew.synced) {
     return <Redirect to={"/tenant/profile/" + props.newData.id} />;
   } else {
     if (props.newData.name === undefined) {
