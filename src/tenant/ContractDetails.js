@@ -63,13 +63,13 @@ const ContractDetails = props => {
 
   return (
     <React.Fragment>
-      <Typography component="h6" variant="h6">
+      <Typography variant="subtitle1">
         契約基礎情報
       </Typography>
       <Box m={2}>
         <p>契約日など後で追加</p>
       </Box>
-      <Typography component="h6" variant="h6">
+      <Typography variant="subtitle1">
         製品ライセンス
       </Typography>
       <Box m={2}>

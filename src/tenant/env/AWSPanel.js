@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme => ({
         paddingLeft: theme.spacing(4)
     },
     button: {
-        margin: theme.spacing(1)
+        margin: theme.spacing(0.5)
     }
 }));
 
@@ -97,31 +97,31 @@ const AWSPanel = props => {
     const BUTTONS = (<>
         <Button
             variant="contained"
-            color="primary"
             className={classes.button}
             startIcon={<StorageIcon />}
             disabled={disableOperationBtn}
             onClick={() => getOperation(tenant, env, index)}
+            disableElevation
         >
             構成決定
         </Button>
         <Button
             variant="contained"
-            color="primary"
             className={classes.button}
             startIcon={<CloudUploadIcon />}
             disabled={disableInvokeBtn}
             onClick={() => handleClickOpenAsExecuteDiag(tenant, env, index)}
+            disableElevation
         >
             作業実行
         </Button>
         <Button
             variant="contained"
-            color="primary"
             className={classes.button}
             startIcon={<DeleteIcon />}
             disabled={disableResetBtn}
             onClick={() => resetOperation(tenant, env, index)}
+            disableElevation
         >
             破棄
         </Button>

@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
   appContent: {
     padding: theme.spacing(2),
-    margin: theme.spacing(2, 0),
+    margin: theme.spacing(1, 0),
     "& .MuiTextField-root": {
       margin: theme.spacing(1),
       width: "25ch"
@@ -39,23 +39,23 @@ export default function TenantApp() {
   let { path } = useRouteMatch();
 
   return (
-    <React.Fragment>
-      <div className={classes.appHeaderWrap}>
-        <PageTitle>テナントプロファイル</PageTitle>
-      </div>
-      <Paper elevation={3} className={classes.appContent}>
-        <Switch>
-          <Route exact path={path + "/list"} component={TenantList} />
-          <Route exact path={path + "/add"} component={NewTenant} />
-          <Route exact path={path + "/profile"} component={TenantDetail} />
-          <Route
-            exact
-            path={path + "/profile/:tenantId"}
-            component={TenantDetail}
-          />
-          <Route exact path={path} component={TenantList} />
-        </Switch>
-      </Paper>
-    </React.Fragment>
+      <React.Fragment>
+        <div className={classes.appHeaderWrap}>
+          <PageTitle>テナントプロファイル</PageTitle>
+        </div>
+        <Paper elevation={3} className={classes.appContent}>
+          <Switch>
+            <Route exact path={path + "/list"} component={TenantList} />
+            <Route exact path={path + "/add"} component={NewTenant} />
+            <Route exact path={path + "/profile"} component={TenantDetail} />
+            <Route
+                exact
+                path={path + "/profile/:tenantId"}
+                component={TenantDetail}
+            />
+            <Route exact path={path} component={TenantList} />
+          </Switch>
+        </Paper>
+      </React.Fragment>
   );
 }

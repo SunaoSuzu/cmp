@@ -15,10 +15,9 @@ import EnvironmentDetail from "./env/EnvironmentDetail";
 import TabPanel from "./TabPanel";
 import Box from "@material-ui/core/Box";
 import Selection from "../components/Selection";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import * as tenantAppModule from "./module/TenantAppModule";
-import {requestNewEnv} from "./module/EnvironmentModule";
-
+import { requestNewEnv } from "./module/EnvironmentModule";
 
 const useStyles = makeStyles(theme => ({
   basicInformationPanel: {
@@ -35,11 +34,13 @@ const useStyles = makeStyles(theme => ({
     height: 800
   },
   tabs: {
-    borderRight: `1px solid ${theme.palette.divider}`
+    borderRight: `1px solid ${theme.palette.divider}`,
+    minWidth: 128
   },
   sideTab: {
     width: "100%",
-    borderRight: `1px solid ${theme.palette.divider}`
+    borderRight: `1px solid ${theme.palette.divider}`,
+    minWidth: 128
   },
   tabPanel: {
     padding: theme.spacing(1, 2),
@@ -59,7 +60,7 @@ function TenantProfilePage(props) {
   const tenantStatusMst = conf.tenantStatusMst;
   const tenantVpcTypeMst = conf.tenantVpcTypeMst;
   const classes = useStyles();
-  const { requestUpdate, changeProperty,updateComplete } = props;
+  const { requestUpdate, changeProperty, updateComplete } = props;
 
   const [tabValue, setValue] = React.useState(0);
 
@@ -70,7 +71,7 @@ function TenantProfilePage(props) {
   //ここで新規登録画面との変数名の違いを吸収
   const targetData = props.tenant;
   const save = function save() {
-    requestUpdate(targetData,props.environments);
+    requestUpdate(targetData, props.environments);
   };
   const uiToJson = event => {
     changeProperty(event);
@@ -84,168 +85,170 @@ function TenantProfilePage(props) {
   const newEnv = function newEnv() {
     props.requestNewEnv(targetData);
   };
-  const disableSaveButton = (updateComplete !== tenantAppModule.necessary);
+  const disableSaveButton = updateComplete !== tenantAppModule.necessary;
   return (
-    <React.Fragment>
-      <form encType="multipart/form-data">
-        <div style={{ width: "100%" }}>
-          <Box display="flex" p={0} bgcolor="background.paper">
-            <Box p={0} flexGrow={1} bgcolor="background.toolbar" />
-            <Box p={0} bgcolor="background.toolbar">
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                className={classes.button}
-                startIcon={<SaveIcon />}
-                onClick={save.bind(this)}
-                disabled={disableSaveButton}
-              >
-                Save
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                className={classes.button}
-                startIcon={<StorageIcon />}
-                onClick={newEnv.bind(this)}
-              >
-                新規環境
-              </Button>
+      <React.Fragment>
+        <form encType="multipart/form-data">
+          <div style={{ width: "100%" }}>
+            <Box display="flex" p={0} bgcolor="background.paper">
+              <Box p={0} flexGrow={1} bgcolor="background.toolbar" />
+              <Box p={0} bgcolor="background.toolbar">
+                <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
+                    startIcon={<SaveIcon />}
+                    onClick={save.bind(this)}
+                    disabled={disableSaveButton}
+                    disableElevation
+                >
+                  Save
+                </Button>
+                <Button
+                    variant="contained"
+                    className={classes.button}
+                    startIcon={<StorageIcon />}
+                    onClick={newEnv.bind(this)}
+                    disableElevation
+                >
+                  新規環境
+                </Button>
+              </Box>
             </Box>
-          </Box>
-        </div>
+          </div>
 
-        <div className={classes.basicInformationPanel}>
-          <TextField
-            name="name"
-            onChange={uiToJson}
-            id="standard-basic"
-            label="テナント名"
-            value={targetData.name}
-            helperText="会社名を入れてください"
-            inputProps={{
-              required: true
-            }}
-          />
-          <TextField
-            name="alias"
-            onChange={uiToJson}
-            id="standard-basic-alias"
-            label="略称"
-            value={targetData.alias}
-            helperText="略称を入れてください"
-            inputProps={{
-              required: true
-            }}
-          />
-          <TextField
-            name="awsTag"
-            onChange={uiToJson}
-            id="standard-basic-awsTag"
-            label="tag(aws)"
-            helperText="tag(aws)を入れてください"
-            value={targetData.awsTag}
-            inputProps={{
-              required: true
-            }}
-          />
-          <Selection input={true}
-            label="ステータス"
-            name="status"
-            onChange={uiToJson}
-            id="standard-basic-status"
-            value={targetData.status}
-            readOnly={true}
-            helperText="ステータス"
-            options={tenantStatusMst}
-          />
-        </div>
-        <Divider />
-        <div className={classes.tabRoot}>
-          <Tabs
-            orientation="vertical"
-            variant="scrollable"
-            value={tabValue}
-            onChange={handleChange}
-            aria-label="Vertical tabs "
-            className={classes.tabs}
-          >
-            <Tab
-              label="契約内容"
-              {...a11yProps(0)}
-              icon={<AssignmentIcon />}
-              wrapped
-              className={classes.sideTab}
+          <div className={classes.basicInformationPanel}>
+            <TextField
+                name="name"
+                onChange={uiToJson}
+                id="standard-basic"
+                label="テナント名"
+                value={targetData.name}
+                helperText="会社名を入れてください"
+                inputProps={{
+                  required: true
+                }}
             />
-            <Tab
-              label="環境方針"
-              {...a11yProps(1)}
-              icon={<AssignmentIcon />}
-              wrapped
-              className={classes.sideTab}
+            <TextField
+                name="alias"
+                onChange={uiToJson}
+                id="standard-basic-alias"
+                label="略称"
+                value={targetData.alias}
+                helperText="略称を入れてください"
+                inputProps={{
+                  required: true
+                }}
             />
-            {props.environments.map((env, index) => (
-              <Tab
-                label={env.name}
-                {...a11yProps(index + 2)}
-                icon={
-                  env.status === 1 ? (
-                    <Badge
-                      badgeContent="draft"
-                      color="primary"
-                      anchorOrigin={{ vertical: "top", horizontal: "left" }}
-                    >
-                      <StorageIcon />
-                    </Badge>
-                  ) : (
-                    <StorageIcon />
-                  )
-                }
-                className={classes.sideTab}
-                key={index}
-              />
-            ))}
-          </Tabs>
-          <TabPanel className={classes.tabPanel} value={tabValue} index={0}>
-            <ContractDetails
-              targetData={targetData}
-              uiToJson={uiToJson}
-              addDetail={addDetail}
-              delDetail={delDetail}
+            <TextField
+                name="awsTag"
+                onChange={uiToJson}
+                id="standard-basic-awsTag"
+                label="tag(aws)"
+                helperText="tag(aws)を入れてください"
+                value={targetData.awsTag}
+                inputProps={{
+                  required: true
+                }}
             />
-          </TabPanel>
-          <TabPanel className={classes.tabPanel} value={tabValue} index={1}>
-            <Selection input={true}
-                       label="VPC方針"
-                       name="environmentSetting.vpcType"
-                       onChange={uiToJson}
-                       id="environment-setting-vpc"
-                       value={targetData.environmentSetting.vpcType}
-                       helperText="VPC作成方針"
-                       margin="dense"
-                       options={tenantVpcTypeMst}
+            <Selection
+                input={true}
+                label="ステータス"
+                name="status"
+                onChange={uiToJson}
+                id="standard-basic-status"
+                value={targetData.status}
+                readOnly={true}
+                helperText="ステータス"
+                options={tenantStatusMst}
             />
-          </TabPanel>
-          {props.environments.map((env, index) => (
-            <TabPanel
-              className={classes.tabPanel}
-              value={tabValue}
-              index={index + 2}
-              key={index}
+          </div>
+          <Divider />
+          <div className={classes.tabRoot}>
+            <Tabs
+                orientation="vertical"
+                variant="scrollable"
+                value={tabValue}
+                onChange={handleChange}
+                aria-label="Vertical tabs "
+                className={classes.tabs}
             >
-              <EnvironmentDetail
-                index={index}
-                env={env}
-                key={index}
-                tenant={targetData}
+              <Tab
+                  label="契約内容"
+                  {...a11yProps(0)}
+                  icon={<AssignmentIcon />}
+                  wrapped
+                  className={classes.sideTab}
+              />
+              <Tab
+                  label="環境方針"
+                  {...a11yProps(1)}
+                  icon={<AssignmentIcon />}
+                  wrapped
+                  className={classes.sideTab}
+              />
+              {props.environments.map((env, index) => (
+                  <Tab
+                      label={env.name}
+                      {...a11yProps(index + 2)}
+                      icon={
+                        env.status === 1 ? (
+                            <Badge
+                                badgeContent="draft"
+                                color="primary"
+                                anchorOrigin={{ vertical: "top", horizontal: "left" }}
+                            >
+                              <StorageIcon />
+                            </Badge>
+                        ) : (
+                            <StorageIcon />
+                        )
+                      }
+                      className={classes.sideTab}
+                      key={index}
+                      wrapped
+                  />
+              ))}
+            </Tabs>
+            <TabPanel className={classes.tabPanel} value={tabValue} index={0}>
+              <ContractDetails
+                  targetData={targetData}
+                  uiToJson={uiToJson}
+                  addDetail={addDetail}
+                  delDetail={delDetail}
               />
             </TabPanel>
-          ))}
-        </div>
-      </form>
-    </React.Fragment>
+            <TabPanel className={classes.tabPanel} value={tabValue} index={1}>
+              <Selection
+                  input={true}
+                  label="VPC方針"
+                  name="environmentSetting.vpcType"
+                  onChange={uiToJson}
+                  id="environment-setting-vpc"
+                  value={targetData.environmentSetting.vpcType}
+                  helperText="VPC作成方針"
+                  margin="dense"
+                  options={tenantVpcTypeMst}
+              />
+            </TabPanel>
+            {props.environments.map((env, index) => (
+                <TabPanel
+                    className={classes.tabPanel}
+                    value={tabValue}
+                    index={index + 2}
+                    key={index}
+                >
+                  <EnvironmentDetail
+                      index={index}
+                      env={env}
+                      key={index}
+                      tenant={targetData}
+                  />
+                </TabPanel>
+            ))}
+          </div>
+        </form>
+      </React.Fragment>
   );
 }
 
@@ -256,25 +259,28 @@ function a11yProps(index) {
   };
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     tenant: state.tenant.tenant,
     environments: state.env.environments,
-    updateComplete: state.tenant.updateComplete,
+    updateComplete: state.tenant.updateComplete
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    requestUpdate: (tenant,envs) => dispatch(tenantAppModule.requestUpdate(tenant,envs)),
-    changeProperty: (e) => dispatch(tenantAppModule.changeProperty(e)),
+    requestUpdate: (tenant, envs) =>
+        dispatch(tenantAppModule.requestUpdate(tenant, envs)),
+    changeProperty: e => dispatch(tenantAppModule.changeProperty(e)),
     pushEmpty: (path, empty) =>
         dispatch(tenantAppModule.pushEmpty(path, empty)),
     delFromArray: (path, index) =>
         dispatch(tenantAppModule.delFromArray(path, index)),
-    requestNewEnv: (tenant) => dispatch(requestNewEnv(tenant)),
+    requestNewEnv: tenant => dispatch(requestNewEnv(tenant))
   };
 };
 
-
-export default connect(mapStateToProps, mapDispatchToProps)(TenantProfilePage);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(TenantProfilePage);

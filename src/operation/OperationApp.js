@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     },
     appContent: {
         padding: theme.spacing(2),
-        margin: theme.spacing(2, 0),
+        margin: theme.spacing(1, 0),
         "& .MuiTextField-root": {
             margin: theme.spacing(1),
             width: "25ch"
