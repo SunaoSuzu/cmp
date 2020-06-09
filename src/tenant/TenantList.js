@@ -23,7 +23,7 @@ function TenantList(props) {
   const [pageSize   , setPageSize] = React.useState(50);
   const [keyword   , setKeyword] = React.useState(50);
 
-  let BLOCK = null;
+  const BLOCK = props.blocking ? <ActionProgress/>:"";
   const loadSuggestions = (query) => {
     setKeyword(query);
     setDispatched(false);
@@ -43,12 +43,9 @@ function TenantList(props) {
     setDispatched(false);
   };
 
-  if(dispatched){
-    BLOCK="";
-  }else{
+  if(!dispatched){
     const from = (pageIndex - 1) * pageSize;
     props.requestSearchList(keyword , from , pageSize);
-    BLOCK=<ActionProgress/>
     setDispatched(true);
   }
   let tenants = props.tenants;
@@ -108,6 +105,7 @@ function TenantList(props) {
 
 const mapStateToProps = (state) => {
   return {
+    blocking: state.tenant.blocking,
     tenants : state.list.tenants,
   };
 };

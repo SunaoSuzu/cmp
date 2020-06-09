@@ -9,9 +9,10 @@ import {
   GET_OPERATION_REQUEST,
   INVOKE_OPERATION_REQUEST, INVOKE_OPERATION_STARTED,
   NEW_ENV_REQUEST,
-  NEW_ENV_SUCCESS, RESET_OPERATION_REQUEST,
-  UPDATE_ENV_SUCCESS
+  NEW_ENV_SUCCESS, ON_SUCCESS_EXECUTE_CHANGE_SET, ON_SUCCESS_GET_CHANGE_SET, RESET_OPERATION_REQUEST,
+  UPDATE_ENV_SUCCESS,GET_CHANGE_SET,EXECUTE_CHANGE_SET
 } from "./EnvironmentModule";
+import {GET_LIST_FAILURE, GET_LIST_REQUEST, GET_LIST_SUCCESS} from "./ListModule";
 
 
 export const GOTO_DETAIL = "GOTO_DETAIL";
@@ -85,26 +86,29 @@ export default function reducer(state = initialState, action) {
       return { ...state, blocking: false };
     //ここから先は細かい処理
     case PUSH_EMPTY_TO_ARRAY:
-      return {...state, operationType: PUSH_EMPTY_TO_ARRAY,
+      return {...state,
         tenant: pushEmptyToArray({ ...state.tenant }, action.path, action.empty),
-        addComplete: necessary,
       };
     case DEL_FROM_ARRAY:
-      return {
-        ...state,
-        operationType: DEL_FROM_ARRAY,
+      return {...state,
         tenant: spliceObjOfArray({ ...state.tenant }, action.path, action.index),
-        addComplete: necessary,
       };
     case INVOKE_OPERATION_STARTED: {
       return { ...state, blocking: false,tenant : action.tenant ,updateComplete : noNeed};
     }
     //他のモジュールの処理でローディングを出す為の処理
+    case GET_LIST_REQUEST:
     case GET_OPERATION_REQUEST:
     case RESET_OPERATION_REQUEST:
     case INVOKE_OPERATION_REQUEST:
+    case GET_CHANGE_SET:
+    case EXECUTE_CHANGE_SET:
       return { ...state, blocking: true };
     case UPDATE_ENV_SUCCESS:
+    case ON_SUCCESS_EXECUTE_CHANGE_SET:
+    case ON_SUCCESS_GET_CHANGE_SET:
+    case GET_LIST_SUCCESS:
+    case GET_LIST_FAILURE:
       return { ...state, blocking: false ,updateComplete : noNeed};
     default:
       return state;

@@ -19,13 +19,10 @@ const OperationList = props => {
     const classes = useStyles();
     const rows = props.operations;
     const [loaded , setLoaded] = React.useState(false);
-    let Block = null;
+    const Block = props.blocking ? <ActionProgress/> : "";
     if (loaded===false){
         props.getOperation();
-        Block = <ActionProgress/>
         setLoaded(true);
-    }else{
-        Block = ""
     }
     return (
         <>
@@ -37,6 +34,8 @@ const OperationList = props => {
                         <TableCell align="right">JobStatus</TableCell>
                         <TableCell align="right">Component</TableCell>
                         <TableCell align="right">prcIdKey</TableCell>
+                        <TableCell align="right">tenant</TableCell>
+                        <TableCell align="right">env</TableCell>
                         <TableCell align="right">name</TableCell>
                         <TableCell align="right">subname</TableCell>
                     </TableRow>
@@ -50,6 +49,8 @@ const OperationList = props => {
                             <TableCell align="right">{row.jobStatus}</TableCell>
                             <TableCell align="right">{row.component}</TableCell>
                             <TableCell align="right">{row.prcIdKey}</TableCell>
+                            <TableCell align="right">{row.tenantName}</TableCell>
+                            <TableCell align="right">{row.envName}</TableCell>
                             <TableCell align="right">{row.name}</TableCell>
                             <TableCell align="right">{row.subname}</TableCell>
                         </TableRow>
@@ -63,7 +64,7 @@ const OperationList = props => {
 const mapStateToProps = (state) => {
     return {
         operations: state.operations,
-
+        blocking : state.blocking,
     }
 }
 const mapDispatchToProps = (dispatch) => {

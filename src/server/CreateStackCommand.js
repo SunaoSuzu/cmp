@@ -61,14 +61,13 @@ exports.changeSet = function (config,name,setName , body) {
             console.log("result=" + name);
             console.log(JSON.stringify(result));
             console.log(JSON.stringify(result.Changes));
+            return result;
         }).catch(function (e) {
             console.log(e)
         })
     }catch (e) {
         console.log(e);
     }
-
-
 }
 
 exports.watch = function (config,name) {

@@ -94,50 +94,53 @@ const AWSPanel = props => {
     const disableInvokeBtn = env.status === CommonCost.STATUS_PLANED ? false : true;
     const disableResetBtn = false;
 
+    const BUTTONS = (<>
+        <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            startIcon={<StorageIcon />}
+            disabled={disableOperationBtn}
+            onClick={() => getOperation(tenant, env, index)}
+        >
+            構成決定
+        </Button>
+        <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            startIcon={<CloudUploadIcon />}
+            disabled={disableInvokeBtn}
+            onClick={() => handleClickOpenAsExecuteDiag(tenant, env, index)}
+        >
+            作業実行
+        </Button>
+        <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+            startIcon={<DeleteIcon />}
+            disabled={disableResetBtn}
+            onClick={() => resetOperation(tenant, env, index)}
+        >
+            破棄
+        </Button>
+        <DownloadLink
+            label="JSON(開発用)"
+            filename="env.json"
+            exportFile={() => JSON.stringify(env) }
+        />
+        <DownloadLink
+            label="Template"
+            filename="template.json"
+            exportFile={() => JSON.stringify(converter.convert(env.resources)) }
+        />
+
+    </>);
 
     return (
         <>
-            <Button
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                startIcon={<StorageIcon />}
-                disabled={disableOperationBtn}
-                onClick={() => getOperation(tenant, env, index)}
-            >
-                構成決定
-            </Button>
-            <Button
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                startIcon={<CloudUploadIcon />}
-                disabled={disableInvokeBtn}
-                onClick={() => handleClickOpenAsExecuteDiag(tenant, env, index)}
-            >
-                作業実行
-            </Button>
-            <Button
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                startIcon={<DeleteIcon />}
-                disabled={disableResetBtn}
-                onClick={() => resetOperation(tenant, env, index)}
-            >
-                破棄
-            </Button>
-            <DownloadLink
-                label="JSON(開発用)"
-                filename="env.json"
-                exportFile={() => JSON.stringify(env) }
-            />
-            <DownloadLink
-                label="Template"
-                filename="template.json"
-                exportFile={() => JSON.stringify(converter.convert(env.resources)) }
-            />
-
+            {BUTTONS}
             {env.resources != null ? (
                 <List
                     component="nav"

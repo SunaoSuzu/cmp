@@ -220,7 +220,6 @@ export default function SiteHeader(props) {
   const isNotificationOpen = Boolean(anchorNotify);
 
   const handleNotificationOpen = (event) => {
-    console.log("handleNotificationOpen");
     setAnchorNotify(event.currentTarget);
   };
   const handleNotificationClose = () => {
