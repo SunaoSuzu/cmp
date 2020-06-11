@@ -12,7 +12,7 @@ import ContractDetails from "./ContractDetails";
 import Badge from "@material-ui/core/Badge";
 import getConfiguration from "../Configuration";
 import EnvironmentDetail from "./env/EnvironmentDetail";
-import TabPanel from "./TabPanel";
+import TabPanel from "../components/TabPanel";
 import Box from "@material-ui/core/Box";
 import Selection from "../components/Selection";
 import { connect } from "react-redux";

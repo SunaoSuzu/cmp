@@ -13,17 +13,18 @@ export const INVOKE_OPERATION_REQUEST = "INVOKE_OPERATION_REQUEST";
 export const INVOKE_OPERATION_STARTED = "INVOKE_OPERATION_STARTED";
 
 export const RESET_OPERATION_REQUEST = "RESET_OPERATION_REQUEST";
+export const RESET_UPD_OPERATION_REQUEST = "RESET_UPD_OPERATION_REQUEST";
 
 export const UPDATE_ENV_SUCCESS = "UPDATE_ENV_SUCCESS";
+
+export const GET_UPD_OPERATION_REQUEST = "GET_UPD_OPERATION_REQUEST";
+export const GET_UPD_OPERATION_SUCCESS = "GET_UPD_OPERATION_SUCCESS";
 
 export const GET_CHANGE_SET = "GET_CHANGE_SET";
 export const ON_SUCCESS_GET_CHANGE_SET = "ON_SUCCESS_GET_CHANGE_SET";
 
 export const EXECUTE_CHANGE_SET = "EXECUTE_CHANGE_SET";
 export const ON_SUCCESS_EXECUTE_CHANGE_SET = "ON_SUCCESS_EXECUTE_CHANGE_SET";
-
-export const ERROR = "ERROR";
-
 
 const initialState = {
     environments: [],
@@ -47,9 +48,19 @@ export default function reducer(state = initialState, action) {
         case GET_OPERATION_SUCCESS: {
             const envs = [ ...state.environments ];
             const env = {...envs[action.envIndex]};
-            env["resources"] = action.resources;
-            env["operations"] = action.operations;
+            env.stack = {name : action.stackName , template : action.template , status:0};
+            env.resources = action.resources;
             env.status=CommonCost.STATUS_PLANED;
+            envs[action.envIndex]=env;
+            return {...state, environments: envs };
+        }
+        case GET_UPD_OPERATION_SUCCESS :{
+            const envs = [ ...state.environments ];
+            const env = {...envs[action.envIndex]};
+            env.prev = {stack : env.stack , resources : env.resources}
+            env.stack.template = action.template;
+            env.resources = action.resources;
+            env.status=CommonCost.STATUS_MOD_PLANED;
             envs[action.envIndex]=env;
             return {...state, environments: envs };
         }
@@ -65,10 +76,19 @@ export default function reducer(state = initialState, action) {
         case RESET_OPERATION_REQUEST: {
             const envs = [ ...state.environments ];
             const env = {...envs[action.envIndex]};
-            delete env.operations;
             delete env.resources;
             delete env.stack;
             env.status = CommonCost.STATUS_DRAFT;
+            envs[action.envIndex]=env;
+            return { ...state ,environments: envs};
+        }
+        case RESET_UPD_OPERATION_REQUEST: {
+            const envs = [ ...state.environments ];
+            const env = {...envs[action.envIndex]};
+            env.resources=env.prev.resources;
+            env.stack=env.prev.stack;
+            delete env.prev;
+            env.status = CommonCost.STATUS_OK;
             envs[action.envIndex]=env;
             return { ...state ,environments: envs};
         }
@@ -77,9 +97,18 @@ export default function reducer(state = initialState, action) {
     }
 }
 
-export const requestGetOperation = (tenant, env, envIndex) => {
+export const getOperation = (tenant, env, envIndex) => {
     return {
         type: GET_OPERATION_REQUEST,
+        tenant: tenant,
+        env: env,
+        envIndex: envIndex,
+    };
+};
+
+export const getUpdOperation = (tenant, env, envIndex) => {
+    return {
+        type: GET_UPD_OPERATION_REQUEST,
         tenant: tenant,
         env: env,
         envIndex: envIndex,
@@ -102,7 +131,7 @@ export const changeEnvProperty = (e,envIndex) => {
     };
 };
 
-export const requestInvokeOperation = (tenant, env, envIndex ) => {
+export const invokeOperation = (tenant, env, envIndex ) => {
     return {
         type: INVOKE_OPERATION_REQUEST,
         tenant: tenant,
@@ -129,9 +158,18 @@ export const executeChangeSet = (tenant, env, envIndex ) => {
     };
 };
 
-export const requestResetOperation = (tenant, env, envIndex) => {
+export const resetOperation = (tenant, env, envIndex) => {
     return {
         type: RESET_OPERATION_REQUEST,
+        tenant: tenant,
+        env: env,
+        envIndex: envIndex,
+    };
+};
+
+export const resetUpdOperation = (tenant, env, envIndex) => {
+    return {
+        type: RESET_UPD_OPERATION_REQUEST,
         tenant: tenant,
         env: env,
         envIndex: envIndex,

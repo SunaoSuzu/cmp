@@ -33,7 +33,9 @@ exports.prepare = function (config,name,body,deleteIfExist) {
             OnFailure: "DO_NOTHING",
         }).promise();
     }).then(function (result) {
-        return result;
+        return cloudFormation.describeStacks({StackName: name}).promise();
+    }).then(function (result) {
+        return result.Stacks[0];
     })
 
 }
@@ -51,16 +53,7 @@ exports.changeSet = function (config,name,setName , body) {
             ChangeSetName : setName,
             TemplateBody : body,
             ChangeSetType: "UPDATE",
-        } ).promise().then(function (result) {
-            console.log("waitFor=" + name);
-            return cloudFormation.waitFor("changeSetCreateComplete" , {StackName: name,ChangeSetName: setName}).promise()
-        }).then(function (result) {
-            console.log("describeChangeSet=" + name);
-            return cloudFormation.describeChangeSet({StackName: name,ChangeSetName: setName}).promise();
-        }).then(function (result) {
-            console.log("result=" + name);
-            console.log(JSON.stringify(result));
-            console.log(JSON.stringify(result.Changes));
+        }).promise().then(function (result) {
             return result;
         }).catch(function (e) {
             console.log(e)
@@ -69,6 +62,71 @@ exports.changeSet = function (config,name,setName , body) {
         console.log(e);
     }
 }
+
+exports.execChangeSet = function (config,name,setName ) {
+    console.log("config=" + JSON.stringify(config));
+    console.log("name=" + name);
+
+    const cloudFormation = new AWS.CloudFormation(config);
+    try{
+
+        console.log("execChangeSet=" + name);
+        return cloudFormation.executeChangeSet({
+            StackName: name,
+            ChangeSetName : setName,
+        }).promise().then(function (result) {
+            return result;
+        }).catch(function (e) {
+            console.log(e)
+        })
+    }catch (e) {
+        console.log(e);
+    }
+}
+
+
+exports.watchExecChangeSet = function (config,name,setName) {
+    const cloudFormation = new AWS.CloudFormation(config);
+    try{
+
+        console.log("watchExecChangeSet=" + name);
+        return cloudFormation.waitFor(
+            "stackUpdateComplete" ,
+            {StackName: name}
+        ).promise().catch(/* 既に終わってる */).then(function (result) {
+            console.log("describeChangeSet=" + name);
+            return cloudFormation.describeStacks({StackName: name}).promise();
+        }).then(function (result) {
+            return result;
+        }).catch(function (e) {
+            console.log(e)
+        })
+    }catch (e) {
+        console.log(e);
+    }
+}
+
+exports.watchChangeSet = function (config,name,setName) {
+    const cloudFormation = new AWS.CloudFormation(config);
+    try{
+
+        console.log("watchChangeSet=" + name);
+        return cloudFormation.waitFor(
+            "changeSetCreateComplete" ,
+            {StackName: name,ChangeSetName: setName}
+        ).promise().catch(/* 既に終わってる */).then(function (result) {
+            console.log("describeChangeSet=" + name);
+            return cloudFormation.describeChangeSet({StackName: name,ChangeSetName: setName}).promise();
+        }).then(function (result) {
+            return result;
+        }).catch(function (e) {
+            console.log(e)
+        })
+    }catch (e) {
+        console.log(e);
+    }
+}
+
 
 exports.watch = function (config,name) {
     console.log("config=" + JSON.stringify(config));

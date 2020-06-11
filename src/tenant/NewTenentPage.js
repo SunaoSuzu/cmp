@@ -8,7 +8,7 @@ import SaveIcon from "@material-ui/icons/SaveOutlined";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import AssignmentIcon from "@material-ui/icons/Assignment";
-import TabPanel from "./TabPanel";
+import TabPanel from "../components/TabPanel";
 import ContractDetails from "./ContractDetails";
 
 const useStyles = makeStyles(theme => ({

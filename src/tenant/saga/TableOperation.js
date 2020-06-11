@@ -1,9 +1,10 @@
 import axios from "axios";
 import {put,select} from "redux-saga/effects";
 import * as TenantAppModule from "../module/TenantAppModule";
-import {ADD_SUCCESS , ADD_FAILURE} from "../module/AddNewModule";
+import {ADD_SUCCESS } from "../module/AddNewModule";
 import makeEnvironment from "../logic/EnvironmentTemplateMaker";
 import {NEW_ENV_SUCCESS,UPDATE_ENV_SUCCESS} from "../module/EnvironmentModule";
+import {ERROR} from "../module/TenantAppModule";
 
 
 const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
@@ -19,7 +20,7 @@ export function* handleRequestData(action) {
         });
     } catch (e) {
         yield put({
-            type: TenantAppModule.GET_DETAIL_FAILURE,
+            type: ERROR,
             e,
         });
     }
@@ -37,7 +38,7 @@ export function* handleRequestUpdate(action) {
         });
     } catch (e) {
         yield put({
-            type: TenantAppModule.UPDATE_FAILURE,
+            type: ERROR,
             e,
         });
     }
@@ -55,7 +56,7 @@ export function* handleRequestAdd(action) {
         });
     } catch (e) {
         yield put({
-            type: ADD_FAILURE,
+            type: ERROR,
             e,
         });
     }
@@ -72,7 +73,7 @@ export function* handleRequestDel(action) {
         });
     } catch (e) {
         yield put({
-            type: TenantAppModule.DEL_FAILURE,
+            type: ERROR,
             e,
         });
     }

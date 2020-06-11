@@ -127,7 +127,7 @@ exports.getStatusById = async function getStatusById(user , jobId){
     return job.jobStatus;
 }
 
-exports.updateJobStatus = async  function updateJobStatus(user, jobId , status ){
+exports.updateJobStatus = async  function updateJobStatus(user, jobId , status,message ){
     const job = await this.getById(user , jobId);
     console.log("updateJobStatus:" + JSON.stringify(job) );
     job.revision++;
@@ -156,6 +156,7 @@ exports.updateJobStatus = async  function updateJobStatus(user, jobId , status )
             "update"          : prcDate,
             "prcIdKey"        : user.userName, //後でarnに変更
             "prcDate"         : prcDate,
+            "message"         : message,
             "data" : job.data
         }
     }).promise();
@@ -181,6 +182,7 @@ exports.updateJobStatus = async  function updateJobStatus(user, jobId , status )
             "update"          : prcDate,
             "prcIdKey"        : user.userName, //後でarnに変更
             "prcDate"         : prcDate,
+            "message"         : message,
             "data" : job.data
         }
     }).promise();
@@ -205,6 +207,7 @@ exports.updateJobStatus = async  function updateJobStatus(user, jobId , status )
             "update"          : prcDate,
             "prcIdKey"        : user.userName, //後でarnに変更
             "prcDate"         : prcDate,
+            "message"         : message,
             "data" : job.data
         }
     }).promise();

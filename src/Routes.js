@@ -3,7 +3,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import { withRouter } from "react-router";
 import HomeApp from "./HomeApp";
 import ProfileApp from "./profile/ProfileApp";
-import NoticeApp from "./notice/NoticeApp";
+import NoticeApp from "./notification/NoticeApp";
 import ActivityApp from "./activity/ActivityApp";
 import TenantSubApp from "./tenant/TenantSubApp";
 import ProductApp from "./product/ProductApp";

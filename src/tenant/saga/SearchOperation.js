@@ -1,6 +1,7 @@
 import axios from "axios";
 import {put} from "redux-saga/effects";
-import {GET_LIST_SUCCESS,GET_LIST_FAILURE} from "../module/ListModule";
+import {GET_LIST_SUCCESS} from "../module/ListModule";
+import {ERROR} from "../module/TenantAppModule";
 
 const searchSource = process.env.REACT_APP_DEV_SEARCH_SOURCE_URL;
 export function* handleRequestList(action) {
@@ -47,7 +48,7 @@ export function* handleRequestList(action) {
         });
     } catch (e) {
         yield put({
-            type: GET_LIST_FAILURE,
+            type: ERROR,
             e,
         });
     }

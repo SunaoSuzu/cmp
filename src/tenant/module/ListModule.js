@@ -1,7 +1,6 @@
 
 export const GET_LIST_REQUEST = "GET_LIST_REQUEST";
 export const GET_LIST_SUCCESS = "GET_LIST_SUCCESS";
-export const GET_LIST_FAILURE = "GET_LIST_FAILURE";
 
 const initialState = {
    tenants: [],
@@ -13,8 +12,6 @@ export default function reducer(state = initialState, action) {
             return {tenants: []};
         case GET_LIST_SUCCESS:
             return {tenants: action.payload };
-        case GET_LIST_FAILURE:
-            return {tenants: [] }; //どうするのが正しいか未定
         default:
             return state;
     }

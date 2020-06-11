@@ -12,23 +12,22 @@ import {
   NEW_ENV_SUCCESS, ON_SUCCESS_EXECUTE_CHANGE_SET, ON_SUCCESS_GET_CHANGE_SET, RESET_OPERATION_REQUEST,
   UPDATE_ENV_SUCCESS,GET_CHANGE_SET,EXECUTE_CHANGE_SET
 } from "./EnvironmentModule";
-import {GET_LIST_FAILURE, GET_LIST_REQUEST, GET_LIST_SUCCESS} from "./ListModule";
+import {GET_LIST_REQUEST, GET_LIST_SUCCESS} from "./ListModule";
+
+export const ERROR = "ERROR";
 
 
 export const GOTO_DETAIL = "GOTO_DETAIL";
 export const GET_DETAIL_REQUEST = "GET_DETAIL_REQUEST";
 export const GET_DETAIL_SUCCESS = "GET_DETAIL_SUCCESS";
-export const GET_DETAIL_FAILURE = "GET_DETAIL_FAILURE";
 
 
 export const CHANGE_PROPERTY = "CHANGE_PROPERTY";
 export const UPDATE_REQUEST = "UPDATE_REQUEST";
 export const UPDATE_SUCCESS = "UPDATE_SUCCESS";
-export const UPDATE_FAILURE = "UPDATE_FAILURE";
 
 export const DEL_REQUEST = "DEL_REQUEST";
 export const DEL_SUCCESS = "DEL_SUCCESS";
-export const DEL_FAILURE = "DEL_FAILURE";
 
 //
 export const PUSH_EMPTY_TO_ARRAY = "PUSH_EMPTY_TO_ARRAY";
@@ -60,8 +59,6 @@ export default function reducer(state = initialState, action) {
       return { ...state, blocking: true,updateComplete : noLoading };
     case GET_DETAIL_SUCCESS:
       return {...state, tenant: action.tenant, updateComplete: noNeed,blocking: false};
-    case GET_DETAIL_FAILURE:
-      return { ...state, tenant: null }; //どうするのが正しいか未定
     case CHANGE_PROPERTY:
       const newData = { ...state.tenant };
       setProperty(newData, action.name, action.value);
@@ -71,20 +68,15 @@ export default function reducer(state = initialState, action) {
     case NEW_ENV_REQUEST:
       return { ...state, blocking: true };
     case NEW_ENV_SUCCESS:
-      return { ...state, blocking: false,updateComplete : noNeed };
+      return { ...state, tenant: action.tenant,blocking: false,updateComplete : noNeed };
     case UPDATE_REQUEST:
       return { ...state, blocking: true };
     case UPDATE_SUCCESS:
       return { ...state, tenant: action.tenant,blocking: false,updateComplete : noNeed };
-    case UPDATE_FAILURE:
-      return { ...state, blocking: false };
     case DEL_REQUEST:
       return { ...state, blocking: true };
     case DEL_SUCCESS:
       return { ...state, blocking: false };
-    case DEL_FAILURE:
-      return { ...state, blocking: false };
-    //ここから先は細かい処理
     case PUSH_EMPTY_TO_ARRAY:
       return {...state,
         tenant: pushEmptyToArray({ ...state.tenant }, action.path, action.empty),
@@ -108,7 +100,6 @@ export default function reducer(state = initialState, action) {
     case ON_SUCCESS_EXECUTE_CHANGE_SET:
     case ON_SUCCESS_GET_CHANGE_SET:
     case GET_LIST_SUCCESS:
-    case GET_LIST_FAILURE:
       return { ...state, blocking: false ,updateComplete : noNeed};
     default:
       return state;

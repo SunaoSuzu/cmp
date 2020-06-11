@@ -28,8 +28,8 @@ const BasicInfoPanel = props => {
 
     const impossible = false;  //常に入力不可能な項目
     const immutable  = env.status === CommonCost.STATUS_DRAFT ? true : false;  //一度決まったら変えれない
-    const changeable = env.status === CommonCost.STATUS_DRAFT ? true : false;  //構築が終わったら変えれる（あとで機能追加）
-    const noimpact   = true;  //いつでもいじれる（環境に反映されない）
+    const changeable = env.status === CommonCost.STATUS_DRAFT||env.status === CommonCost.STATUS_OK ? true : false;  //構築が終わったら変えれる（あとで機能追加）
+    const noImpact   = true;  //いつでもいじれる（環境に反映されない）
 
     return (
         <>
@@ -40,7 +40,7 @@ const BasicInfoPanel = props => {
                 label="環境名"
                 value={env.name}
                 inputProps={{
-                    readOnly: !noimpact
+                    readOnly: !noImpact
                 }}
                 margin="dense"
                 helperText="環境名を入れてください"

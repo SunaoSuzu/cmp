@@ -117,12 +117,10 @@ const environmentStatusMst = [
   { id: CommonCost.STATUS_PLANED, caption: "未作成（予定あり）", description: "作業待ち" },
   { id: CommonCost.STATUS_CREATING, caption: "構築中", description: "作業待ち" },
   { id: CommonCost.STATUS_OK, caption: "作成済み", description: "作成済み（予定なし）" },
-  {
-    id: CommonCost.STATUS_MOD_PLANED,
-    caption: "作成済み(予定あり)",
-    description: "作成済み（予定あり）",
-    use: 1
-  }
+  {id: CommonCost.STATUS_MOD_PLANED, caption: "作成済み(予定あり)", description: "作成済み（予定あり）", use: 1},
+  {id: CommonCost.STATUS_CHANGE_SETTING, caption: "作成済み(更新差分取得中)", description: "作成済み（予定あり）", use: 1},
+  {id: CommonCost.STATUS_CHANGE_SET, caption: "作成済み(更新差分)", description: "作成済み（予定あり）", use: 1},
+  {id: CommonCost.STATUS_MOD_ING, caption: "作成済み（環境更新中）", description: "環境更新中", use: 1},
 ];
 
 const tenantStatusMst = [
