@@ -96,6 +96,39 @@ function OperationTemplateMaker(tenant, environment) {
     };
     apSecurityGroups.push(landscapeGroup);
 
+    const bastionSecurityGroupName  = namePrefix + "-sg-bastion";
+    const bastionSecurityGroup      = {
+        stack : "bastionSecurityGroup",
+        GroupName   : bastionSecurityGroupName,
+        Description : "for bastion ec2",
+        ingress : [
+            {
+                toMyGroup : true,
+                IpProtocol: "TCP",
+                FromPort: 22,
+                ToPort: 22,
+            },
+        ],
+    };
+    resources.securityGroups.push(bastionSecurityGroup);
+
+    const sshSgName  = namePrefix + "-sg-ssh-from-bastion";
+    const sshSg      = {
+        GroupName   : sshSgName,
+        stack : "sshFromBastion",
+        Description : "for ssh from bastion",
+        ingress : [
+            {
+                toOtherGroup : bastionSecurityGroupName,
+                toOtherGroupStack : bastionSecurityGroup.stack,
+                IpProtocol: "TCP",
+                FromPort: 22,
+                ToPort: 22,
+            },
+        ],
+    }
+    resources.securityGroups.push(sshSg);
+
     //public subnetを作る
     for (let i = 0; i < aznum ; i++) {
         const subnetName = namePrefix + "-public-subnet-" + Region.azShortName[i];
@@ -136,8 +169,6 @@ function OperationTemplateMaker(tenant, environment) {
     })
 
     //about bastion（最後に処理すべき）
-    let sshSgName = null;
-    let sshSgStack = null;
     if(strategy.bastion.create===1){
         //Bastion用の外からSSHできるSG（複数bastion同士を考慮してグループ内のSSHも可能）
         //各EC2はBastionのSGからSSHできるSGを足す
@@ -145,20 +176,6 @@ function OperationTemplateMaker(tenant, environment) {
         const keyForBastion = "sunao";
         const typeForBastion = 't2.micro';
 
-        const bastionSecurityGroupName  = namePrefix + "-sg-bastion";
-        const bastionSecurityGroup      = {
-            stack : "bastionSecurityGroup",
-            GroupName   : bastionSecurityGroupName,
-            Description : "for bastion ec2",
-            ingress : [
-                {
-                    toMyGroup : true,
-                    IpProtocol: "TCP",
-                    FromPort: 22,
-                    ToPort: 22,
-                },
-            ],
-        };
         strategy.bastion.accessFroms.split(",").forEach(
             function (ip) {
                 bastionSecurityGroup.ingress.push({
@@ -169,25 +186,6 @@ function OperationTemplateMaker(tenant, environment) {
                 });
             }
         );
-        resources.securityGroups.push(bastionSecurityGroup);
-
-        sshSgName  = namePrefix + "-sg-ssh-from-bastion";
-        const sshSg      = {
-            GroupName   : sshSgName,
-            stack : "sshFromBastion",
-            Description : "for ssh from bastion",
-            ingress : [
-                {
-                    toOtherGroup : bastionSecurityGroupName,
-                    toOtherGroupStack : bastionSecurityGroup.stack,
-                    IpProtocol: "TCP",
-                    FromPort: 22,
-                    ToPort: 22,
-                },
-            ],
-        }
-        sshSgStack=sshSg.stack;
-        resources.securityGroups.push(sshSg);
 
         //結構処理サボってる
         //とりあえずサブネット作る（もったいないから共有する設定を後から持つ）
@@ -212,8 +210,6 @@ function OperationTemplateMaker(tenant, environment) {
                 InstanceType : typeForBastion,
                 KeyName      : keyForBastion,
             },
-            SecurityGroupNames: [bastionSecurityGroupName],
-            SubnetName: subnetName,
             securityGroupStack: [bastionSecurityGroup.stack],
             subnetStack: subnet.stack,
             tags:managementTag,
@@ -239,9 +235,7 @@ function OperationTemplateMaker(tenant, environment) {
             autoScale         : true,
             alb               : true,
             name              : namePrefix + config.ap.sn,
-            SecurityGroupNames: [webSecurityGroupName,landscapeGroup],
-            subnets: privateSubnetNames,
-            securityGroupStack: [webSecurityGroup.stack],
+            securityGroupStack: [webSecurityGroup.stack,landscapeGroup.stack,sshSg.stack],
             subnetsStack: privateSubnetStacks,
             launch : {...config.ap.launch },
             tags:managementTag,
@@ -254,9 +248,7 @@ function OperationTemplateMaker(tenant, environment) {
             internalDomain    : config.db.sn + "." +  subDomain + "." + internalDomainRoot,
             name              : namePrefix + config.db.sn,
             launch : {...config.db.launch },
-            SecurityGroupNames: [webSecurityGroupName,landscapeGroup],
-            SubnetName : privateSubnetNames[0] ,
-            securityGroupStack: [webSecurityGroup.stack,landscapeGroup.stack],
+            securityGroupStack: [webSecurityGroup.stack,landscapeGroup.stack,sshSg.stack],
             subnetStack: privateSubnets[0].stack,
             efs : true,
             efsDomain: subDomain +  config.db.suffix + "." + internalDomainRoot,
@@ -270,9 +262,7 @@ function OperationTemplateMaker(tenant, environment) {
                 internalDomain    : config.bs.sn + "." +  subDomain + "." + internalDomainRoot,
                 name              : namePrefix + config.bs.sn,
                 launch : {...config.bs.launch },
-                SecurityGroupNames: [landscapeGroup],
-                SubnetName : privateSubnetNames[0] ,
-                securityGroupStack: [landscapeGroup.stack],
+                securityGroupStack: [landscapeGroup.stack,sshSg.stack],
                 subnetStack: privateSubnets[0].stack,
                 tags:managementTag,
             }
@@ -286,9 +276,7 @@ function OperationTemplateMaker(tenant, environment) {
                 internalDomain: config.ss.sn + "." + subDomain + "." + internalDomainRoot,
                 name: namePrefix + config.ss.sn,
                 launch: {...config.ss.launch},
-                SecurityGroupNames: [landscapeGroup],
-                SubnetName: privateSubnetNames[0],
-                securityGroupStack: [landscapeGroup.stack],
+                securityGroupStack: [landscapeGroup.stack,sshSg.stack],
                 subnetStack: privateSubnets[0].stack,
                 tags: managementTag,
             }
@@ -300,22 +288,11 @@ function OperationTemplateMaker(tenant, environment) {
                 internalDomain: config.efs.sn + "." + subDomain + "." + internalDomainRoot,
                 name: namePrefix + config.efs.sn,
                 launch: {...config.efs.launch},
-                SubnetNames: privateSubnetNames,
                 subnetsStack: privateSubnetStacks,
-                SecurityGroupNames: [landscapeGroup],
                 securityGroupStack: [landscapeGroup.stack],
                 tags: managementTag,
             }
         }
-
-        if(sshSgName!==null)ap.SecurityGroupNames.push(sshSgName);
-        if(sshSgName!==null)db.SecurityGroupNames.push(sshSgName);
-        if(sshSgName!==null&&bs!==undefined)bs.SecurityGroupNames.push(sshSgName);
-        if(sshSgName!==null&&ss!==undefined)ss.SecurityGroupNames.push(sshSgName);
-        if(sshSgStack!==null)ap.securityGroupStack.push(sshSgStack);
-        if(sshSgStack!==null)db.securityGroupStack.push(sshSgStack);
-        if(sshSgStack!==null&&bs!==undefined)bs.securityGroupStack.push(sshSgStack);
-        if(sshSgStack!==null&&ss!==undefined)ss.securityGroupStack.push(sshSgStack);
 
         apps.push({ product : product ,ap : ap, db : db , bs : bs, ss : ss , efs : efs });
     })
@@ -324,9 +301,7 @@ function OperationTemplateMaker(tenant, environment) {
         stack             : "ALB",
         name : namePrefix + "-lb",
         alb : true,
-        subnets : publicSubnetNames,
         subnetStacks : publicSubnetStacks,
-        securityGroup : [webSecurityGroupName],
         securityGroupStack : [webSecurityGroup.stack],
         tags : managementTag,
     }
