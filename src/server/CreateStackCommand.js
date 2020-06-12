@@ -111,6 +111,7 @@ exports.watchChangeSet = function (config,name,setName) {
     try{
 
         console.log("watchChangeSet=" + name);
+        const ret = {}
         return cloudFormation.waitFor(
             "changeSetCreateComplete" ,
             {StackName: name,ChangeSetName: setName}
@@ -118,7 +119,9 @@ exports.watchChangeSet = function (config,name,setName) {
             console.log("describeChangeSet=" + name);
             return cloudFormation.describeChangeSet({StackName: name,ChangeSetName: setName}).promise();
         }).then(function (result) {
-            return result;
+            ret.status = result.Status
+            ret.ret = result
+            return ret;
         }).catch(function (e) {
             console.log(e)
         })
@@ -135,10 +138,13 @@ exports.watch = function (config,name) {
     const cloudFormation = new AWS.CloudFormation(config);
     console.log("commandStartWatch");
     try{
-
+        const response = {};
         return cloudFormation.waitFor("stackCreateComplete" , {StackName: name}).promise()
             .then(function (result) {
                 console.log("describeStackResource");
+                return cloudFormation.describeStacks({StackName: name}).promise();
+            }).then(function (result) {
+                response.status = result.Stacks[0].StackStatus;
                 return cloudFormation.describeStackResources({StackName: name}).promise()
             }).then(function (result) {
                 console.log("finish describeStackResource ");
@@ -146,12 +152,34 @@ exports.watch = function (config,name) {
                     arg[resource.LogicalResourceId]=resource;
                     return arg;
                 },{})
-                return ret;
+                response.resources = ret;
+                return response;
             }).catch(function (e) {
                 console.log(e)
             })
     }catch (e) {
         console.log(e);
+    }
+}
+
+exports.events = function (config,name) {
+
+    const cloudFormation = new AWS.CloudFormation(config);
+    console.log("describeStackEvents");
+    try{
+        const ret = {};
+        return cloudFormation.describeStacks({StackName: name}).promise()
+            .then(function (result) {
+                ret.status = result.Stacks[0].StackStatus;
+                return cloudFormation.describeStackEvents({StackName: name}).promise()
+            }).then(function (result) {
+                ret.events = result.StackEvents;
+                return ret;
+            }).catch(function (e) {
+                return e;
+            })
+    }catch (e) {
+        return e;
     }
 
 
