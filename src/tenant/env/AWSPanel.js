@@ -135,7 +135,7 @@ const AWSPanel = props => {
             onClick={() => getOperation(tenant, env, index)}
             disableElevation
         >
-            構成決定
+            Template作成
         </Button>
         <Button
             variant="contained"
@@ -155,7 +155,7 @@ const AWSPanel = props => {
             onClick={() => resetOperation(tenant, env, index)}
             disableElevation
         >
-            破棄
+            Template破棄
         </Button>
         <DownloadLink
             label="JSON(開発用)"
@@ -179,7 +179,7 @@ const AWSPanel = props => {
             onClick={() => props.getUpdOperation(tenant, env, index)}
             disableElevation
         >
-            構成決定
+            Template作成
         </Button>
         <Button
             variant="contained"
@@ -209,7 +209,7 @@ const AWSPanel = props => {
             onClick={() => props.resetUpdOperation(tenant, env, index)}
             disableElevation
         >
-            破棄
+            Template破棄
         </Button>
         <DownloadLink
             label="JSON(開発用)"
