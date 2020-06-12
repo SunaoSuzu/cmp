@@ -226,7 +226,7 @@ const AWSPanel = props => {
 
     const BUTTONS = env.status < CommonCost.STATUS_OK ? BUTTONS_CREATE : BUTTONS_UPD;
 
-    const showChangeSet = (env.status === CommonCost.STATUS_CHANGE_SET||env.status === CommonCost.STATUS_MOD_ING);
+    const showChangeSet = (env.status === CommonCost.STATUS_CHANGE_SET);
     const showTemplate = (!showChangeSet&&(env.status === CommonCost.STATUS_PLANED||env.status === CommonCost.STATUS_MOD_PLANED));
     const showSpinner = (!showChangeSet&&(env.status === CommonCost.STATUS_CHANGE_SETTING||env.status === CommonCost.STATUS_MOD_ING||env.status === CommonCost.STATUS_CREATING));
 

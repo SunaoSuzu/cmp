@@ -84,10 +84,10 @@ const EnvironmentDetail = props => {
   return (
     <React.Fragment>
       <Dialog open={props.showFoundMessage} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">更新を検知しました</DialogTitle>
+        <DialogTitle id="form-dialog-title">処理の終了を検知しました</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            更新を検知しましたので、最新化をします
+            処理の終了を検知しました、画面を最新化をします
           </DialogContentText>
           <TextField
               margin="dense"
@@ -103,7 +103,7 @@ const EnvironmentDetail = props => {
         </DialogContent>
         <DialogActions>
           <Button id="diagButton" onClick={() => props.acceptChange(tenant, env, index)} color="primary">
-            実行
+            OK
           </Button>
         </DialogActions>
       </Dialog>

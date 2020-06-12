@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import SuTechGrid from "../components/SuTechGrid";
 import * as tenantAppModule from "./module/TenantAppModule";
 import { connect } from "react-redux";
@@ -18,15 +18,13 @@ function TenantList(props) {
   const conf = getConfiguration();
   const gridConf = conf.tenantListGridConf;
 
-  const [dispatched , setDispatched] = React.useState(true);
   const [pageIndex  , setPageIndex] = React.useState(1);
   const [pageSize   , setPageSize] = React.useState(50);
-  const [keyword   , setKeyword] = React.useState(50);
+  const [keyword   , setKeyword] = React.useState("");
 
   const BLOCK = props.blocking ? <ActionProgress/>:"";
   const loadSuggestions = (query) => {
     setKeyword(query);
-    setDispatched(false);
   }
   const { searchQuery, setSearchQuery } = useDebouncedQuery(loadSuggestions);
 
@@ -34,20 +32,18 @@ function TenantList(props) {
 
   const onPageChange = (event,newPageIndex) => {
     setPageIndex(newPageIndex);
-    setDispatched(false);
   };
 
   const onSizeChange = (event) => {
     setPageSize(event.target.value);
     setPageIndex(1);
-    setDispatched(false);
   };
 
-  if(!dispatched){
+  useEffect( () =>{
     const from = (pageIndex - 1) * pageSize;
     props.requestSearchList(keyword , from , pageSize);
-    setDispatched(true);
-  }
+  },[keyword,pageIndex,pageSize])
+
   let tenants = props.tenants;
   let total = 0;
   const loaded = (tenants.hits !== undefined);
