@@ -1,17 +1,49 @@
-import { takeLatest, all } from 'redux-saga/effects';
-import { get } from '../../util/Common';
-import {ON_SUCCESS_GET_OPERATION,GET_OPERATION}  from "../OperationAppModule";
+import {GET} from "../../util/Client"
+import {take, all, put, select, delay,call ,race} from 'redux-saga/effects';
+import {START_MONITORING,STOP_MONITORING,DATA_UPDATED}  from "../OperationAppModule";
 
-export function* getOperations(){
-    yield get({
-        url: `https://9l7wsipahj.execute-api.ap-northeast-1.amazonaws.com/operation`,
-        onSuccess: ON_SUCCESS_GET_OPERATION,
-        onError: "ON_ERROR",
-    });
+const url = `https://9l7wsipahj.execute-api.ap-northeast-1.amazonaws.com/operation`;
 
+export function* worker(){
+    while (true){
+        const response = yield call(GET , url);
+        const now = response.data;
+        const prev = yield select(state => state.operations);
+        if(prev.length!==now.length) {
+            yield put(
+                { type: DATA_UPDATED,payload : now}
+            );
+        }else{
+            //statusのみ比較する
+            const changed = prev.filter( pr => pr.jobStatus !== 10).some( p => {
+                const n = now.find( n => n.jobId===p.jobId);
+                if(n===null||n===undefined){
+                    return true;
+                }
+                if(p.jobStatus!==n.jobStatus){
+                    return true;
+                }
+            })
+            if(changed){
+                yield put(
+                    { type: DATA_UPDATED,payload : now}
+                );
+            }
+        }
+        yield delay(3000);
+    }
 }
-export default function* main(action) {
+
+export function* observer(){
+    while (true){
+        yield take(START_MONITORING);
+        yield race([call(worker),take(STOP_MONITORING)]);
+    }
+}
+
+
+export default function* main() {
     return yield all([
-        takeLatest(GET_OPERATION, getOperations),
+        call(observer),
     ]);
 }

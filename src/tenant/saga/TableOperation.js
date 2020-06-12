@@ -8,6 +8,8 @@ import {ERROR} from "../module/TenantAppModule";
 
 
 const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
+const dbEndPoint = "https://a88ytp7kbf.execute-api.ap-northeast-1.amazonaws.com/cmp";
+
 export function* handleRequestData(action) {
     try {
         const id = action.id;
@@ -94,7 +96,7 @@ export function* handleRequestNewEnv(action) {
 export function* updateEnv(action) {
     const envs = yield select( state => state.env.environments);
     const env = envs[action.envIndex];
-    const res = yield axios.put(baseEndPoint + `/env/` + env.id, env);
+    const res = yield axios.put(dbEndPoint + `/environment/` + env.id, env);
 
     yield put({
         type: UPDATE_ENV_SUCCESS,

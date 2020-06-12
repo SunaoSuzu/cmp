@@ -26,8 +26,17 @@ export const ON_SUCCESS_GET_CHANGE_SET = "ON_SUCCESS_GET_CHANGE_SET";
 export const EXECUTE_CHANGE_SET = "EXECUTE_CHANGE_SET";
 export const ON_SUCCESS_EXECUTE_CHANGE_SET = "ON_SUCCESS_EXECUTE_CHANGE_SET";
 
+export const START_SUBSCRIBE = "START_SUBSCRIBE";
+export const STOP_SUBSCRIBE  = "STOP_SUBSCRIBE";
+export const FIND_CHANGE     = "FIND_CHANGE";
+export const ACCEPT_CHANGE   = "ACCEPT_CHANGE";
+export const CANCEL_CHANGE   = "CANCEL_CHANGE";
+
+
 const initialState = {
+    showFoundMessage : false,
     environments: [],
+    found : null,
 }
 export default function reducer(state = initialState, action) {
     switch (action.type) {
@@ -92,6 +101,17 @@ export default function reducer(state = initialState, action) {
             envs[action.envIndex]=env;
             return { ...state ,environments: envs};
         }
+        case FIND_CHANGE:{
+            return {...state,showFoundMessage : true , found : action.payload};
+        }
+        case ACCEPT_CHANGE:{
+            const envs = [ ...state.environments ];
+            envs[action.envIndex]=state.found;
+            return { ...state, environments: envs,showFoundMessage : false,found:null };
+        }
+        case STOP_SUBSCRIBE:
+        case START_SUBSCRIBE:
+            return {...state , showFoundMessage : false,found:null}
         default:
             return state;
     }
@@ -170,6 +190,33 @@ export const resetOperation = (tenant, env, envIndex) => {
 export const resetUpdOperation = (tenant, env, envIndex) => {
     return {
         type: RESET_UPD_OPERATION_REQUEST,
+        tenant: tenant,
+        env: env,
+        envIndex: envIndex,
+    };
+};
+
+export const startSubscribe = (tenant, env, envIndex) => {
+    return {
+        type: START_SUBSCRIBE,
+        tenant: tenant,
+        env: env,
+        envIndex: envIndex,
+    };
+};
+
+export const stopSubscribe = (tenant, env, envIndex) => {
+    return {
+        type: STOP_SUBSCRIBE,
+        tenant: tenant,
+        env: env,
+        envIndex: envIndex,
+    };
+};
+
+export const acceptChange = (tenant, env, envIndex) => {
+    return {
+        type: ACCEPT_CHANGE,
         tenant: tenant,
         env: env,
         envIndex: envIndex,

@@ -1,4 +1,4 @@
-import { put, all,takeLatest } from "redux-saga/effects";
+import { put, all,takeLatest,call } from "redux-saga/effects";
 import * as TenantAppModule from "../module/TenantAppModule";
 import makeOperation from "../logic/OperationTemplateMaker";
 import handleInvokeOperation, {getChangeSet , execChangeSet} from "./InvokeOperation";
@@ -7,13 +7,21 @@ import * as table from "./TableOperation"
 import {GET_LIST_REQUEST} from "../module/ListModule";
 import {ADD_REQUEST} from "../module/AddNewModule";
 import {
-  NEW_ENV_REQUEST, GET_CHANGE_SET,
+  NEW_ENV_REQUEST,
+  GET_CHANGE_SET,
   GET_OPERATION_REQUEST,
   INVOKE_OPERATION_REQUEST,
   GET_OPERATION_SUCCESS,
-  RESET_OPERATION_REQUEST, GET_UPD_OPERATION_SUCCESS, GET_UPD_OPERATION_REQUEST,EXECUTE_CHANGE_SET
+  RESET_OPERATION_REQUEST,
+  GET_UPD_OPERATION_SUCCESS,
+  GET_UPD_OPERATION_REQUEST,
+  EXECUTE_CHANGE_SET,
+  RESET_UPD_OPERATION_REQUEST,
+  ON_SUCCESS_EXECUTE_CHANGE_SET,
+
 } from "../module/EnvironmentModule";
 import converter from "../../convert/ToCloudFormation";
+import EnvStatusSubscribe from "./EnvStatusSubscribe";
 
 function* getOperation(action) {
   const tenant = action.tenant;
@@ -63,8 +71,11 @@ function* mySaga() {
     yield takeLatest(INVOKE_OPERATION_REQUEST, handleInvokeOperation),
     yield takeLatest(GET_OPERATION_SUCCESS, table.updateEnv),
     yield takeLatest(RESET_OPERATION_REQUEST, table.updateEnv),
+    yield takeLatest(GET_UPD_OPERATION_SUCCESS, table.updateEnv),
+    yield takeLatest(RESET_UPD_OPERATION_REQUEST, table.updateEnv),
     yield takeLatest(GET_CHANGE_SET, getChangeSet),
     yield takeLatest(EXECUTE_CHANGE_SET, execChangeSet),
+    yield call(EnvStatusSubscribe),
   );
 }
 

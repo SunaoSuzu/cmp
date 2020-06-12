@@ -28,7 +28,7 @@ export function* isComplete(action) {
     })
 }
 
-export default function* main(action) {
+export default function* main() {
     return yield all([
         takeLatest(GET_STATUS, getStatus),
         takeLatest(ON_SUCCESS_GET_STATUS, isComplete),

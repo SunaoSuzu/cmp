@@ -43,7 +43,7 @@ function getNowYMD(){
     return result;
 }
 
-exports.getById = async function getById(tenantId,user){
+exports.getById = async function getById(user, tenantId){
     try {
         console.log("tenant.getById id=" + tenantId);
         const dataKeys=decideDataKeys(user,tenantId,0);

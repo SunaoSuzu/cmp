@@ -1,7 +1,5 @@
 import axios from 'axios';
-import { call, getContext, put } from 'redux-saga/effects';
-
-
+import { call, put } from 'redux-saga/effects';
 
 function isNil(o){
     if (o===null||o===undefined){

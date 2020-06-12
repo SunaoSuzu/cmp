@@ -1,6 +1,6 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {connect} from "react-redux";
-import {getOperation} from "./OperationAppModule";
+import {startMonitoring,stopMonitoring} from "./OperationAppModule";
 import ActionProgress from "../components/ActionProgress";
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -18,12 +18,15 @@ const useStyles = makeStyles({
 const OperationList = props => {
     const classes = useStyles();
     const rows = props.operations;
-    const [loaded , setLoaded] = React.useState(false);
     const Block = props.blocking ? <ActionProgress/> : "";
-    if (loaded===false){
-        props.getOperation();
-        setLoaded(true);
-    }
+
+    useEffect(()=>{
+        props.startMonitoring();
+        return () => {
+            props.stopMonitoring();
+        }
+    },[])
+
     return (
         <>
             {Block}
@@ -63,13 +66,14 @@ const OperationList = props => {
 }
 const mapStateToProps = (state) => {
     return {
-        operations: state.operations,
-        blocking : state.blocking,
+        operations : state.operations,
+        blocking   : state.blocking,
     }
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        getOperation: () => dispatch(getOperation()),
+        startMonitoring: () => dispatch(startMonitoring()),
+        stopMonitoring: () => dispatch(stopMonitoring()),
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(OperationList);

@@ -4,7 +4,7 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Typography from "@material-ui/core/Typography";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
-import React from "react";
+import React, {useEffect} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
@@ -14,7 +14,13 @@ import AWSPanel from "./AWSPanel";
 import ComponentPanel from "./ComponentPanel";
 import BasicInfoPanel from "./BasicInfoPanel";
 import { connect } from "react-redux";
-import {changeEnvProperty} from "../module/EnvironmentModule";
+import {changeEnvProperty,startSubscribe,stopSubscribe,acceptChange} from "../module/EnvironmentModule";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogActions from "@material-ui/core/DialogActions";
+import Button from "@material-ui/core/Button";
 
 
 const useStyles = makeStyles(theme => ({
@@ -63,6 +69,13 @@ const EnvironmentDetail = props => {
     changeEnvProperty(event,index);
   };
 
+  useEffect(()=>{
+    props.startSubscribe(tenant,env,index);
+    return () => {
+      props.stopSubscribe(tenant,env,index);
+    }
+  },[env,env.status])
+
   //for tab
   const [innerTabValue, setInnerTavLavlue] = React.useState(0);
   const handleChange = (event, newValue) => {
@@ -70,6 +83,33 @@ const EnvironmentDetail = props => {
   };
   return (
     <React.Fragment>
+      <Dialog open={props.showFoundMessage} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">更新を検知しました</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            更新を検知しましたので、最新化をします
+          </DialogContentText>
+          <TextField
+              margin="dense"
+              id="region"
+              label="Region"
+              defaultValue="ap-northeast-1"
+              inputProps={{
+                readOnly: true,
+                required: true,
+              }}
+              fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button id="diagButton" onClick={() => props.acceptChange(tenant, env, index)} color="primary">
+            実行
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+
+
       <div className={classes.root}>
         <AppBar position="static" color="default" elevation={0}>
           <Tabs
@@ -179,12 +219,16 @@ function a11yProps(index) {
 
 const mapStateToProps = (state) => {
   return {
+    showFoundMessage : state.env.showFoundMessage,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     changeEnvProperty: (e,index) => dispatch(changeEnvProperty(e,index)),
+    startSubscribe: (tenant, env, envIndex) => dispatch(startSubscribe(tenant, env, envIndex)),
+    stopSubscribe: (tenant, env, envIndex) => dispatch(stopSubscribe(tenant, env, envIndex)),
+    acceptChange: (tenant, env, envIndex) => dispatch(acceptChange(tenant, env, envIndex)),
   };
 };
 

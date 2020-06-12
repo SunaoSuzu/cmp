@@ -64,7 +64,7 @@ exports.handler = async ( event, context,callback ) => {
                 }else{
                     try {
                         const tenantId = decodeURIComponent(event.pathParameters.tenantId);
-                        const data = await tenant.getById(tenantId,user);
+                        const data = await tenant.getById(user,tenantId);
                         let envs = [];
                         if(data.envIds!==undefined){
                             envs = await Promise.all(data.envIds.map(async id => {

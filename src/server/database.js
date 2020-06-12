@@ -1,27 +1,31 @@
 const AWS = require('aws-sdk'),
-    documentClient = new AWS.DynamoDB.DocumentClient({region : "ap-northeast-1"});
+    documentClient = new AWS.DynamoDB.DocumentClient();
 const util = require('util');
 
 const prefix_latest = "latest";
 const prefix_log = "log";
 
 
-function decideDataKeys(user,key,revision){
-    return { "tenantKey" : user.mt ,
+function decideDataKeys(db, user,key,revision){
+    return { "tableKey" : decideTenantKey(db,user) ,
         "dataKey" : decideLatestPrefix(user, prefix_latest) + "_" + key,
         "logKey"  : decideLatestPrefix(user, prefix_log) + "_" + key + "_" + revision,
     } ; //入力者までつければ同時入力まで防げるけど。。
 }
 
-function decideSearchKeys(user){
-    return { "tenantKey" : user.mt ,
+function decideSearchKeys(db, user){
+    return { "tableKey" : user.mt ,
         "searchKey" : decideLatestPrefix(user, prefix_latest)
     } ; //入力者までつければ同時入力まで防げるけど。。
 }
 
 
-function decideLatestPrefix(user,prefix){
-    return user.stage + "_" + user.schem + "_" +  prefix;
+function decideLatestPrefix(db, user,prefix){
+    return user.schem + "_" +  prefix;
+}
+
+function decideTenantKey(db, user){
+    return db.db + "_" + db.table + "_" +  user.mt + "_" + user.stage;
 }
 
 
@@ -43,18 +47,18 @@ function getNowYMD(){
     return result;
 }
 
-const TABLE_NAME = "environment";
+const TABLE_NAME = "database";
 
 
-exports.getById = async function getById(user,envId){
+exports.getById = async function getById(db , user , id){
     try {
-        console.log("env.getById id=" + envId);
-        const dataKeys=decideDataKeys(user,envId,0);
+        console.log("getById " + db.table + " id=" + id);
+        const dataKeys=decideDataKeys(user,id,0);
         let result = await documentClient.get({
             TableName: TABLE_NAME,
             Key:{
-                "tenant" : dataKeys.tenantKey,
-                "envKey" : dataKeys.dataKey,
+                "tableKey" : dataKeys.tableKey,
+                "dataKey" : dataKeys.dataKey,
             }}).promise();
         return result.Item.data;
     }catch (e) {
@@ -63,19 +67,18 @@ exports.getById = async function getById(user,envId){
     }
 }
 
-exports.getList = async function getList(user){
-    console.log("getByListImpl:" + JSON.stringify(user));
+exports.getList = async function getList(db,user){
     try {
-        const searchKeys = decideSearchKeys(user);
+        const searchKeys = decideSearchKeys(db,user);
         let result = await documentClient.query({
             TableName : TABLE_NAME,
-            KeyConditionExpression:  " tenant = :tenantKey and begins_with(envKey , :dataKey) ",
+            KeyConditionExpression:  " tableKey = :tableKey and begins_with(dataKey , :dataKey) ",
             ProjectionExpression: "#d",
             ExpressionAttributeNames :{
                 "#d" : "data",
             },
             ExpressionAttributeValues: {
-                ":tenantKey": searchKeys.tenantKey,
+                ":tableKey": searchKeys.tableKey,
                 ":dataKey": searchKeys.searchKey,
             }
         }).promise();
@@ -86,30 +89,28 @@ exports.getList = async function getList(user){
     }
 }
 
-
-exports.upsert = async  function upsert(method ,user, json ){
+exports.upsert = async  function upsert(db , method ,user, json ){
     try {
         console.log("更新or追加");
-        const e_time = new Date();
-        const key = e_time.getTime();  //TODO サロゲート？
         if(method==='POST'){
+            const e_time = new Date();
+            const key = e_time.getTime();  //もうちょいがんばるべし
             json["id"]=key;
             json.revision=0;
         }
         json.revision++;
         const revision  = json.revision;
-        const keys = decideDataKeys(user,json.id,revision) ;
+        const keys = decideDataKeys(db ,user,json.id,revision) ;
         const prcDate   = getNowYMD();
-        let saveValue = json;
+        const saveValue = json;
         console.log("latest保存します。name=" + json.name + "revision=" + revision);
         let result = await documentClient.put({
             TableName: TABLE_NAME,
             "Item" : {
-                "tenant"  : keys.tenantKey ,
-                "envKey"    : keys.dataKey,
+                "tableKey"  : keys.tableKey ,
+                "dataKey"    : keys.dataKey,
                 "revision"   : revision,
-                "envId"      : json.id,
-                "envName" : json.name,
+                "id"      : json.id,
                 "prcIdKey"   : user.userName, //後でarnに変更
                 "prcDate"    : prcDate,
                 "data" : saveValue
@@ -121,11 +122,10 @@ exports.upsert = async  function upsert(method ,user, json ){
         result = await documentClient.put({
             TableName: TABLE_NAME,
             "Item" : {
-                "tenant"  : keys.tenantKey ,
-                "envKey"    : keys.logKey,
+                "tableKey"  : keys.tableKey ,
+                "dataKey"    : keys.logKey,
                 "revision"   : revision,
-                "envId"   : json.id,
-                "envName" : json.name,
+                "id"      : json.id,
                 "prcIdKey"   : user.userName, //後でarnに変更
                 "prcDate"    : prcDate,
                 "data" : saveValue
@@ -139,14 +139,14 @@ exports.upsert = async  function upsert(method ,user, json ){
 
 }
 
-exports.del = async  function del(user, envId ){
+exports.del = async  function del(db,user, envId ){
     try {
-        const dataKeys=decideDataKeys(user,envId,0);
+        const dataKeys=decideDataKeys(db,user,envId,0);
         let result = await documentClient.delete({
             TableName: TABLE_NAME,
             Key:{
-                "tenant" : dataKeys.tenantKey,
-                "envKey" : dataKeys.dataKey,
+                "tableKey" : dataKeys.tableKey,
+                "dataKey" : dataKeys.dataKey,
             }}).promise();
     }  catch (e) {
         throw e;

@@ -27,6 +27,7 @@ import CloudFormationTable from "./CloudFormationTable";
 import ChangeSetTable from "./ChangeSetTable";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 const useStyles = makeStyles(theme => ({
@@ -63,6 +64,9 @@ const useStyles = makeStyles(theme => ({
     },
     button: {
         margin: theme.spacing(0.5)
+    },
+    divider: {
+        margin: theme.spacing(1, 0)
     }
 }));
 
@@ -223,14 +227,19 @@ const AWSPanel = props => {
     const BUTTONS = env.status < CommonCost.STATUS_OK ? BUTTONS_CREATE : BUTTONS_UPD;
 
     const showChangeSet = (env.status === CommonCost.STATUS_CHANGE_SET||env.status === CommonCost.STATUS_MOD_ING);
-//    const showTemplate = (!showChangeSet&&env.stack !== null&&env.stack !== undefined&&env.stack.template !== null&&env.stack.template !== undefined);
     const showTemplate = (!showChangeSet&&(env.status === CommonCost.STATUS_PLANED||env.status === CommonCost.STATUS_MOD_PLANED));
+    const showSpinner = (!showChangeSet&&(env.status === CommonCost.STATUS_CHANGE_SETTING||env.status === CommonCost.STATUS_MOD_ING||env.status === CommonCost.STATUS_CREATING));
 
     return (
         <>
             {BUTTONS}
+            <Divider className={classes.divider} />
+            {showSpinner ? (<>
+                <CircularProgress size="5rem" />
+            </>) : ""}
             {showChangeSet ? (
                 <>
+                    <ChangeSetTable changes={env.stack.changeSet.Changes}/>
                 </>
             ) : ""}
             {showTemplate ? (
