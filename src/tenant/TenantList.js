@@ -12,9 +12,62 @@ import {Box} from "@material-ui/core";
 import ActionProgress from "../components/ActionProgress";
 import {requestSearchList} from "./module/ListModule";
 import {goToAdd} from "./module/AddNewModule";
+import SearchIcon from "@material-ui/icons/SearchOutlined";
+import InputBase from "@material-ui/core/InputBase";
+import {fade, makeStyles} from "@material-ui/core/styles";
+
+const useStyles = makeStyles(theme => ({
+  search: {
+    position: "relative",
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: "#fff",
+    "&:hover": {
+      backgroundColor: fade(theme.palette.common.black, 0.05),
+    },
+    marginRight: theme.spacing(1),
+    marginLeft: 0,
+    width: "auto",
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: theme.spacing(2),
+      width: "auto",
+    },
+  },
+  searchIcon: {
+    padding: theme.spacing(0, 2),
+    height: "100%",
+    position: "absolute",
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  inputRoot: {
+    color: "inherit",
+  },
+  inputInput: {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    transition: theme.transitions.create("width"),
+    width: "0ch",
+    "&:focus": {
+      width: "12ch",
+    },
+    [theme.breakpoints.up("sm")]: {
+      width: "8ch",
+      "&:focus": {
+        width: "20ch",
+      },
+    },
+  },
+  grow: {
+    flexGrow: 1,
+  },
+}));
 
 
 function TenantList(props) {
+  const classes = useStyles();
   const conf = getConfiguration();
   const gridConf = conf.tenantListGridConf;
 
@@ -27,8 +80,6 @@ function TenantList(props) {
     setKeyword(query);
   }
   const { searchQuery, setSearchQuery } = useDebouncedQuery(loadSuggestions);
-
-  const Searcher = <Input type="search" name="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
 
   const onPageChange = (event,newPageIndex) => {
     setPageIndex(newPageIndex);
@@ -50,7 +101,7 @@ function TenantList(props) {
   if(loaded){
     total = tenants.hits.total;
     tenants = tenants.hits.hits.map(hit => {
-          hit._source.highlight=hit.highlight;
+          hit._source.data.highlight=hit.highlight;
           return hit._source.data;
         }
     );
@@ -62,7 +113,21 @@ function TenantList(props) {
   return (
     <React.Fragment>
       {BLOCK}
-      {Searcher}
+      <div className={classes.grow} />
+      <div className={classes.search}>
+        <div className={classes.searchIcon}>
+          <SearchIcon />
+        </div>
+        <InputBase
+            placeholder="Search…"
+            classes={{
+              root: classes.inputRoot,
+              input: classes.inputInput,
+            }}
+            inputProps={{ "aria-label": "search" }}
+            value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
       <SuTechGrid
         title={"テナント一覧(" + props.operationType + ")"}
         gridConf={gridConf}
