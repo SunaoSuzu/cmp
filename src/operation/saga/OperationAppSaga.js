@@ -8,6 +8,11 @@ export function* worker(){
     while (true){
         const response = yield call(GET , url);
         const now = response.data;
+        if(now.length===0) {
+            yield put(
+                {type: DATA_UPDATED, payload: now}
+            );
+        }
         const prev = yield select(state => state.operations);
         if(prev.length!==now.length) {
             yield put(
