@@ -10,7 +10,7 @@ function isNil(o){
 
 }
 
-export function* get(config) {
+export function* getRequest(config) {
     const { url, onSuccess, onError } = config;
     try {
         const response = yield call(axios.get, url);
@@ -24,10 +24,24 @@ export function* get(config) {
     }
 }
 
-export function* post(config) {
+export function* postRequest(config) {
     const { url, data, onSuccess, onError } = config;
     try {
         const response = yield call(axios.post, url, data);
+        if (response && !isNil(response.data)) {
+            yield put({ type: onSuccess, payload: response.data });
+        } else {
+            throw response;
+        }
+    } catch (error) {
+        yield put({ type: onError, error });
+    }
+}
+
+export function* putRequest(config) {
+    const { url, data, onSuccess, onError } = config;
+    try {
+        const response = yield call(axios.put, url, data);
         if (response && !isNil(response.data)) {
             yield put({ type: onSuccess, payload: response.data });
         } else {

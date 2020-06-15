@@ -1,5 +1,6 @@
 const envDao = require("envFacade");
 const databaseDao = require("database");
+const util = require('util');
 
 function selectDao(db){
     if(db.table === "environment"){
@@ -16,18 +17,14 @@ exports.handler = async (event) => {
     const userName   = "sunao";
     const mt     = "sutech";  //マルチテナントのテナント
     const stage  = "pro";     //Landscape
-    const schem  = "default"; //予備(テナントをくくる者)
-    const user   = {mt,stage,schem,userName}
-
+    const schema  = "default"; //予備(テナントをくくる者)
+    const user   = {mt,stage,schema,userName}
     const encoded = event.isBase64Encoded;
     const method  = event.requestContext.http.method;
-
     const db    = event.pathParameters.db;
     const table = event.pathParameters.table;
     const id    = event.pathParameters.id;
-
     const dbInfo={db,table}
-
     const dao   = selectDao(dbInfo);
 
     try{
@@ -78,11 +75,11 @@ exports.handler = async (event) => {
         }
 
     }catch(e){
+        console.log("🐱" + util.inspect(e, false, null));
         return {
             statusCode: 503,
             headers : CORS_HEADER,
             body: JSON.stringify(e),
         };
     }
-
 };

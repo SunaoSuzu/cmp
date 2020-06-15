@@ -1,9 +1,9 @@
 import { select, put, delay, takeLatest, all } from 'redux-saga/effects';
-import { get } from '../../util/Common';
+import { getRequest } from '../../util/Common';
 import {JOB_UPDATE,ON_SUCCESS_GET_STATUS,GET_STATUS} from "../../NavigationModule";
 
 export function* getStatus() {
-    yield get({
+    yield getRequest({
         url: `https://9l7wsipahj.execute-api.ap-northeast-1.amazonaws.com/my.operation`,
         onSuccess: ON_SUCCESS_GET_STATUS,
         onError: "ON_ERROR",
