@@ -9,6 +9,7 @@ const initialState = {
 export default function reducer(state = initialState, action) {
     switch (action.type) {
         case types.ON_SUCCESS_GET_LIST:
+        case types.ON_SUCCESS_GET_ES_LIST:
         case types.ON_SUCCESS_GET_BY_ID:
             return {...state , blocking: false ,redirect : false}
         case types.ON_SUCCESS_UPDATE:
@@ -16,6 +17,7 @@ export default function reducer(state = initialState, action) {
             return {...state , redirect : true}
         }
         case types.GET_LIST:
+        case types.GET_ES_LIST:
         case types.GET_BY_ID:
         case types.UPDATE:
         case types.ADD:

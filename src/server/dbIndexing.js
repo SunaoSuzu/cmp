@@ -40,8 +40,7 @@ exports.handler = (event, context) => {
             }
 
             const id = json.id;
-            const data = json.data;
-            const postData = { id : id , data : data};
+            const postData = json.data;
 
             const action = {};
             action[actionType] = {};

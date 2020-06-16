@@ -69,17 +69,15 @@ const Add = () => {
             </Box>
             <Grid container spacing={1}>
                 {def.schema.fields.map( field => (
-                    <>
-                        <Grid item xs={12}>
-                            <TextField
-                                name={field.name}
-                                onChange={handleChange}
-                                label={field.caption}
-                                value={data[field.name]}
-                                helperText={field.name}
-                            />
-                        </Grid>
-                    </>
+                    <Grid item xs={12} key={field.name}>
+                        <TextField
+                            name={field.name}
+                            onChange={handleChange}
+                            label={field.caption}
+                            value={data[field.name]}
+                            helperText={field.name}
+                        />
+                    </Grid>
                 ))}
             </Grid>
         </div>

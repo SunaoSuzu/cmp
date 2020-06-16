@@ -13,6 +13,10 @@ exports.getList = async function getList(db , user){
     return env.getList(user);
 }
 
+exports.getLatestN = async function getLatestN(db , user , size){
+    return env.getLatestN(user,size);
+}
+
 
 exports.upsert = async  function upsert(db , method ,user, json ){
     return env.upsert(method ,user, json);

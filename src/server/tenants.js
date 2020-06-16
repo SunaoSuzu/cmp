@@ -32,6 +32,18 @@ exports.handler = async ( event, context,callback ) => {
         }
         const json = JSON.parse(decode);
         switch (method) {
+            case 'GET':{
+                if(event.pathParameters===undefined){
+                    const ret = await command.getList(user);
+                    callback(null, {"statusCode": 200,'headers': CORS_HEADER,"body": JSON.stringify(ret)});
+                }else{
+                    const envId = decodeURIComponent(event.pathParameters.envId);
+                    const ret = await command.getById(user,envId);
+                    callback(null, {"statusCode": 200, 'headers': CORS_HEADER,"body": JSON.stringify(ret) });
+                }
+
+                break;
+            }
             case 'POST':{
                 console.log("/env add");
                 const e  = json.env;

@@ -2,7 +2,7 @@ import {GET} from "../../util/Client"
 import {take, all, put, select, delay,call ,race} from 'redux-saga/effects';
 import {START_SUBSCRIBE,STOP_SUBSCRIBE,FIND_CHANGE} from "../module/EnvironmentModule";
 import {STATUS_CREATING,STATUS_OK,STATUS_CHANGE_SETTING,STATUS_CHANGE_SET,STATUS_MOD_ING} from "../../common/CommonConst"
-const dbEndPoint = "https://a88ytp7kbf.execute-api.ap-northeast-1.amazonaws.com/cmp";
+const baseEndPoint = process.env.REACT_APP_DEV_API_URL;
 
 const target = [
     {prev : STATUS_CREATING , after : STATUS_OK},
@@ -16,7 +16,7 @@ export function* worker(action){
     while (true){
         const flg = yield select(state => state.env.showFoundMessage);
         if(!flg){
-            const response = yield call(GET , dbEndPoint + "/environment/" + targetId);
+            const response = yield call(GET , baseEndPoint + "/env/" + targetId);
             const now = response.data;
             const prev = yield select(state => state.env.environments[envIndex]);
             if(now.status!==prev.status) {

@@ -67,12 +67,16 @@ exports.getById = async function getById(db , user , id){
     }
 }
 
-exports.getList = async function getList(db,user){
+exports.getList = async function getList(db,user,params){
     console.log("getList:" + JSON.stringify(db));
+    const queryPrams = {};
+    if(params.limit===undefined)queryPrams.Limit=params.limit;
+    if(params.forward===undefined)queryPrams.ScanIndexForward=params.forward;
     try {
         const searchKeys = decideSearchKeys(db,user);
         console.log("getList:" + JSON.stringify(searchKeys));
         let result = await documentClient.query({
+            ...queryPrams,
             TableName : TABLE_NAME,
             KeyConditionExpression:  " tableKey = :tableKey and begins_with(dataKey , :dataKey) ",
             ProjectionExpression: "#d",
@@ -82,7 +86,8 @@ exports.getList = async function getList(db,user){
             ExpressionAttributeValues: {
                 ":tableKey": searchKeys.tableKey,
                 ":dataKey": searchKeys.searchKey,
-            }
+            },
+            ScanIndexForward: false,
         }).promise();
         return result.Items.map(item => item.data);
     }catch (e) {

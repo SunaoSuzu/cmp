@@ -86,6 +86,31 @@ exports.getList = async function getList(user){
     }
 }
 
+exports.getLatestN = async function getLatestN(user,size){
+    console.log("getByListImpl:" + JSON.stringify(user));
+    try {
+        const searchKeys = decideSearchKeys(user);
+        let result = await documentClient.query({
+            TableName : TABLE_NAME,
+            KeyConditionExpression:  " tenant = :tenantKey and begins_with(envKey , :dataKey) ",
+            ProjectionExpression: "#d",
+            ExpressionAttributeNames :{
+                "#d" : "data",
+            },
+            ExpressionAttributeValues: {
+                ":tenantKey": searchKeys.tenantKey,
+                ":dataKey": searchKeys.searchKey,
+            },
+            ScanIndexForward: false,
+            Limit : size
+        }).promise();
+        return result.Items.map(item => item.data);
+    }catch (e) {
+        console.log("🐱" + util.inspect(e, false, null));
+        throw e;
+    }
+}
+
 
 exports.upsert = async  function upsert(method ,user, json ){
     try {

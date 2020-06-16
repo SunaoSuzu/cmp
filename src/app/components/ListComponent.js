@@ -1,7 +1,7 @@
 import React,{useEffect} from "react";
 import {useDef} from "../AppProvider";
 import { useSelector,useDispatch } from 'react-redux'
-import { getList } from '../modules/ListModule'
+import {getESList, getList} from '../modules/ListModule'
 import { initAdd } from '../modules/AddModule'
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -17,7 +17,6 @@ import Select from "@material-ui/core/Select";
 import SearchIcon from "@material-ui/icons/SearchOutlined";
 import InputBase from "@material-ui/core/InputBase";
 import {fade, makeStyles} from "@material-ui/core/styles";
-import ActionProgress from "../../components/ActionProgress";
 import useDebouncedQuery from "../../util/useDebouncedQuery";
 
 const useStyles = makeStyles(theme => ({
@@ -73,6 +72,8 @@ const List = () => {
     const classes = useStyles();
     const def = useDef();
     const list = useSelector(state => state.list.list);
+    const total = useSelector(state => state.list.total);
+    const cache = useSelector(state => state.list.cache);
     const dispatch = useDispatch();
     const [pageIndex  , setPageIndex] = React.useState(1);
     const [pageSize   , setPageSize] = React.useState(50);
@@ -97,19 +98,15 @@ const List = () => {
 
     useEffect( () => {
         const from = (pageIndex - 1) * pageSize;
-        dispatch(getList(keyword,from,pageSize));
+        if(from===0&&keyword===""&&cache!==null){
+            dispatch(getList(keyword,from,pageSize));
+        }else{
+            dispatch(getESList(keyword,from,pageSize));
+        }
     },[keyword,pageIndex,pageSize])
-
-    const es = (list.hits !== undefined);
-    const total = es ? list.hits.total : 0;
-    const hits  = es ? list.hits.hits.map(hit => {
-        hit._source.data.highlight=hit.highlight;
-        return hit._source.data;
-    }) : list;
 
     const count = Math.floor(total / pageSize) + ((total % pageSize)===0 ? 0 : 1);
     const Pager=<Pagination count={count} page={pageIndex} onChange={onPageChange.bind()} />;
-
 
     return (
         <>
@@ -138,7 +135,7 @@ const List = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {hits.map( data => (
+                    {list.map( data => (
                         <TableRow key={data.id}>
                             <TableCell >
                                 <NavLink to={"./profile/" + data.id} >
