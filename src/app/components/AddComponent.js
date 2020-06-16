@@ -74,7 +74,6 @@ const Add = () => {
                             <TextField
                                 name={field.name}
                                 onChange={handleChange}
-                                id="standard-basic"
                                 label={field.caption}
                                 value={data[field.name]}
                                 helperText={field.name}

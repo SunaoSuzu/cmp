@@ -24,8 +24,6 @@ const mapDispatchToProps = (dispatch) => {
     selectAccount: () => dispatch(navigationModule.selectAccount()),
     selectNotice: () => dispatch(navigationModule.selectNotice()),
     selectSearch: () => dispatch(navigationModule.selectSearch()),
-    selectLogout: () => dispatch(navigationModule.selectLogout()),
-    authSuccess: (uid) => dispatch(navigationModule.authSuccess(uid)),
     startMonitor  : (job) => dispatch(navigationModule.startMonitor()),
   };
 };

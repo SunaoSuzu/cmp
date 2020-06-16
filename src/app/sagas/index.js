@@ -8,7 +8,7 @@ import update from "./UpdateSaga"
 export default function* rootSaga() {
     all(
         yield takeEvery(ADD, add),
-        yield takeEvery(GET_LIST, search),
+        yield takeLatest(GET_LIST, search),
         yield takeEvery(GET_BY_ID, getById),
         yield takeEvery(UPDATE, update),
     )

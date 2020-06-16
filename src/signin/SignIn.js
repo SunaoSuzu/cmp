@@ -12,6 +12,7 @@ import SuTechIcon from "../components/SuTechIcon";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Cover from "../asset/bg_top_x2.png";
+import {useLoginHandler} from "../UserContextProvider";
 
 function Copyright() {
   return (
@@ -63,14 +64,15 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function SignInSide(props) {
+export default function SignInSide() {
   const classes = useStyles();
+  const loginHandler = useLoginHandler();
 
   const challengeAuthentication = function challengeAuthentication() {
     //とりあえず常に認証は成功する
-    props.authSuccess("sunao");
+    const user = document.getElementById("email").value;
+    loginHandler(user);
   };
-
 
   return (
     <Grid container component="main" className={classes.root}>

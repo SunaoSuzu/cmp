@@ -4,6 +4,8 @@ import Routes from "./Routes";
 import { withRouter } from "react-router-dom";
 import { isIOS, isMobile } from "react-device-detect";
 import SignIn from "./signin/SignIn";
+import {useAuthenticated} from "./UserContextProvider";
+
 
 //自作
 import SiteHeader from "./components/SiteHeader";
@@ -48,13 +50,10 @@ const Navigation = (props) => {
   }
 
   const classes = useStyles();
+  const {isAuthenticated} = useAuthenticated();
 
-  const authSuccess = function(uid){
-    props.authSuccess(uid);
-  }
-
-  if(!props.authorized){
-    return <SignIn authSuccess={authSuccess.bind()}/>;
+  if(!isAuthenticated){
+    return <SignIn />;
   }else{
     if(monitor===false){
       startMonitor();

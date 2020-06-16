@@ -22,6 +22,8 @@ import SideMenu from "./SideMenu";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import {useLogoutHandler} from '../UserContextProvider';
+
 
 const drawerWidth = 240;
 
@@ -191,6 +193,7 @@ export default function SiteHeader(props) {
   const { selectMenu, selectReport } = props;
   const { functionType, selectedMenuId, selectedReportId } = props;
   const {targetOperations} = props;
+  const logoutHandler = useLogoutHandler();
 
   const anchor = "left";
   const [state, setState] = React.useState({
@@ -262,7 +265,7 @@ export default function SiteHeader(props) {
         My account
       </MenuItem>
       <MenuItem onClick={handleMenuClose}>Close</MenuItem>
-      <MenuItem onClick={props.selectLogout} component={Link} to="/login">
+      <MenuItem onClick={logoutHandler} component={Link} to="/login">
         Logout
       </MenuItem>
       {/* modified by asaka 0513 */}

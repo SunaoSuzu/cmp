@@ -12,20 +12,23 @@ import { Route, Switch } from "react-router";
 import theme from "./theme";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
+import UserContextProvider from "./UserContextProvider"
 
 const store = createStore();
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Switch>
-            <Route path="/" component={App} />
-          </Switch>
-        </ThemeProvider>
-      </ConnectedRouter>
-    </Provider>
+    <UserContextProvider>
+      <Provider store={store}>
+        <ConnectedRouter history={history}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Switch>
+              <Route path="/" component={App} />
+            </Switch>
+          </ThemeProvider>
+        </ConnectedRouter>
+      </Provider>
+    </UserContextProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );
