@@ -11,8 +11,8 @@ const initialState = {
         isForcePwdChg  : false,
         message : null,
         token  : null,
-        profile: 'sunao@sutech.co.jp',
-        name   : 'sunao@sutech.co.jp',
+        profile: null,
+        name   : null,
     }
 };
 
