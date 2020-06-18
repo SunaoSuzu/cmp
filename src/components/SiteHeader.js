@@ -265,7 +265,7 @@ export default function SiteHeader(props) {
         My account
       </MenuItem>
       <MenuItem onClick={handleMenuClose}>Close</MenuItem>
-      <MenuItem onClick={logoutHandler} component={Link} to="/login">
+      <MenuItem onClick={logoutHandler} component={Link} to="/signIn">
         Logout
       </MenuItem>
       {/* modified by asaka 0513 */}

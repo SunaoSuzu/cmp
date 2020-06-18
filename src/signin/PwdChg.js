@@ -11,7 +11,7 @@ import SuTechIcon from "../components/SuTechIcon";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Cover from "../asset/bg_top_x2.png";
-import {useLoginHandler , useAuthenticateInfo} from "../UserContextProvider";
+import {useAuthenticateInfo, usePwdChgHandler} from "../UserContextProvider";
 import { Link } from "react-router-dom";
 
 function Copyright() {
@@ -66,12 +66,15 @@ const useStyles = makeStyles(theme => ({
 
 export default function SignInSide() {
   const classes = useStyles();
-  const loginHandler = useLoginHandler();
-  const { message } = useAuthenticateInfo();
-  const challengeAuthentication = function challengeAuthentication() {
+  const pwdChgHandler = usePwdChgHandler();
+  const {message} = useAuthenticateInfo();
+
+  const challengePasswordChange = function challengeAuthentication() {
     const user = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    loginHandler(user,password);
+    const name = document.getElementById("name").value;
+    const nowPwd = document.getElementById("current-password").value;
+    const newPwd = document.getElementById("new-password").value;
+    pwdChgHandler(user,nowPwd,name,newPwd);
   };
 
   return (
@@ -83,30 +86,47 @@ export default function SignInSide() {
           <SuTechIcon />
           <form className={classes.form} noValidate>
             <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+            />
+            <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="name"
+                label="Name"
+                name="name"
+                autoComplete="name"
+            />
+            <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="current-password"
+                label="Current Password"
+                name="current-password"
+                autoComplete="current-password"
+                type="password"
             />
             <TextField
               variant="outlined"
               margin="normal"
               required
               fullWidth
-              name="password"
-              label="Password"
+              id="new-password"
+              label="New Password"
+              name="new-password"
+              autoComplete="new-password"
               type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
             />
             <Button
               type="button"
@@ -114,9 +134,9 @@ export default function SignInSide() {
               variant="contained"
               color="primary"
               className={classes.submit}
-              onClick={challengeAuthentication.bind()}
+              onClick={challengePasswordChange.bind()}
             >
-              Sign In
+              登録
             </Button>
             {message}
             <Grid container>

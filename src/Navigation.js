@@ -3,8 +3,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Routes from "./Routes";
 import { withRouter } from "react-router-dom";
 import { isIOS, isMobile } from "react-device-detect";
-import SignIn from "./signin/SignIn";
-import {useAuthenticated} from "./UserContextProvider";
 
 
 //自作
@@ -50,45 +48,38 @@ const Navigation = (props) => {
   }
 
   const classes = useStyles();
-  const {isAuthenticated} = useAuthenticated();
 
-  if(!isAuthenticated){
-    return <SignIn />;
-  }else{
-    if(monitor===false){
-      startMonitor();
-      setMonitor(true);
-    }
-    return (
-        <React.StrictMode>
-          <div className={classes.root}>
-            <SiteHeader
-                selectHome={selectHome}
-                selectSearch={selectSearch}
-                selectNotice={selectNotice}
-                selectProfile={selectProfile}
-                selectAccount={selectAccount}
-                selectLogout={selectLogout}
-                functionType={functionType}
-                selectedMenuId={selectedMenuId}
-                selectedReportId={selectedReportId}
-                selectMenu={selectMenu}
-                selectReport={selectReport}
-                targetOperations={targetOperations}
-            />
-            <main className={classes.content}>
-              <div className={classes.appBarSpacer} />
-              <Container maxWidth="lg" className={classes.container}>
-                <Routes />
-              </Container>
-            </main>
-            {/* <SiteFooter/> */}
-          </div>
-        </React.StrictMode>
-    );
-
+  if(monitor===false){
+    startMonitor();
+    setMonitor(true);
   }
-
+  return (
+      <React.StrictMode>
+        <div className={classes.root}>
+          <SiteHeader
+              selectHome={selectHome}
+              selectSearch={selectSearch}
+              selectNotice={selectNotice}
+              selectProfile={selectProfile}
+              selectAccount={selectAccount}
+              selectLogout={selectLogout}
+              functionType={functionType}
+              selectedMenuId={selectedMenuId}
+              selectedReportId={selectedReportId}
+              selectMenu={selectMenu}
+              selectReport={selectReport}
+              targetOperations={targetOperations}
+          />
+          <main className={classes.content}>
+            <div className={classes.appBarSpacer} />
+            <Container maxWidth="lg" className={classes.container}>
+              <Routes />
+            </Container>
+          </main>
+          {/* <SiteFooter/> */}
+        </div>
+      </React.StrictMode>
+  );
 };
 
 export default withRouter(Navigation);
