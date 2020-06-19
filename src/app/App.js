@@ -3,12 +3,20 @@ import configStore from "./ConfigStore";
 import { Provider } from 'react-redux'
 import MainApp from "./MainApp"
 import AppProvider from "./AppProvider"
+import {useIdToken} from "../UserContextProvider";
+
+const AppLauncher = (props) => {
+    const token = useIdToken();
+    const def = props.def;
+    def["token"] = token;
+    return <App def={props.def} />;
+}
 
 
 class App extends React.Component {
     constructor(props) {
         super(props)
-        this.store = configStore(props.def);
+        this.store = configStore(props.def,props.token);
         this.def = props.def;
     }
 
@@ -23,4 +31,4 @@ class App extends React.Component {
     }
 }
 
-export default App;
+export default AppLauncher;

@@ -1,18 +1,18 @@
-import axios from "axios";
 import {getContext, put} from "redux-saga/effects";
-import {ON_SUCCESS_GET_ES_LIST,ON_SUCCESS_SEARCH_ES_LIST} from "../modules";
+import {ERROR, ON_SUCCESS_GET_ES_LIST, ON_SUCCESS_SEARCH_ES_LIST} from "../modules";
+import { postRequest} from '../../util/Common';
 
 const base = "https://a88ytp7kbf.execute-api.ap-northeast-1.amazonaws.com";
+
 
 export function* search(action) {
     try {
         const db = yield getContext("db");
-        let executeQuery = {};
-        let way = "";
         const schema = yield getContext("schema");
+        let executeQuery = {};
         const fields = schema.fields.map( field => (field.name))
         const search = (action.keyword!==null&&action.keyword!=="");
-        const action = search ? ON_SUCCESS_SEARCH_ES_LIST : ON_SUCCESS_GET_ES_LIST;
+        const success = search ? ON_SUCCESS_SEARCH_ES_LIST : ON_SUCCESS_GET_ES_LIST;
         if(search){
             //キーワード検索
             executeQuery = {
@@ -40,21 +40,21 @@ export function* search(action) {
 
         console.log(JSON.stringify(executeQuery));
 
-        const res = yield axios.post(url,
-            JSON.stringify(executeQuery) ,
-            {headers: {'Content-Type': 'application/json'}}
-        );
-        yield put({
-            type: action,
-            payload : res.data,
-            receivedAt: Date.now(),
+        const token = yield getContext("token");
+
+
+        yield postRequest({
+            url: url,
+            data : JSON.stringify(executeQuery) ,
+            onSuccess: success,
         });
-    } catch (e) {
-        //index未作成を考慮
+
+    } catch (error) {
+        //index未作成をとりあえず考慮してエラーにしないようにはする
         yield put({
-            type: ON_SUCCESS_GET_ES_LIST,
+            type: "ERROR",
             payload : {hits : {total:0 , hits : []}},
-            e,
+            error,
         });
     }
 }

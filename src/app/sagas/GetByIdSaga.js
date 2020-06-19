@@ -9,6 +9,7 @@ export default function* getById(action) {
     const url = base + "/" + db.database + "/" + db.table + "/" + action.payload
     yield getRequest({
         url: url,
+        token : yield getContext("token"),
         onSuccess: ON_SUCCESS_GET_BY_ID,
         onError: ERROR,
     });

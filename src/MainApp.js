@@ -9,7 +9,6 @@ import App from "./NavigationContainer";
 const MainApp = () => {
     const isAuthenticated = useIsAuthenticated();
     const {isForcePwdChg} = useAuthenticateInfo();
-    console.log(isAuthenticated + ":" + isForcePwdChg);
     if(isForcePwdChg){
         return (
             <Switch>

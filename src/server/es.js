@@ -1,9 +1,8 @@
 const sendToEs = require("sendToEs");
 
 function decideIndex(db , user){
-    return db.db + "_" +  user.mt + "_" + user.stage + "_" + db.table + "_" + user.schema;
+    return user.roleName + "_" + db.db + "_" +  db.table + "_" + user.schema;
 }
-
 
 exports.upsert = function upsert(db , user , data ) {
     const index  = decideIndex(db , user);

@@ -9,6 +9,7 @@ export default function* update(action) {
     const url = base + "/" + db.database + "/" + db.table + "/" + action.payload.id
     yield putRequest({
         url: url,
+        token : yield getContext("token"),
         data : action.payload,
         onSuccess: ON_SUCCESS_UPDATE,
         onError: ERROR,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Routes from "./Routes";
 import { withRouter } from "react-router-dom";
@@ -39,7 +39,6 @@ const Navigation = (props) => {
   const { functionType, selectedMenuId, selectedReportId,targetOperations } = props;
   const { selectMenu, selectReport } = props;
 
-  const [monitor, setMonitor] = React.useState(false);
 
   if (isIOS && isMobile) {
     document.body.classList.add("ios-mobile-view-height");
@@ -49,10 +48,10 @@ const Navigation = (props) => {
 
   const classes = useStyles();
 
-  if(monitor===false){
+  useEffect( () => {
     startMonitor();
-    setMonitor(true);
-  }
+  },[])
+
   return (
       <React.StrictMode>
         <div className={classes.root}>

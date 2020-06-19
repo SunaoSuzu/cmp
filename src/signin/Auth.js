@@ -9,7 +9,7 @@ export const FAIL_SIGN_IN = "FAIL_SIGN_IN";
 export const FAIL_PWD_CHALLENGE = "FAIL_PWD_CHALLENGE";
 export const ON_SUCCESS_SIGN_OUT = "ON_SUCCESS_SIGN_OUT";
 
-const cognitoConfig = {
+export const cognitoConfig = {
     region: 'ap-northeast-1',
     IdentityPoolId: 'ap-northeast-1:57065cfe-8606-4b3d-afa6-ba4c124d46c0',
     UserPoolId: 'ap-northeast-1_OS8KTk9vJ',
@@ -17,13 +17,35 @@ const cognitoConfig = {
 }
 
 
-function prepare(userName){
-    console.log("cognitoUser.prepare:" + userName);
+function initPool() {
     const userPoolData = {
         UserPoolId : cognitoConfig.UserPoolId,
         ClientId : cognitoConfig.ClientId
     };
-    const userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
+    return new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
+
+}
+
+function getCurrentUser() {
+    const userPool = initPool();
+    return userPool.getCurrentUser()
+}
+
+export function getToken() {
+    const cognitoUser = getCurrentUser()
+    let token = null
+    cognitoUser.getSession( function (err, session) {
+        if (err) {
+            alert(err.message || JSON.stringify(err));
+            return;
+        }
+        token = session.getIdToken().getJwtToken()
+    })
+    return token;
+}
+
+function prepare(userName){
+    const userPool = initPool();
     const userData = {
         Username : userName,
         Pool : userPool
@@ -33,12 +55,7 @@ function prepare(userName){
 }
 
 export const isAuthenticated = function () {
-    const userPoolData = {
-        UserPoolId : cognitoConfig.UserPoolId,
-        ClientId : cognitoConfig.ClientId
-    };
-    const userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
-    const cognitoUser = userPool.getCurrentUser()
+    const cognitoUser = getCurrentUser()
 
     if (cognitoUser) {
         return true;
@@ -49,12 +66,7 @@ export const isAuthenticated = function () {
 
 
 export const doLogout = function () {
-    const userPoolData = {
-        UserPoolId : cognitoConfig.UserPoolId,
-        ClientId : cognitoConfig.ClientId
-    };
-    const userPool = new AmazonCognitoIdentity.CognitoUserPool(userPoolData)
-    const cognitoUser = userPool.getCurrentUser()
+    const cognitoUser = getCurrentUser()
     if (cognitoUser) {
         cognitoUser.signOut()
         localStorage.clear()

@@ -22,6 +22,9 @@ export default function reducer(state = initialState, action) {
         case types.UPDATE:
         case types.ADD:
             return {...state , blocking: true , redirect : false}
+        case types.ERROR:
+            console.log("ERROR:" + JSON.stringify(action.error))
+            return {...state , blocking: false , redirect : false}
         default :
             return state;
     }

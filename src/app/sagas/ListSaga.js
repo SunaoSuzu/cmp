@@ -9,6 +9,7 @@ export default function* list(action) {
     const url = base + "/" + db.database + "/" + db.table + "?forward=false&limit=" + action.size;
     yield getRequest({
         url: url,
+        token : yield getContext("token"),
         onSuccess: ON_SUCCESS_GET_LIST,
         onError: ERROR,
     });

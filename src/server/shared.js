@@ -1,5 +1,4 @@
-const AWS = require('aws-sdk'),
-    documentClient = new AWS.DynamoDB.DocumentClient();
+const AWS = require('aws-sdk')
 const util = require('util');
 
 const prefix_latest = "latest";
@@ -7,25 +6,25 @@ const prefix_log = "log";
 
 
 function decideDataKeys(db, user,key,revision){
-    return { "tableKey" : decideTenantKey(db,user) ,
+    return { "ownerKey" : decideTenantKey(db,user) ,
         "dataKey" : decidePrefix(db,user, prefix_latest) + "_" + key,
         "logKey"  : decidePrefix(db,user, prefix_log) + "_" + key + "_" + revision,
     } ; //入力者までつければ同時入力まで防げるけど。。
 }
 
 function decideSearchKeys(db, user){
-    return { "tableKey" : decideTenantKey(db,user) ,
+    return { "ownerKey" : decideTenantKey(db,user) ,
         "searchKey" : decidePrefix(db,user, prefix_latest)
     } ; //入力者までつければ同時入力まで防げるけど。。
 }
 
 
 function decidePrefix(db , user,prefix){
-    return db.table + "_" +  user.schema +"_" + prefix;
+    return db.db + "_" + db.table + "_" +  user.schema +"_" + prefix;
 }
 
 function decideTenantKey(db, user){
-    return db.db + "_" +  user.mt + "_" + user.stage;
+    return user.roleName;
 }
 
 
@@ -46,17 +45,18 @@ function getNowYMD(){
     return y + m + d + hh + mi + ss;
 }
 
-const TABLE_NAME = "database";
+const TABLE_NAME = "shared";
 
 
 exports.getById = async function getById(db , user , id){
     try {
+        const documentClient = new AWS.DynamoDB.DocumentClient(user.session);
         console.log("getById " + db.table + " id=" + id);
         const dataKeys=decideDataKeys(db , user,id , 0);
         let result = await documentClient.get({
             TableName: TABLE_NAME,
             Key:{
-                "tableKey" : dataKeys.tableKey,
+                "ownerKey" : dataKeys.ownerKey,
                 "dataKey" : dataKeys.dataKey,
             }}).promise();
         console.log(JSON.stringify(result))
@@ -75,16 +75,17 @@ exports.getList = async function getList(db,user,params){
     try {
         const searchKeys = decideSearchKeys(db,user);
         console.log("getList:" + JSON.stringify(searchKeys));
+        const documentClient = new AWS.DynamoDB.DocumentClient(user.session);
         let result = await documentClient.query({
             ...queryPrams,
             TableName : TABLE_NAME,
-            KeyConditionExpression:  " tableKey = :tableKey and begins_with(dataKey , :dataKey) ",
+            KeyConditionExpression:  " ownerKey = :ownerKey and begins_with(dataKey , :dataKey) ",
             ProjectionExpression: "#d",
             ExpressionAttributeNames :{
                 "#d" : "data",
             },
             ExpressionAttributeValues: {
-                ":tableKey": searchKeys.tableKey,
+                ":ownerKey": searchKeys.ownerKey,
                 ":dataKey": searchKeys.searchKey,
             },
             ScanIndexForward: false,
@@ -111,16 +112,16 @@ exports.upsert = async  function upsert(db , method ,user, json ){
         const keys = decideDataKeys(db ,user,json.id,revision) ;
         const prcDate   = getNowYMD();
         const saveValue = json;
-        console.log("latest保存します。saveValue=" + JSON.stringify(saveValue) + "revision=" + revision);
+        console.log("latest保存します。saveValue=" + JSON.stringify(saveValue) + "revision=" + revision + " keys=" + JSON.stringify(keys));
+        const documentClient = new AWS.DynamoDB.DocumentClient(user.session);
         let result = await documentClient.put({
             TableName: TABLE_NAME,
             "Item" : {
-                "tableKey"   : keys.tableKey ,
+                "ownerKey"   : keys.ownerKey ,
                 "dataKey"    : keys.dataKey,
+                "owner"      : user.roleName,
                 "db"         : db.db,
                 "table"      : db.table,
-                "tenant"     : user.mt,
-                "env"        : user.stage,
                 "schema"     : user.schema,
                 "id"         : json.id,
                 "revision"   : revision,
@@ -135,12 +136,11 @@ exports.upsert = async  function upsert(db , method ,user, json ){
         result = await documentClient.put({
             TableName: TABLE_NAME,
             "Item" : {
-                "tableKey"  : keys.tableKey ,
+                "ownerKey"  : keys.ownerKey ,
                 "dataKey"    : keys.logKey,
+                "owner"      : user.roleName,
                 "db"         : db.db,
                 "table"      : db.table,
-                "tenant"     : user.mt,
-                "env"        : user.stage,
                 "schema"     : user.schema,
                 "id"         : json.id,
                 "revision"   : revision,
@@ -159,14 +159,14 @@ exports.upsert = async  function upsert(db , method ,user, json ){
 exports.del = async  function del(db,user, id ){
     try {
         const dataKeys=decideDataKeys(db,user,id,0);
+        const documentClient = new AWS.DynamoDB.DocumentClient(user.session);
         await documentClient.delete({
             TableName: TABLE_NAME,
             Key:{
-                "tableKey" : dataKeys.tableKey,
+                "ownerKey" : dataKeys.ownerKey,
                 "dataKey" : dataKeys.dataKey,
             }}).promise();
     }  catch (e) {
         throw e;
     }
 }
-

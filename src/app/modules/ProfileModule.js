@@ -1,5 +1,5 @@
 import {setProperty} from "../../util/JsonUtils";
-import {CHANGE_PROPERTY_UPDATE,UPDATE,GET_BY_ID,ON_SUCCESS_GET_BY_ID,ON_SUCCESS_UPDATE,INIT_PROFILE} from "./index";
+import {CHANGE_PROPERTY_UPDATE,UPDATE,GET_BY_ID,ON_SUCCESS_GET_BY_ID,ON_SUCCESS_UPDATE,INIT_PROFILE,ON_SUCCESS_INIT_PROFILE} from "./index";
 
 
 const initialState = {
@@ -8,8 +8,8 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
     switch (action.type) {
-        case INIT_PROFILE:{
-            return {data : {}};
+        case ON_SUCCESS_INIT_PROFILE:{
+            return {data : action.payload};
         }
         case CHANGE_PROPERTY_UPDATE:{
             const data = {...state.data};
@@ -23,6 +23,10 @@ export default function reducer(state = initialState, action) {
         default:
             return state;
     }
+}
+
+export function initProfile(id) {
+    return { type: INIT_PROFILE, payload: id };
 }
 
 export function getBiId(id) {

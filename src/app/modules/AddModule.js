@@ -1,5 +1,5 @@
 import {setProperty} from "../../util/JsonUtils";
-import {CHANGE_PROPERTY_ADD,ADD,INIT_ADD} from "./index";
+import {CHANGE_PROPERTY_ADD,ADD,ON_SUCCESS_INIT_ADD,INIT_ADD} from "./index";
 
 
 const initialState = {
@@ -8,8 +8,8 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
     switch (action.type) {
-        case INIT_ADD:{
-            return { data: {} }
+        case ON_SUCCESS_INIT_ADD:{
+            return { data: action.payload }
         }
         case CHANGE_PROPERTY_ADD:{
             const data = {...state.data};

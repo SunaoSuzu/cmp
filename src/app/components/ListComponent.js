@@ -3,6 +3,7 @@ import {useDef} from "../AppProvider";
 import { useSelector,useDispatch } from 'react-redux'
 import {getESList, getList} from '../modules/ListModule'
 import { initAdd } from '../modules/AddModule'
+import { initProfile } from '../modules/ProfileModule'
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -91,6 +92,10 @@ const List = () => {
         dispatch(initAdd());
     };
 
+    const gotoProfile = (id) => {
+        dispatch(initProfile(id));
+    };
+
     const loadSuggestions = (query) => {
         setKeyword(query);
     }
@@ -138,7 +143,7 @@ const List = () => {
                     {list.map( data => (
                         <TableRow key={data.id}>
                             <TableCell >
-                                <NavLink to={"./profile/" + data.id} >
+                                <NavLink to={"./profile/" + data.id} onClick={()=>gotoProfile(data.id)}>
                                     <VisibilityIcon/>
                                 </NavLink>
                             </TableCell>

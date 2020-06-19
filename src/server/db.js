@@ -1,7 +1,7 @@
-const dao = require("database");
+const dao = require("shared");
 const util = require('util');
 const es = require('es');
-
+const AWS = require("aws-sdk")
 
 const CORS_HEADER = {'Content-Type': 'application/json','Access-Control-Allow-Origin': '*' };
 
@@ -20,20 +20,42 @@ exports.handlerZ = async (event) => {
 }
 
 exports.handler = async (event) => {
-    const userName   = "sunao";
-    const mt     = "sutech";  //マルチテナントのテナント
-    const stage  = "pro";     //Landscape
+    const userName   = event.requestContext.authorizer.jwt.claims["cognito:username"];
+    const preferredRole = event.requestContext.authorizer.jwt.claims["cognito:preferred_role"];
+    const roleName = preferredRole.split("/")[1];
     const schema  = "default"; //予備(テナントをくくる者)
     const params = event.queryStringParameters;
     const encoded = event.isBase64Encoded;
-    const method  = event.requestContext.http.method;
+    const method  = event.httpMethod ? event.httpMethod : event.requestContext.http.method;
     const db    = event.pathParameters.db;
     const table = event.pathParameters.table;
     const id    = event.pathParameters.id;
-    const user   = {mt,stage,schema,userName}
     const dbInfo={db,table}
 
+    const sts = new AWS.STS()
+    const accountId = (await sts.getCallerIdentity({}).promise());
+    console.log("account:" + JSON.stringify(accountId));
+
+    const credential = await sts.assumeRole({
+        RoleArn: preferredRole,
+        RoleSessionName: 'test'
+    }).promise()
+        .then(data => data)
+        .catch(e => console.log(e))
+
+    const user = {
+        userName, roleName, schema,preferredRole,
+        session : {
+            region: process.env.REGION,
+            accessKeyId : credential.Credentials.AccessKeyId,
+            secretAccessKey : credential.Credentials.SecretAccessKey,
+            sessionToken : credential.Credentials.SessionToken,
+        }
+    };
+
+
     try{
+        console.log(JSON.stringify(event))
         switch (method) {
             case 'GET':{
                 if(id===undefined){

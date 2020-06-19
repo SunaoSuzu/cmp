@@ -54,7 +54,6 @@ export default function reducer(state = initialState, action) {
 
 // Action Creators
 export const startMonitor = () => {
-  console.log("startMonitor");
   return {
     type: GET_STATUS,
   };

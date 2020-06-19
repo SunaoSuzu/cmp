@@ -18,7 +18,7 @@ function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
-      <Link color="inherit" href="https://www.sutech.co.jp/">
+      <Link color="inherit" to="https://www.sutech.co.jp/">
         SuTech
       </Link>{" "}
       {new Date().getFullYear()}
@@ -121,7 +121,7 @@ export default function SignInSide() {
             {message}
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link href="#" variant="body2" to="/initPwd">
                   Forgot password?
                 </Link>
               </Grid>

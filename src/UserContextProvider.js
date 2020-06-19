@@ -17,7 +17,6 @@ const initialState = {
 };
 
 const userReducer = (state, action) => {
-    console.log(action.type);
     switch (action.type) {
         case auth.ON_SUCCESS_SIGN_IN:
             return {...action.payload, message : null , isForcePwdChg:false};
@@ -99,10 +98,18 @@ export function usePwdChgHandler(){
     const contextValue = React.useContext(UserContext);
     return contextValue.pwdChgHandler;
 }
+/**
+ * 将来削除したい
+ * */
 export function useAuthenticateInfo(){
     const contextValue = React.useContext(UserContext);
     return contextValue;
 }
+
+export function useIdToken(){
+    return auth.getToken();
+}
+
 
 export function useIsAuthenticated(){
     return auth.isAuthenticated();
