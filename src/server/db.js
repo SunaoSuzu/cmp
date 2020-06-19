@@ -1,23 +1,13 @@
-const dao = require("shared");
+const shared = require("shared");
+const item   = require("Item");
 const util = require('util');
-const es = require('es');
+const sharedEs = require('es');
+const itemEs = require('ItemEs');
 const AWS = require("aws-sdk")
 
 const CORS_HEADER = {'Content-Type': 'application/json','Access-Control-Allow-Origin': '*' };
 
-exports.handlerZ = async (event) => {
-    const userName   = "sunao";
-    const mt     = "sutech";  //マルチテナントのテナント
-    const stage  = "pro";     //Landscape
-    const schema  = "default"; //予備(テナントをくくる者)
-    const user   = {mt,stage,schema,userName}
-    const db    = "cmp";
-    const table = "product";
-    const dbInfo={db,table}
 
-    const ret=await dao.upsert(dbInfo,"POST",user,{ name : "高橋"});
-    const ret2=await es.upsert(dbInfo,user,ret);
-}
 
 exports.handler = async (event) => {
     const userName   = event.requestContext.authorizer.jwt.claims["cognito:username"];
@@ -27,6 +17,7 @@ exports.handler = async (event) => {
     const params = event.queryStringParameters;
     const encoded = event.isBase64Encoded;
     const method  = event.httpMethod ? event.httpMethod : event.requestContext.http.method;
+    const kind    = event.pathParameters.kind;
     const db    = event.pathParameters.db;
     const table = event.pathParameters.table;
     const id    = event.pathParameters.id;
@@ -53,6 +44,8 @@ exports.handler = async (event) => {
         }
     };
 
+    const dao = kind === "item" ? item : shared;
+    const es  = kind === "item" ? itemEs : sharedEs;
 
     try{
         console.log(JSON.stringify(event))

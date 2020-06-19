@@ -2,7 +2,7 @@ import {getContext, put} from "redux-saga/effects";
 import {ERROR, ON_SUCCESS_GET_ES_LIST, ON_SUCCESS_SEARCH_ES_LIST} from "../modules";
 import { postRequest} from '../../util/Common';
 
-const base = "https://a88ytp7kbf.execute-api.ap-northeast-1.amazonaws.com";
+const base = process.env.REACT_APP_DEV_PLATFORM + "/data";
 
 
 export function* search(action) {
