@@ -135,7 +135,7 @@ const List = () => {
                     <TableRow>
                         <TableCell ></TableCell>
                         {def.schema.fields.map( (field , index) => (
-                            <TableCell key={index} >{field.caption}</TableCell>
+                            <TableCell key={index} >{field.title}</TableCell>
                         ) )}
                     </TableRow>
                 </TableHead>
@@ -148,7 +148,7 @@ const List = () => {
                                 </NavLink>
                             </TableCell>
                             {def.schema.fields.map( (field,index) => (
-                                <TableCell key={index}>{data[field.name]}</TableCell>
+                                <TableCell key={index}>{data[field.field]}</TableCell>
                             ))}
                         </TableRow>
                     ))}

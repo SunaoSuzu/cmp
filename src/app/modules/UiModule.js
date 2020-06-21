@@ -14,7 +14,7 @@ export default function reducer(state = initialState, action) {
             return {...state , blocking: false ,redirect : false}
         case types.ON_SUCCESS_UPDATE:
         case types.ON_SUCCESS_ADD:{
-            return {...state , redirect : true}
+            return {...state , redirect : true, blocking: false}
         }
         case types.GET_LIST:
         case types.GET_ES_LIST:

@@ -6,6 +6,7 @@ import {Redirect, Route, Switch, useRouteMatch} from "react-router-dom";
 import {useDef} from "./AppProvider";
 import Add from "./components/AddComponent";
 import list from "./components/ListComponent";
+import listModify from "./components/ListModifyComponent";
 import profile from "./components/ProfileComponent";
 import {useSelector} from "react-redux";
 import ActionProgress from "../components/ActionProgress";
@@ -56,6 +57,7 @@ const MainApp = () => {
                     <Redirect exact from={path} to={path + "/list"} />
                     <Redirect exact from={path + "/profile"} to={path + "/list"} />
                     <Route exact path={path + "/list"} component={list} />
+                    <Route exact path={path + "/listModify"} component={listModify} />
                     <Route exact path={path + "/profile/:id"} component={profile} />
                     <Route exact path={path + "/add"} component={Add} />
                 </Switch>

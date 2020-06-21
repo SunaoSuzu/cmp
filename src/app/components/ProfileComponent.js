@@ -73,13 +73,13 @@ const Profile = (props) => {
             <Grid container spacing={1}>
                 {def.schema.fields.map( field => (
                     <>
-                        <Grid item xs={12} key={field.name}>
+                        <Grid item xs={12} key={field.field}>
                             <TextField
-                                name={field.name}
+                                name={field.field}
                                 onChange={handleChange}
-                                label={field.caption}
-                                value={data[field.name]}
-                                helperText={field.name}
+                                label={field.title}
+                                value={data[field.field]}
+                                helperText={field.field}
                             />
                         </Grid>
                     </>

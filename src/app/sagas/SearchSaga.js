@@ -10,8 +10,8 @@ export function* search(action) {
         const db = yield getContext("db");
         const schema = yield getContext("schema");
         let executeQuery = {};
-        const fields = schema.fields.map( field => (field.name))
-        const search = (action.keyword!==null&&action.keyword!=="");
+        const fields = schema.fields.map( field => (field.field))
+        const search = (action.payload.keyword!==null&&action.payload.keyword!=="");
         const success = search ? ON_SUCCESS_SEARCH_ES_LIST : ON_SUCCESS_GET_ES_LIST;
         if(search){
             //キーワード検索
@@ -19,11 +19,11 @@ export function* search(action) {
                 "query": {
                     "multi_match": {
                         "fields": fields,
-                        "query": action.keyword,
+                        "query": action.payload.keyword,
                     }
                 },
-                "from" : action.from,
-                "size" : action.size,
+                "from" : action.payload.from,
+                "size" : action.payload.size,
             };
         }else{
             //全件取得
@@ -31,8 +31,8 @@ export function* search(action) {
                 "query": {
                     "match_all": {}
                 },
-                "from" :action.from,
-                "size" : action.size,
+                "from" :action.payload.from,
+                "size" : action.payload.size,
                 "sort": { "id": { "order": "desc" } }
             };
         }

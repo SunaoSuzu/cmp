@@ -4,7 +4,7 @@ import {ON_SUCCESS_INIT_ADD} from "../modules";
 export default function* initAdd(action) {
     const schema = yield getContext("schema");
     const initial = {}
-    schema.fields.forEach( field => (initial[field.name]=""))
+    schema.fields.forEach( field => (initial[field.field]=""))
     yield put({
         type: ON_SUCCESS_INIT_ADD,
         payload : initial,

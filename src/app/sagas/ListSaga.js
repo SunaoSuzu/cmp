@@ -6,7 +6,7 @@ const base = process.env.REACT_APP_DEV_PLATFORM + "/data";
 
 export default function* list(action) {
     const db = yield getContext("db");
-    const url = base + "/" + db.database + "/" + db.table + "?forward=false&limit=" + action.size;
+    const url = base + "/" + db.database + "/" + db.table + "?forward=false&limit=" + action.payload.size;
     yield getRequest({
         url: url,
         token : yield getContext("token"),

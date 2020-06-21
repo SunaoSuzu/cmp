@@ -40,8 +40,8 @@ export default function reducer(state = initialState, action) {
     }
 }
 export function getList(keyword,from , size) {
-    return { type: GET_LIST , from : from , size : size ,keyword : keyword };
+    return { type: GET_LIST , payload : {from : from , size : size ,keyword : keyword }};
 }
 export function getESList(keyword,from , size) {
-    return { type: GET_ES_LIST , from : from , size : size ,keyword : keyword };
+    return { type: GET_ES_LIST , payload : {from : from , size : size ,keyword : keyword }};
 }
