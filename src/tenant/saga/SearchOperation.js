@@ -48,7 +48,8 @@ export function* handleRequestList(action) {
         });
     } catch (e) {
         yield put({
-            type: ERROR,
+            type: GET_LIST_SUCCESS,
+            payload : {hits : {total:0 , hits : []}},
             e,
         });
     }

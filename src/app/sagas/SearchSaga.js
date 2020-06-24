@@ -45,6 +45,7 @@ export function* search(action) {
 
         yield postRequest({
             url: url,
+            token : token,
             data : JSON.stringify(executeQuery) ,
             onSuccess: success,
         });
