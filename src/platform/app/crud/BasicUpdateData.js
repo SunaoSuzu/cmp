@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import SaveIcon from "@material-ui/icons/SaveOutlined";
@@ -22,13 +22,15 @@ const Profile = ({def,data,prefix}) => {
     const {update,toList} = useHandlers();
 
 
-    const { register,control, handleSubmit, errors,reset } = useForm({
+    const { register,control, handleSubmit, errors,reset,watch } = useForm({
         defaultValues: {
             ...data
         }
     });
+    const [state , setState] = useState({});
     useEffect( ()=>{
         reset(data);
+        setState(data);
     },[data])
 
     if(!data){
@@ -36,13 +38,14 @@ const Profile = ({def,data,prefix}) => {
     }
 
     const onSubmit = data => {
-        update(data);
+        const merged={...state , ...data}
+        console.log("merged:" + merged);
+        update(merged);
     };
 
     if(toList){
         return <Redirect to="../list"/>
     }
-
     return (
         <BasicLayout title={prefix + "更新"}>
             <form onSubmit={handleSubmit(onSubmit)}>

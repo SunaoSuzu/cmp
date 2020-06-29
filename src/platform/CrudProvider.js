@@ -33,13 +33,13 @@ const reducer = (state, action) => {
             return {...state , loading: false , list: state.list.concat(action.payload) , toList: true};
         case a.ON_SUCCESS_UPDATE:
             {
-                const index = state.list.some( data => data.id === action.payload.id);
+                const index = state.list.findIndex( data => data.id === action.payload.id);
                 const array = [...state.list]
                 array[index]=action.payload;
                 return {...state , loading: false , list: array , toList: true};
             }
         case a.ON_SUCCESS_DEL:
-            const index = state.list.some( data => data.id === action.payload);
+            const index = state.list.findIndex( data => data.id === action.payload);
             const array = [...state.list]
             array.splice(index,1);
             return {...state , loading: false , list: array , toList: true};
@@ -163,7 +163,6 @@ const CrudProvider = ({db , table , children}) => {
 
 export function useList(){
     const ctx = React.useContext(CrudContext);
-    console.log("CTX:" + JSON.stringify(ctx))
     return ctx.list;
 }
 
