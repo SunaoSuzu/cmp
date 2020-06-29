@@ -5,7 +5,8 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import { Link } from "react-router-dom";
-import Configuration from "../Configuration";
+import {useMenuIcons,useReportIcons} from "../platform/UserContextProvider"
+import getIcon from "../platform/MenuIcons"
 
 const useStyles = makeStyles((theme) => ({
   menuIcon: {
@@ -23,23 +24,22 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SideMenu(props) {
   const classes = useStyles();
-  const conf = Configuration();
-  const menuIcons = conf.menuIcons;
-  const reportIcons = conf.reportIcons;
+  const menuIcons = useMenuIcons();
+  const reportIcons = useReportIcons();
   const { selectMenu, selectReport } = props;
   const { functionType, selectedMenuId, selectedReportId } = props;
   return (
     <List>
       {menuIcons.map((menu) => {
-        const IconTag = menu.icon;
+        const IconTag = getIcon(menu.icon);
         return (
           <ListItem
             button
             component={Link}
-            key={menu.menuId}
-            id={menu.menuId}
+            key={menu.id}
+            id={menu.id}
             onClick={() => selectMenu(menu)}
-            to={menu.appTo}
+            to={menu.appTo + "/" + menu.id}
             selected={functionType === "MENU" && selectedMenuId === menu.menuId}
           >
             <ListItemIcon className={classes.menuIcon}>
@@ -50,15 +50,15 @@ export default function SideMenu(props) {
         );
       })}
       {reportIcons.map((report) => {
-        const IconTag = report.icon;
+        const IconTag = getIcon(report.icon);
         return (
           <ListItem
             button
             component={Link}
-            key={report.reportId}
-            id={report.reportId}
+            key={report.id}
+            id={report.id}
             onClick={() => selectReport(report)}
-            to={"/report/" + report.reportId}
+            to={"/report/" + report.id}
             selected={
               functionType === "REPORT" && selectedReportId === report.reportId
             }

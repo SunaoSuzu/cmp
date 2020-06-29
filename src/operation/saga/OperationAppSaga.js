@@ -1,4 +1,4 @@
-import {GET} from "../../util/Client"
+import {GET} from "../../platform/util/Client"
 import {take, all, put, select, delay,call ,race} from 'redux-saga/effects';
 import {START_MONITORING,STOP_MONITORING,DATA_UPDATED}  from "../OperationAppModule";
 

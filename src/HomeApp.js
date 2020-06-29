@@ -1,5 +1,5 @@
 import React from "react";
-import {useAuthenticateInfo} from "./UserContextProvider";
+import {useAuthenticateInfo} from "./platform/UserContextProvider";
 
 export default function HomeApp(props) {
   const {name} = useAuthenticateInfo();

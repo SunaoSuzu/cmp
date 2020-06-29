@@ -1,4 +1,4 @@
-import {pushEmptyToArray, setProperty, spliceObjOfArray} from "../../util/JsonUtils";
+import {pushEmptyToArray, setProperty, spliceObjOfArray} from "../../platform/util/JsonUtils";
 
 export const GOTO_ADD = "GOTO_ADD";
 export const CHANGE_PROPERTY_OF_NEW = "CHANGE_PROPERTY_OF_NEW";

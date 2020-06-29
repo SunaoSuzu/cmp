@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import FabLink from "../asset/FabLink";
 import getConfiguration from "../Configuration";
 import Pagination from "@material-ui/lab/Pagination";
-import useDebouncedQuery from "../util/useDebouncedQuery";
+import useDebouncedQuery from "../platform/util/useDebouncedQuery";
 import Select from '@material-ui/core/Select';
 import {Box} from "@material-ui/core";
 import ActionProgress from "../components/ActionProgress";
@@ -132,7 +132,7 @@ function TenantList(props) {
         gridConf={gridConf}
         datas={tenants}
         goDetailHandler={props.selectGoToDetail}
-        selectToBase="/tenant/profile"
+        selectToBase="./profile"
         deleteHandler={props.requestDel}
         requestSearchList={props.requestSearchList}
       />
@@ -158,7 +158,7 @@ function TenantList(props) {
           </Select>
         </Box>
       </Box>
-      <FabLink to="/tenant/add" onClick={props.goToAdd} />
+      <FabLink to="./add" onClick={props.goToAdd} />
     </React.Fragment>
   );
 }

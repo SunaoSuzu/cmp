@@ -1,62 +1,10 @@
-import DashboardIcon from "@material-ui/icons/DashboardOutlined";
-import AccountBoxIcon from "@material-ui/icons/AccountBoxOutlined";
-import BusinessIcon from "@material-ui/icons/BusinessOutlined";
-import CloudDownloadIcon from "@material-ui/icons/CloudDownloadOutlined";
-import NotificationsIcon from "@material-ui/icons/NotificationsOutlined";
-import AssignmentIcon from "@material-ui/icons/AssignmentOutlined";
-import CodeIcon from "@material-ui/icons/CodeOutlined";
-import ReportIcon from "@material-ui/icons/ReportOutlined";
-import NoteIcon from "@material-ui/icons/NoteOutlined";
-import * as CommonCost from "./common/CommonConst"
 
+import * as CommonCost from "./common/CommonConst"
 // 設定系の　JSON
 // Mst 仕様
 // Conf (configuration) 顧客定義(のちにテナント毎にデータを分ける)
 
-const menuIconsDef = {
-  1: {
-    menuId: 1,
-    caption: "Activity",
-    icon: AccountBoxIcon,
-    appTo: "/activity"
-  },
-  2: { menuId: 2, caption: "テナント", icon: BusinessIcon, appTo: "/tenant" },
-  3: { menuId: 3, caption: "プロダクト", icon: CodeIcon, appTo: "/product" },
-  4: {
-    menuId: 4,
-    caption: "作業予実",
-    icon: AssignmentIcon,
-    appTo: "/operation/list"
-  },
-  5: { menuId: 5, caption: "通知", icon: NotificationsIcon, appTo: "/home" },
-  11: {
-    menuId: 11,
-    caption: "AWS Asset",
-    icon: CloudDownloadIcon,
-    appTo: "/aws/asset"
-  }
-};
 
-const reportIconsDef = {
-  11: {
-    reportId: 11,
-    caption: "レポート",
-    icon: DashboardIcon,
-    reportTo: "/report"
-  },
-  12: {
-    reportId: 12,
-    caption: "レポート2",
-    icon: ReportIcon,
-    reportTo: "/report"
-  },
-  13: {
-    reportId: 13,
-    caption: "レポート",
-    icon: NoteIcon,
-    reportTo: "/report"
-  }
-};
 
 const tenantListGridColumnsDef = {
   1: { caption: "テナント", propName: "name" },
@@ -257,15 +205,6 @@ const whi_configuration = {
   ],
   environmentStatusMst: environmentStatusMst,
 
-  menuIcons: [
-    menuIconsDef[1],
-    menuIconsDef[2],
-    menuIconsDef[3],
-    menuIconsDef[4],
-    menuIconsDef[5],
-    menuIconsDef[11]
-  ],
-  reportIcons: [reportIconsDef[11], reportIconsDef[12]],
   tenantListGridConf: {
     columnsDef: [tenantListGridColumnsDef[1], tenantListGridColumnsDef[2]]
   },

@@ -11,7 +11,7 @@ function NewTenant(props) {
     return <ActionProgress />;
   } else if (props.addComplete === addNew.synced) {
     console.log("リダイレクト！");
-    return <Redirect to={"/tenant/profile/" + props.newData.id} />;
+    return <Redirect to={"./profile/" + props.newData.id} />;
   } else {
     if (props.newData.name === undefined) {
       //HOT DEPLOYで進められるようにする

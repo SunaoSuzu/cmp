@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Routes from "./Routes";
 import { withRouter } from "react-router-dom";
 import { isIOS, isMobile } from "react-device-detect";
-
+import {useConfigHandler} from "./platform/UserContextProvider"
 
 //自作
 import SiteHeader from "./components/SiteHeader";
@@ -35,6 +35,11 @@ const Navigation = (props) => {
     selectLogout,
     startMonitor
   } = props;
+
+  const handler = useConfigHandler();
+  useEffect(() => {
+    handler();
+  },[])
 
   const { functionType, selectedMenuId, selectedReportId,targetOperations } = props;
   const { selectMenu, selectReport } = props;

@@ -1,6 +1,6 @@
 import {GET_DETAIL_SUCCESS, UPDATE_SUCCESS,} from "./TenantAppModule";
 import * as CommonCost from "../../common/CommonConst";
-import {setProperty} from "../../util/JsonUtils";
+import {setProperty} from "../../platform/util/JsonUtils";
 
 export const NEW_ENV_REQUEST = "NEW_ENV_REQUEST";
 export const NEW_ENV_SUCCESS = "NEW_ENV_SUCCESS";

@@ -2,7 +2,7 @@ import {
   setProperty,
   pushEmptyToArray,
   spliceObjOfArray,
-} from "../../util/JsonUtils";
+} from "../../platform/util/JsonUtils";
 import {ADD_SUCCESS} from "./AddNewModule";
 import {
   CHANGE_PROPERTY_ENV,

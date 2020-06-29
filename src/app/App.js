@@ -1,34 +1,28 @@
+import {useIdToken} from "../platform/UserContextProvider";
 import React from "react";
-import configStore from "./ConfigStore";
-import { Provider } from 'react-redux'
-import MainApp from "./MainApp"
-import AppProvider from "./AppProvider"
-import {useIdToken} from "../UserContextProvider";
+import CrudApp from "./crud/CrudApp"
+import ListMod from "./listMod/ListModApp"
+import AppProvider from "./AppProvider";
 
-const AppLauncher = (props) => {
+const App = (props) => {
     const token = useIdToken();
     const def = props.def;
     def["token"] = token;
-    return <App def={props.def} />;
-}
-
-
-class App extends React.Component {
-    constructor(props) {
-        super(props)
-        this.store = configStore(props.def,props.token);
-        this.def = props.def;
-    }
-
-    render() {
-        return (
-            <AppProvider def={this.def} >
-                <Provider store={this.store}>
-                    <MainApp />
-                </Provider>
-            </AppProvider>
-        )
+    switch (def.type) {
+        case "listMod":{
+            return (
+                <AppProvider def={def}>
+                    <ListMod {...props} />
+                </AppProvider>
+            );
+        }
+        default :{
+            return (
+                <AppProvider def={def}>
+                    <CrudApp {...props} />
+                </AppProvider>
+            );
+        }
     }
 }
-
-export default AppLauncher;
+export default App;

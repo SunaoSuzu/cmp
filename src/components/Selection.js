@@ -26,10 +26,12 @@ const Selection      = props => {
     const readOnly   = props.readOnly;
     const required   = props.required;
     const margin     = props.margin;
+    const inputRef   = props.inputRef;
+    const defaultValue = props.defaultValue;
     const classes    = useStyles();
 
     const handleChange = (event, newValue) => {
-        onChange(event , newValue);
+        if(onChange)onChange(event , newValue);
     };
 
     const valToStr = function valToStr(v){
@@ -59,8 +61,9 @@ const Selection      = props => {
                         readOnly: readOnly,
                         required: required,
                     }}
+                    inputRef={inputRef}
                     margin={margin}
-                    labelId={(id!=null?id:name) + "-label"}
+                    defaultValue={defaultValue}
                 >
                     {options.map(option => (
                         <MenuItem value={option.id} key={option.id}>

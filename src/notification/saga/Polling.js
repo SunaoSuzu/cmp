@@ -1,5 +1,5 @@
 import { select, put, delay, takeLatest, all } from 'redux-saga/effects';
-import { getRequest } from '../../util/Common';
+import { getRequest } from '../../platform/util/Common';
 import {JOB_UPDATE,ON_SUCCESS_GET_STATUS,GET_STATUS} from "../../NavigationModule";
 
 export function* getStatus() {

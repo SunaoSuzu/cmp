@@ -12,7 +12,7 @@ import { Route, Switch } from "react-router";
 import theme from "./theme";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
-import UserContextProvider from "./UserContextProvider"
+import UserContextProvider from "./platform/UserContextProvider"
 
 const store = createStore();
 ReactDOM.render(

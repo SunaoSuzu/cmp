@@ -1,4 +1,4 @@
-import {GET} from "../../util/Client"
+import {GET} from "../../platform/util/Client"
 import {take, all, put, select, delay,call ,race} from 'redux-saga/effects';
 import {START_SUBSCRIBE,STOP_SUBSCRIBE,FIND_CHANGE} from "../module/EnvironmentModule";
 import {STATUS_CREATING,STATUS_OK,STATUS_CHANGE_SETTING,STATUS_CHANGE_SET,STATUS_MOD_ING} from "../../common/CommonConst"

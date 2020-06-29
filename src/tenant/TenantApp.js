@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, useRouteMatch, Switch } from "react-router-dom";
+import {Route, useRouteMatch, Switch, Redirect} from "react-router-dom";
 import NewTenant from "./NewTenant";
 import TenantList from "./TenantList";
 import TenantDetail from "./TenantProfile";
@@ -45,6 +45,7 @@ export default function TenantApp() {
         </div>
         <Paper elevation={3} className={classes.appContent}>
           <Switch>
+            <Redirect exact from={path} to={path + "/list"} />
             <Route exact path={path + "/list"} component={TenantList} />
             <Route exact path={path + "/add"} component={NewTenant} />
             <Route exact path={path + "/profile"} component={TenantDetail} />
@@ -53,7 +54,6 @@ export default function TenantApp() {
                 path={path + "/profile/:tenantId"}
                 component={TenantDetail}
             />
-            <Route exact path={path} component={TenantList} />
           </Switch>
         </Paper>
       </React.Fragment>
