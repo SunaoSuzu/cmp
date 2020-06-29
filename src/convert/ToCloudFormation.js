@@ -6,7 +6,7 @@ const sg = require('./SecurityGroupsConverter');
 const domain = require("../conf/Domain")
 
 
-exports.convert = function (vpc) {
+function convert(vpc) {
     let resources = network.convert(vpc);
     resources = Object.assign(resources , sg.convert(vpc));
 
@@ -295,4 +295,4 @@ exports.convert = function (vpc) {
         Resources : resources
     };
 }
-export default this.convert;
+export default convert;

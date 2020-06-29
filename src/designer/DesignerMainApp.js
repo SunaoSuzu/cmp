@@ -2,7 +2,9 @@ import React from "react";
 import {Redirect, Route, Switch, useRouteMatch} from "react-router-dom";
 import Menu from "./menu/MenuDesigner";
 import App from "./app/AppDesigner";
+import Select from "./SelectDesigner";
 import {makeStyles} from "@material-ui/core/styles";
+
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -27,7 +29,8 @@ const DesignerMainApp = (props) => {
     return (
         <React.Fragment>
             <Switch>
-                <Redirect exact from={path} to={path + "/app"} />
+                <Redirect exact from={path} to={path + "/select"} />
+                <Route path={path + "/select"} component={Select} />
                 <Route path={path + "/menu"} component={Menu} />
                 <Route path={path + "/app"} component={App} />
             </Switch>
