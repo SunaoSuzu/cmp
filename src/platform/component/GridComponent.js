@@ -12,8 +12,8 @@ import Select from "@material-ui/core/Select";
 import SearchIcon from "@material-ui/icons/SearchOutlined";
 import InputBase from "@material-ui/core/InputBase";
 import {fade, makeStyles} from "@material-ui/core/styles";
-import useDebouncedQuery from "../../util/useDebouncedQuery";
-import {getProperty} from "../../util/JsonUtils"
+import useDebouncedQuery from "../util/useDebouncedQuery";
+import {getProperty} from "../util/JsonUtils"
 
 const useStyles = makeStyles(theme => ({
     search: {

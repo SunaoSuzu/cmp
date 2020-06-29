@@ -11,7 +11,6 @@ import OperationSubApp from "./operation/OperationSubApp";
 import ReportApp from "./report/ReportApp";
 import AwsSubApp from "./aws/AwsSubApp";
 import DesignerApp from "./designer/DesignerMainApp"
-import DesignedApp from "./app/UserDesignedApp"
 
 
 const Routes = ({ match }) => (
@@ -27,7 +26,6 @@ const Routes = ({ match }) => (
     <Route path={`${match.url}operation/:appId`} component={OperationSubApp} />
     <Route path={`${match.url}designer/:appId`} component={DesignerApp} />
     <Route path={`${match.url}report/:reportId`} component={ReportApp} />
-    <Route path={`${match.url}app/:appId`} component={DesignedApp} />
     <Route path={`${match.url}aws`} component={AwsSubApp} />
   </Switch>
 );

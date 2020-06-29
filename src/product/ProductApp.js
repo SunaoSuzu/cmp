@@ -1,15 +1,21 @@
 import React from "react";
-import App from "../app/App"
+import CrudProvider from "../platform/CrudProvider";
+import BasicCrudContainer from "../platform/container/BasicCrudContainer";
 
 export default function ProductApp(props) {
   const def = {
     title : "product",
     type  : "listMod",
-    db    : {database : "cmp" ,table : "product"},
-    schema:{fields : [
+    database : "cmp" ,table : "product",
+    fields : [
         {title : "通称", field : "name" ,    type : "text" , required : true , unique : true},
         {title : "名称", field : "caption" , type : "text" , required : true }
-      ]}
+      ]
   }
-  return <App def={def} />;
+  return (
+        <CrudProvider db={def.database} table={def.table}>
+            <BasicCrudContainer def={def}/>
+        </CrudProvider>
+    )
+
 }
