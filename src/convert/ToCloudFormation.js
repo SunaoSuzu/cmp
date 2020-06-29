@@ -295,3 +295,4 @@ exports.convert = function (vpc) {
         Resources : resources
     };
 }
+export default this.convert;

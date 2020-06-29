@@ -26,11 +26,11 @@ const DesignerMainApp = (props) => {
     const { path } = useRouteMatch();
     return (
         <React.Fragment>
-                <Switch>
-                    <Redirect exact from={path} to={path + "/app"} />
-                    <Route path={path + "/menu"} component={Menu} />
-                    <Route path={path + "/app"} component={App} />
-                </Switch>
+            <Switch>
+                <Redirect exact from={path} to={path + "/app"} />
+                <Route path={path + "/menu"} component={Menu} />
+                <Route path={path + "/app"} component={App} />
+            </Switch>
         </React.Fragment>
     );
 }
