@@ -1,6 +1,8 @@
 import AWS from 'aws-sdk'
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 
+
+export const SIGN_IN = "SIGN_IN";
 export const ON_SUCCESS_SIGN_IN = "ON_SUCCESS_SIGN_IN";
 export const FORCE_PWD_CHG = "FORCE_PWD_CHG";
 export const MF_CHALLENGE = "MF_CHALLENGE";

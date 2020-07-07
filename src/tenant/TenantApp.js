@@ -38,6 +38,8 @@ export default function TenantApp() {
   const classes = useStyles();
   let { path } = useRouteMatch();
 
+  console.log("path=" + path);
+
   return (
       <React.Fragment>
         <div className={classes.appHeaderWrap}>

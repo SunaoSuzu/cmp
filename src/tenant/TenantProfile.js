@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import * as tenantAppModule from "./module/TenantAppModule";
 import { connect } from "react-redux";
 import TenantProfilePage from "./TenantProfilePage";
@@ -8,8 +8,11 @@ function TenantProfile(props) {
   const tenantId = props.match.params.tenantId;
   const { blocking,updateComplete, requestLoadDetail} = props;
 
-  if(updateComplete===tenantAppModule.noLoading){
+  useEffect( ()=>{
     requestLoadDetail(tenantId);
+  },[tenantId])
+
+  if(updateComplete===tenantAppModule.noLoading){
     return <ActionProgress />;
   }
   const Block = blocking ? <ActionProgress /> : "";

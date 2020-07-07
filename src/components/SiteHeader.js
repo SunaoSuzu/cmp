@@ -22,7 +22,7 @@ import SideMenu from "./SideMenu";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import {useLogoutHandler} from '../platform/UserContextProvider';
+import {useLogoutHandler} from '../platform/ClientContextProvider';
 
 
 const drawerWidth = 240;

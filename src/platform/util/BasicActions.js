@@ -1,10 +1,12 @@
 
+export const CLEAN_UP               = "CLEAN_UP"
 export const INIT                   = "INIT"
 export const LIST                   = "LIST"
 export const ON_SUCCESS_LIST        = "ON_SUCCESS_LIST"
-export const SHOW_LIST              = "SHOW_LIST"
+export const INIT_ADD               = "INIT_ADD"
 export const ADD                    = "ADD";
 export const ON_SUCCESS_ADD         = "ON_SUCCESS_ADD";
+export const INIT_UPDATE            = "INIT_UPDATE"
 export const UPDATE                 = "UPDATE";
 export const ON_SUCCESS_UPDATE      = "ON_SUCCESS_UPDATE";
 export const DEL                    = "DEL";

@@ -20,7 +20,7 @@ import {
   ON_SUCCESS_EXECUTE_CHANGE_SET,
 
 } from "../module/EnvironmentModule";
-import converter from "../../convert/ToCloudFormation";
+import convert from "../../convert/ToCloudFormation";
 import EnvStatusSubscribe from "./EnvStatusSubscribe";
 
 function* getOperation(action) {
@@ -28,7 +28,7 @@ function* getOperation(action) {
   const env = action.env;
   const envIndex = action.envIndex;
   let { resources, operations } = makeOperation(tenant, env);
-  const template = converter.convert(resources);
+  const template = convert(resources);
   const stackName = resources.name;
   yield put({
     type       : GET_OPERATION_SUCCESS,
@@ -46,7 +46,7 @@ function* getUpdOperation(action) {
   const env = action.env;
   const envIndex = action.envIndex;
   let { resources, operations } = makeOperation(tenant, env);
-  const template = converter.convert(resources);
+  const template = convert(resources);
 
   yield put({
     type       : GET_UPD_OPERATION_SUCCESS,

@@ -1,36 +1,34 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import App from "./MainApp";
 import * as serviceWorker from "./serviceWorker";
 
-import { Provider } from "react-redux";
-import createStore from "./NavigationStore";
-import { ConnectedRouter } from "connected-react-router";
-import history from "./asset/history";
-import { Route, Switch } from "react-router";
+import PostMessageRouter from "./platform/PostMessageRouter";
+import { Route, Switch } from "react-router-dom";
 import theme from "./theme";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
-import UserContextProvider from "./platform/UserContextProvider"
+import ClientContextProvider from "./platform/ClientContextProvider"
+import TenantSubApp from "./tenant/TenantSubApp";
+import { createBrowserHistory } from 'history';
 
-const store = createStore();
+const history = createBrowserHistory({basename:"/cmp/"});
+
+
 ReactDOM.render(
-  <React.StrictMode>
-    <UserContextProvider>
-      <Provider store={store}>
-        <ConnectedRouter history={history}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Switch>
-              <Route path="/" component={App} />
-            </Switch>
-          </ThemeProvider>
-        </ConnectedRouter>
-      </Provider>
-    </UserContextProvider>
-  </React.StrictMode>,
-  document.getElementById("root")
+    <React.StrictMode>
+      <ClientContextProvider>
+          <PostMessageRouter history={history}>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <Switch>
+                <Route path="/tenant" component={TenantSubApp} />
+              </Switch>
+            </ThemeProvider>
+          </PostMessageRouter>
+      </ClientContextProvider>
+    </React.StrictMode>,
+    document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change

@@ -2,6 +2,7 @@
   "name": "cloud-management-platform",
   "version": "0.1.0",
   "private": true,
+  "homepage": "cmp",
   "dependencies": {
     "@material-ui/core": "^4.9.14",
     "@material-ui/icons": "^4.9.1",
@@ -38,7 +39,8 @@
     "typescript": "^3.7.5"
   },
   "scripts": {
-    "start:react": "react-scripts start",
+    "start:server": "node server.js",
+    "start:react": "PORT=5000 react-scripts start",
     "start": "npm-run-all -p start:*",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -62,7 +64,9 @@
   "devDependencies": {
     "@material-ui/core": "^4.9.14",
     "@material-ui/icons": "^4.9.1",
+    "http-proxy-middleware": "^1.0.4",
     "prettier": "^2.0.5",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.0",
+    "use-reducer-logger": "^1.0.2"
   }
 }
